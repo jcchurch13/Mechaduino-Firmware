@@ -16924,7 +16924,9 @@ void setpoint()     //////////////////////////////////////////////////    SETPOI
   static float u_3 = 0.0;
   static float e_3 = 0.0;
   static long counter = 0;
-
+  
+  static long wrap_count = 0;
+  static float y_1 = 0;
 
 
   SerialUSB.println("Enter angle:");      //Prompt User for input
@@ -16947,12 +16949,22 @@ void setpoint()     //////////////////////////////////////////////////    SETPOI
       a = readEncoder();
       y = lookup_angle(a);
 
+
+      if ((y-y_1)<-180.0){
+        wrap_count += 1;
+      }
+      else if ((y-y_1)>180.0){
+        wrap_count -= 1;        
+      }
+      y_1 = y;
+      //SerialUSB.println((y+(360.0*wrap_count)));
+
       //      SerialUSB.print(r,DEC);
       //      SerialUSB.print(" , ");
       //      SerialUSB.print(y,DEC);
       //      SerialUSB.print(" , ");
       //      SerialUSB.println(e,DEC);
-      e = (r - y);
+      e = (r - (y+(360.0*wrap_count)));
       //   if (e>0){
       //        y +=0.9;
       //      }
@@ -17070,11 +17082,11 @@ void setpoint()     //////////////////////////////////////////////////    SETPOI
 
                                                    /////SERIAL UPDATE
 
-//
-//      if (SerialUSB.available() > 0) { 
-//        delay(100);       
-//        r = SerialUSB.parseFloat();
-//     }
+
+      if (SerialUSB.available() > 0) { 
+        delay(100);       
+        r = SerialUSB.parseFloat();
+     }
 
 
 
@@ -17099,7 +17111,7 @@ void setpoint()     //////////////////////////////////////////////////    SETPOI
                  // }
 
 
-       r=0.1*step_count;                                 ///// STEP/DIR INPUTS
+   //    r=0.1*step_count;                                 ///// STEP/DIR INPUTS
         //SerialUSB.println(r);
     }
 
