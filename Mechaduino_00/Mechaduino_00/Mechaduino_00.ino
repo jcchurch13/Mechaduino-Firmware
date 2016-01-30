@@ -17131,42 +17131,17 @@ void setpoint2()     //////////////////////////////////////////////////    SETPO
 
 
   
+  const float bKp = 19.75;
 
-//// Enable clock for TC 
-//  REG_GCLK_CLKCTRL = (uint16_t) (GCLK_CLKCTRL_CLKEN | GCLK_CLKCTRL_GEN_GCLK0 | GCLK_CLKCTRL_ID_TCC0_TCC1) ;
-//  while ( GCLK->STATUS.bit.SYNCBUSY == 1 ); // wait for sync 
-//
-//
-//  // The type cast must fit with the selected timer 
-//  Tcc* TC = (Tcc*) TCC0; // get timer struct
-//  
-//  TC->CTRLA.reg &= ~TCC_CTRLA_ENABLE;   // Disable TC
-//  while (TC->SYNCBUSY.bit.ENABLE == 1); // wait for sync 
-//
-//
-//  TC->CTRLA.reg |= TCC_CTRLA_PRESCALER_DIV256;   // Set perscaler
-//
-//
-//  TC->WAVE.reg |= TCC_WAVE_WAVEGEN_NFRQ;   // Set wave form configuration 
-//  while (TC->SYNCBUSY.bit.WAVE == 1); // wait for sync 
-//
-//  TC->PER.reg = 0xBB;//3E;//BB;//FFFF;//BB;//FFFF;//F;              // Set counter Top using the PER register  
-//  while (TC->SYNCBUSY.bit.PER == 1); // wait for sync 
-//
-//  TC->CC[0].reg = 0xBBB;//FFF;//B;//FF;//F;
-//  while (TC->SYNCBUSY.bit.CC0 == 1); // wait for sync 
-//  
-//  // Interrupts 
-//  TC->INTENSET.reg = 0;                 // disable all interrupts
-//  TC->INTENSET.bit.OVF = 1;          // enable overfollow
-//  TC->INTENSET.bit.MC0 = 1;          // enable compare match to CC0
-//
-//  // Enable InterruptVector
-//  NVIC_EnableIRQ(TCC0_IRQn);
-//
-//  // Enable TC
-//  TC->CTRLA.reg |= TCC_CTRLA_ENABLE ;
-//  while (TC->SYNCBUSY.bit.ENABLE == 1); // wait for sync 
+  const float bKi = 1250*Ts;
+
+  const float bKd = 0.001/Ts;
+
+  static float ITerm;
+
+
+  
+
 
 
     // Enable GCLK for TC4 and TC5 (timer counter input clock)
@@ -17204,14 +17179,6 @@ void setpoint2()     //////////////////////////////////////////////////    SETPO
 
 
 
-
-
-
-
-
-
-
-
   SerialUSB.println("Enter angle:");      //Prompt User for input
   while (SerialUSB.available() == 0)  {   //Wait for new angle
       }
@@ -17245,12 +17212,24 @@ void setpoint2()     //////////////////////////////////////////////////    SETPO
       else if ((y-y_1)>180.0){
         wrap_count -= 1;        
       }
-      y_1 = y;
+      //y_1 = y;  pushed lower
 
       e = (r - (y+(360.0*wrap_count)));
+
+
+
+
+//
+//      ITerm+= (bKi * e);
+//      if(ITerm> 200) ITerm= 200;
+//      else if(ITerm< -200) ITerm= -200;
+
+
+
+      // u = ((bKp*e) + ITerm - (bKd * ((y+(360.0*wrap_count))-y_1)));  //ARDUINO library style
     
 
-      u = u_1 + cA*e + cB*e_1 + cC*e_2;
+      u = u_1 + cA*e + cB*e_1 + cC*e_2;     //ppt linked in octave script
 
       //  u = 20*e;//
      
@@ -17292,6 +17271,7 @@ void setpoint2()     //////////////////////////////////////////////////    SETPO
       u_3 = u_2;
       u_2 = u_1;
       u_1 = u;
+      y_1 = y;
       U = abs(u);//+lookup_force((((a-4213)%16384)+16384)%16384)-6); ///p);//+i);
 
       // U = 200;
@@ -17379,22 +17359,6 @@ void setpoint2()     //////////////////////////////////////////////////    SETPO
 
 
 
-
-
-
-//
-//void TCC0_Handler()
-//{
-//  Tcc* TC = (Tcc*) TCC0;       // get timer struct
-//  if (TC->INTFLAG.bit.OVF == 1) {  // A overflow caused the interrupt
-//    interrupted = 1;
-//    //digitalWrite(pin_ovf_led, irq_ovf_count % 2); // for debug leds
-//    //digitalWrite(pin_mc0_led, HIGH); // for debug leds
-//    TC->INTFLAG.bit.OVF = 1;    // writing a one clears the flag ovf flag
-//    //irq_ovf_count++;                 // for debug leds
-//  }
-//}
-//
 
 
 
