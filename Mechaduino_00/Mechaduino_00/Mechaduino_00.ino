@@ -17379,6 +17379,8 @@ void setpointv()     //////////////////////////////////////////////////    SETPO
   static int U = 0;  //control effort
   static float r = 0.0;  //setpoint
   static float y = 0.0;  // measured angle
+  static float yw = 0.0;
+  static float yw_1 = 0.0;
   static float e = 0.0;  // e = r-y (error)
   static float p = 0.0;  // proportional effort
   static float i = 0.0;  // integral effort
@@ -17398,11 +17400,11 @@ void setpointv()     //////////////////////////////////////////////////    SETPO
 
   const float  Ts = 0.0004;//1/2500;
 
-  const float Kp = 10.0;
+  const float Kp = 0.5;
 
-  const float Ki = 0.0;
+  const float Ki = 25.0;
 
-  const float Kd = 0.0;
+  const float Kd = 0.0;//0.02;
 
   const float cA = Kp + Ki*(Ts/2) + (Kd/Ts);
 
@@ -17496,24 +17498,26 @@ void setpointv()     //////////////////////////////////////////////////    SETPO
       }
       //y_1 = y;  pushed lower
 
-      e = (r - (((y+(360.0*wrap_count))-y_1)*9.15527));
+      yw = (y+(360.0*wrap_count));
+
+      e = (r - ((yw-yw_1)*416.66667));
 
 
 
 
-//
+
 //      ITerm+= (bKi * e);
 //      if(ITerm> 200) ITerm= 200;
 //      else if(ITerm< -200) ITerm= -200;
+//
+//
+//
+//       u = ((bKp*e) + ITerm - (bKd * (yw-yw_1)));  //ARDUINO library style
 
 
+    //u = 20*e;
 
-      // u = ((bKp*e) + ITerm - (bKd * ((y+(360.0*wrap_count))-y_1)));  //ARDUINO library style
-
-
-    u = kp*e;
-
-      //u = u_1 + cA*e + cB*e_1 + cC*e_2;     //ppt linked in octave script
+      u = u_1 + cA*e + cB*e_1 + cC*e_2;     //ppt linked in octave script
 
       //  u = 20*e;//
      
@@ -17555,6 +17559,7 @@ void setpointv()     //////////////////////////////////////////////////    SETPO
       u_3 = u_2;
       u_2 = u_1;
       u_1 = u;
+      yw_1 = yw;
       y_1 = y;
       U = abs(u);//+lookup_force((((a-4213)%16384)+16384)%16384)-6); ///p);//+i);
 
@@ -17636,7 +17641,6 @@ void setpointv()     //////////////////////////////////////////////////    SETPO
 
 
 }
-
 
 
 
