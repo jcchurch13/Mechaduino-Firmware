@@ -16727,6 +16727,7 @@ void loop()
     
     else if (inChar == 'f') {follow();}
     else if (inChar == 'x') {setpoint2();}
+    else if (inChar == 'v') {setpointv();}
     else if (inChar == 'y') {sine();}
 
   }
@@ -17097,6 +17098,8 @@ void setpoint2()     //////////////////////////////////////////////////    SETPO
   static int U = 0;  //control effort
   static float r = 0.0;  //setpoint
   static float y = 0.0;  // measured angle
+  static float yw = 0.0;
+  static float yw_1 = 0.0;
   static float e = 0.0;  // e = r-y (error)
   static float p = 0.0;  // proportional effort
   static float i = 0.0;  // integral effort
@@ -17214,7 +17217,286 @@ void setpoint2()     //////////////////////////////////////////////////    SETPO
       }
       //y_1 = y;  pushed lower
 
-      e = (r - (y+(360.0*wrap_count)));
+      yw = (y+(360.0*wrap_count));
+
+      e = (r - yw);
+
+
+
+
+
+      ITerm+= (bKi * e);
+      if(ITerm> 200) ITerm= 200;
+      else if(ITerm< -200) ITerm= -200;
+
+
+
+       u = ((bKp*e) + ITerm - (bKd * (yw-yw_1)));  //ARDUINO library style
+    
+
+   //   u = u_1 + cA*e + cB*e_1 + cC*e_2;     //ppt linked in octave script
+
+      //  u = 20*e;//
+     
+      //u = u_1 + 10.0*(2.0*e - 1.95*e_1);
+
+      //u = 1.517*u_1 - 0.5172*u_2 + 400.0*((0.5*e) - (0.9734*e_1) + (0.4735*e_2));
+
+      //u = 10*e;
+      
+      e_3 = e_2;
+      e_2 = e_1;
+      e_1 = e;
+     
+      
+      
+      //u_1 = u;
+
+      // u = p;/////////////////////
+
+      if (u > 0) {
+        PA = 1.8;
+      }
+      else {
+        PA = -1.8;
+      }
+
+
+      y += PA;
+
+
+
+
+      if (u > 200) {                          //saturation limits max current command
+        u = 200;
+      }
+      else if (u < -200) {
+        u = -200;
+      }
+      u_3 = u_2;
+      u_2 = u_1;
+      u_1 = u;
+      yw_1 = yw;
+      y_1 = y;
+      U = abs(u);//+lookup_force((((a-4213)%16384)+16384)%16384)-6); ///p);//+i);
+
+      // U = 200;
+      //      if (abs(e)<=0.1){
+      //        U = 100;
+      //      }
+
+
+      if (abs(e) < 0.1) {
+        digitalWrite(pulse, HIGH);
+      }
+      else  {
+        digitalWrite(pulse, LOW);
+      }
+
+
+
+    //  digitalWrite(pulse, HIGH);
+      //  digitalWrite(pulse, HIGH);
+
+      //  digitalWrite(pulse, LOW);
+      //       PORTB ^= (B00010000);     //PULSE
+
+   //   digitalWrite(pulse, HIGH);
+
+      output(y, U);
+ 
+    
+    
+    //  digitalWrite(pulse, LOW);
+
+      analogWrite(3, map(u, -200, 200, 0, 255));
+      analogWriteResolution(12);
+      analogWrite(4, (a >> 2));
+      analogWriteResolution(8);
+
+
+                                                        /////SERIAL UPDATE
+
+
+      if (SerialUSB.available() > 0) { 
+        delay(100);       
+        r = SerialUSB.parseFloat();
+     }
+
+
+
+
+//                 counter +=1;                          ////COUNTER UPDATE
+//      
+//                  if (counter>10000)
+//                  {
+//                    r = 270;
+//                  }
+//      
+//                  else
+//                  {
+//                    r = 90;
+//                  }
+//                  if (counter>20000)
+//                  {
+//                    counter = 0;
+//                  }
+      
+      
+                 // }
+
+
+  //     r=0.001*step_count;                                 ///// STEP/DIR INPUTS
+        //SerialUSB.println(r);
+
+  //      digitalWrite(pulse, LOW);
+    }
+
+  }
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+void setpointv()     //////////////////////////////////////////////////    SETPOINTV   ///////////////////////////////////////
+{
+  
+  static float ei = 0.0;
+  int start = 0;
+  int finish = 0;
+  static int U = 0;  //control effort
+  static float r = 0.0;  //setpoint
+  static float y = 0.0;  // measured angle
+  static float e = 0.0;  // e = r-y (error)
+  static float p = 0.0;  // proportional effort
+  static float i = 0.0;  // integral effort
+  static float PA = 0.0;  //
+
+  static float u = 0.0;
+  static float u_1 = 0.0;
+  static float e_1 = 0.0;
+  static float u_2 = 0.0;
+  static float e_2 = 0.0;
+  static float u_3 = 0.0;
+  static float e_3 = 0.0;
+  static long counter = 0;
+  
+  static long wrap_count = 0;
+  static float y_1 = 0;
+
+  const float  Ts = 0.0004;//1/2500;
+
+  const float Kp = 10.0;
+
+  const float Ki = 0.0;
+
+  const float Kd = 0.0;
+
+  const float cA = Kp + Ki*(Ts/2) + (Kd/Ts);
+
+  const float cB = -Kp + Ki*(Ts/2) - 2*(Kd/Ts);
+
+  const float cC = (Kd/Ts);
+
+
+
+  
+  const float bKp = 19.75;
+
+  const float bKi = 1250*Ts;
+
+  const float bKd = 0.001/Ts;
+
+  static float ITerm;
+
+
+  
+
+
+
+    // Enable GCLK for TC4 and TC5 (timer counter input clock)
+    GCLK->CLKCTRL.reg = (uint16_t) (GCLK_CLKCTRL_CLKEN | GCLK_CLKCTRL_GEN_GCLK0 | GCLK_CLKCTRL_ID(GCM_TC4_TC5));
+    while (GCLK->STATUS.bit.SYNCBUSY);
+
+      TC5->COUNT16.CTRLA.reg &= ~TC_CTRLA_ENABLE;   // Disable TCx
+      WAIT_TC16_REGS_SYNC(TC5)                      // wait for sync 
+
+      TC5->COUNT16.CTRLA.reg |= TC_CTRLA_MODE_COUNT16;   // Set Timer counter Mode to 16 bits
+      WAIT_TC16_REGS_SYNC(TC5)
+
+      TC5->COUNT16.CTRLA.reg |= TC_CTRLA_WAVEGEN_MFRQ; // Set TC as normal Normal Frq
+      WAIT_TC16_REGS_SYNC(TC5)
+
+      TC5->COUNT16.CTRLA.reg |= TC_CTRLA_PRESCALER_DIV1;   // Set perscaler
+      WAIT_TC16_REGS_SYNC(TC5)
+
+
+      TC5->COUNT16.CC[0].reg = 0x4AF0;
+      WAIT_TC16_REGS_SYNC(TC5)
+
+
+      TC5->COUNT16.INTENSET.reg = 0;              // disable all interrupts
+      TC5->COUNT16.INTENSET.bit.OVF = 1;          // enable overfollow
+      TC5->COUNT16.INTENSET.bit.MC0 = 1;         // enable compare match to CC0
+
+        // Enable InterruptVector
+      NVIC_EnableIRQ(TC5_IRQn);
+      
+      // Enable TC
+      TC5->COUNT16.CTRLA.reg |= TC_CTRLA_ENABLE;
+      WAIT_TC16_REGS_SYNC(TC5)
+
+
+
+
+  SerialUSB.println("Enter angle:");      //Prompt User for input
+  while (SerialUSB.available() == 0)  {   //Wait for new angle
+      }
+
+
+      
+  //  new_angle=SerialUSB.parseFloat();
+  // diff_angle =(new_angle-current_angle);
+  
+
+  r = SerialUSB.parseFloat();
+  e = (r - y);
+
+
+  while (1) {//(abs(diff_angle) >= 0.05)
+    
+  if (interrupted == 1)
+  {
+    interrupted = 0;
+
+    
+ 
+
+      a = readEncoder();
+      y = lookup_angle(a);
+
+
+      if ((y-y_1)<-180.0){
+        wrap_count += 1;
+      }
+      else if ((y-y_1)>180.0){
+        wrap_count -= 1;        
+      }
+      //y_1 = y;  pushed lower
+
+      e = (r - (((y+(360.0*wrap_count))-y_1)*9.15527));
 
 
 
@@ -17227,9 +17509,11 @@ void setpoint2()     //////////////////////////////////////////////////    SETPO
 
 
       // u = ((bKp*e) + ITerm - (bKd * ((y+(360.0*wrap_count))-y_1)));  //ARDUINO library style
-    
 
-      u = u_1 + cA*e + cB*e_1 + cC*e_2;     //ppt linked in octave script
+
+    u = kp*e;
+
+      //u = u_1 + cA*e + cB*e_1 + cC*e_2;     //ppt linked in octave script
 
       //  u = 20*e;//
      
@@ -17352,6 +17636,16 @@ void setpoint2()     //////////////////////////////////////////////////    SETPO
 
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
