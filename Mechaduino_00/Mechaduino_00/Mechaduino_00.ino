@@ -66,8 +66,8 @@ const float pKp = 19.75;
 const float pKi = 0.30;
 const float pKd = 5.00;
  
-const float vKp = 0.10;
-const float vKi = 1000.00*Ts;
+const float vKp = 0.15;
+const float vKi = 500.00*Ts;
 const float vKd = 0.00/Ts;
  
 const PROGMEM float lookup[] = {
