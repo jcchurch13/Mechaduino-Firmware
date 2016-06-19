@@ -57,7 +57,8 @@
 
 //----Current Parameters-----
 
-const float Ts = 0.0003333333;
+
+ const float Ts = 0.0003333333;
  
 const float pKp = 19.75;
 const float pKi = 0.10;
@@ -96,7 +97,6 @@ const PROGMEM float force_lookup[] = {
 #include <avr/pgmspace.h>
 #include <SPI.h>
 #include <Wire.h>
-#include "Mechaduino_functions.h"
 
 const int spr = 200; //  400 steps per revolution
 const float aps = 360.0 / spr; // angle per step
@@ -258,8 +258,8 @@ void setup() {
   delay(500);
   
 
-//  enableTCInterrupts();     //start in closed loop mode
-//  mode = 'x';
+  enableTCInterrupts();     //start in closed loop mode
+  mode = 'x';
 //
 //  Wire.begin(4);                // join i2c bus with address #8
 //  Wire.onReceive(receiveEvent); // register event
@@ -386,16 +386,17 @@ void loop()
 
   //    mode = 'x';
 
-
-
-
-
-
-
-
-
-
-
+    for (int i = -180; i < 90; i++) {
+      r = i;
+      delay(10);
+    }
+    delay(2000);
+      for (int i = 90; i > -180; i--) {
+      r = i;
+      delay(10);
+    }
+    delay(2000);
+  
 
 
 
@@ -608,22 +609,22 @@ void TC5_Handler()
 }
 
 
-//void oneStep() {           /////////////////////////////////   oneStep    ///////////////////////////////
-//
-//  if (dir == 0) {
-//    stepNumber += 1;
-//  }
-//  else {
-//    stepNumber -= 1;
-//  }
-//  // step_state = ((((stepNumber) % 4) + 4) % 4); // arduino mod does not wrap for negative....
-//
-//  //output(1.8 * step_state, 128); //1.8 = 90/50
-//
-//  output(1.8 * stepNumber, 128); //1.8 = 90/50
-//
-//  delay(10);
-//}
+void oneStep() {           /////////////////////////////////   oneStep    ///////////////////////////////
+
+  if (dir == 0) {
+    stepNumber += 1;
+  }
+  else {
+    stepNumber -= 1;
+  }
+  // step_state = ((((stepNumber) % 4) + 4) % 4); // arduino mod does not wrap for negative....
+
+  //output(1.8 * step_state, 128); //1.8 = 90/50
+
+  output(1.8 * stepNumber, 128); //1.8 = 90/50
+
+  delay(10);
+}
 
 
 void print_angle()                ///////////////////////////////////       PRINT_ANGLE   /////////////////////////////////
