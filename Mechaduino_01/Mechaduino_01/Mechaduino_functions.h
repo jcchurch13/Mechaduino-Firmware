@@ -6,5 +6,12 @@
 
     void oneStep(void);
 
+    
+    void receiveEvent(int howMany);
+	
+	
+	
+
+
   #endif
 
