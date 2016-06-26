@@ -169,7 +169,7 @@ volatile long wrap_count = 0;
 volatile float y_1 = 0;
 
 
-
+volatile int uMAX = 150;
 
 volatile float ITerm;
 
@@ -228,8 +228,8 @@ void setup() {
   delay(500);
 
 
-  //  enableTCInterrupts();     //start in closed loop mode
-  //  mode = 'x';
+    enableTCInterrupts();     //start in closed loop mode
+    mode = 'x';
   //
   //  Wire.begin(4);                // join i2c bus with address #8
   //  Wire.onReceive(receiveEvent); // register event
@@ -240,7 +240,7 @@ void setup() {
   //pinMode(10, OUTPUT);
   //pinMode(11, OUTPUT);
   //pinMode(12, OUTPUT);
-
+  SerialUSB.println("Mechaduino 0.1 begin...");
 
 }
 
@@ -290,7 +290,7 @@ void loop()
 
   serialCheck();
 
-  // r=0.1125*step_count;
+   r=0.1125*step_count;
 
   // electronic gearing with analog
   //  val = 0;
@@ -539,11 +539,11 @@ void TC5_Handler()
 
 
 
-    if (u > 200) {                          //saturation limits max current command
-      u = 200;
+    if (u > uMAX) {                          //saturation limits max current command
+      u = uMAX;
     }
-    else if (u < -200) {
-      u = -200;
+    else if (u < -uMAX) {
+      u = -uMAX;
     }
 
 
