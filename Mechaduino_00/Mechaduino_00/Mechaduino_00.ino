@@ -446,7 +446,7 @@ void loop()
   digitalWrite(12, LOW);
 
   
-  r = 30;
+  r = 50;
   delay(4000);
 //  r = -60;
 //  delay(2000);
