@@ -1,6 +1,10 @@
 //Utils
 
-#ifndef Utils
-  #define Utils
+#ifndef __UTILS_H__
+#define __UTIL_H__
 
-  #endif
+	
+	float lookup_angle(int n);
+	
+
+#endif

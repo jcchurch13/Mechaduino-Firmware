@@ -1,6 +1,6 @@
 //Contains the State 
 
-#ifndef State
-  #define State
+#ifndef __STATE_H__
+#define __STATE_H__
 
-  #endif
+#endif

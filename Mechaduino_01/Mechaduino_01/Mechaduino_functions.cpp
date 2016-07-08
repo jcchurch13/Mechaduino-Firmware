@@ -44,10 +44,6 @@ extern volatile char mode;
 
 
 
-
-
-
-
 void oneStep() {           /////////////////////////////////   oneStep    ///////////////////////////////
 
   if (dir == 0) {

@@ -1,6 +1,9 @@
 //Contains the Mechaduino Parameters
 
-#ifndef Parameters
-  #define Parameters
+#ifndef __PARAMETERS_H__
+#define __PARAMETERS_H__
 
-  #endif
+#include <avr/pgmspace.h>
+
+
+#endif
