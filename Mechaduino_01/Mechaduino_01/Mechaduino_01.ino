@@ -228,7 +228,7 @@ void setup() {
   delay(500);
 
 
-    enableTCInterrupts();     //start in closed loop mode
+   // enableTCInterrupts();     //start in closed loop mode
   //  mode = 'x';
   //
   //  Wire.begin(4);                // join i2c bus with address #8
@@ -290,50 +290,6 @@ void loop()
 
   serialCheck();
 
-
-
-  // multi mode demo:
-
-  mode = 'x';
-  
-  digitalWrite(10, LOW);
-  digitalWrite(11, LOW);
-  digitalWrite(12, HIGH);
-  r = 0;
-  delay(1000);
-  r = -45;
-  delay(1000);
-  r = 90;
-  delay (1000);
-  r = 1080;
-  delay(3000);
-
-
-  mode = 'v';
-  
-  digitalWrite(10, LOW);
-  digitalWrite(11, HIGH);
-  digitalWrite(12, LOW);
-
-  r = 5;
-  delay(2000);
-  r = -60;
-  delay(2000);
-  r = 200;
-  delay(100);
-  r = 0;
-
-  
-  mode = 't';
-  
-  digitalWrite(10, HIGH);
-  digitalWrite(11, LOW);
-  digitalWrite(12, LOW);
-
-  
-  r = 30;
-  delay(4000); 
-  
   // r=0.1125*step_count;
 
   
