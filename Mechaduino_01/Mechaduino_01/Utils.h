@@ -6,5 +6,7 @@
 		float lookup_angle(int n);
 	
 		void oneStep(void);
+		
+		void receiveEvent(int howMany);
 
 #endif

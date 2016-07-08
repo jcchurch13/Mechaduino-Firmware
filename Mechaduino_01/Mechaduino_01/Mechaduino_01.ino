@@ -82,7 +82,7 @@ const PROGMEM float force_lookup[] = {
 #include <SPI.h>
 #include <Wire.h>
 
-#include "Mechaduino_functions.h"
+
 #include "Controller.h"
 #include "Parameters.h"
 #include "Utils.h"

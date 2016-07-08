@@ -30,3 +30,16 @@ void oneStep() {           /////////////////////////////////   oneStep    //////
 
   delay(10);
 }
+
+
+void receiveEvent(int howMany)
+{
+  while (1 < Wire.available()) // loop through all but the last
+  {
+    char c = Wire.read(); // receive byte as a character
+    SerialUSB.print(c);         // print the character
+  }
+  int x = Wire.read();    // receive byte as an integer
+  SerialUSB.println(x);         // print the integer
+  r = 0.1 * ((float)x);
+}
