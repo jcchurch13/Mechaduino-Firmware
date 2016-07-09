@@ -1,66 +1,50 @@
-// multi file
+
 /*
 
-
+  Mechaduino 0.1 Firmware  --multi file branch
+    
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
+  Many thanks to Will Church and Marco Farrugia.
+
+  
+  
   Controlled via a SerialUSB terminal at 115200 baud.
 
+  Implemented serial commands are:
 
-  ____
-    |
-  0005|-> LED
-  0007|-> pulse
-  0009|-> IN_1
-  0010|-> IN_2
-  0012|-> IN_3
-  0011|-> IN_4
-    |->                   \
-  0008|-> VREF_1             \___A4954
-  0013|-> VREF_2            _/
-   4|->
-  0006|-> chipSelectPin
-   2|
-    |
-  SCK|-> clockPin
-  MOSI|-> MISO
-  MISO|-> MOSI
-  ____|
-
-
-  Implemented commands are:
-
-  p  -  print [step count] , [assumed angle] , [encoder reading]
-
-  c  -  clear step count & assumed angle
 
   s  -  step
 
   d  -  dir toggle
 
-  z  -  seek zero position
+  w  -  encoder cal routine
+  
+  y  -  enable controller interrupts
 
-  g  -  Go! steps around 400 times
+  n  - disable controller interrupts
 
-  w  -  Same as go, but stores encoder angles to EEPROM
+  r  -  enter new setpoint
 
-  r  -  returns EEPROM contents
+  x  - position mode
 
-  a  -  prompts user to enter angle
+  v  -  velocity mode
 
-  y  -  sine sweep
+  t  -  torque mode
 
+  q  - parameter query (prints current parameters)
+
+  e  -  reads encoder diagnostic register 
+
+  p  -  print [step count] , [assumed angle] , [encoder reading]
+
+  ...see serialCheck() in Utils for more details
 
 */
 
 
 #include "Utils.h"
 
-
-int analogPin = 1;
-int val = 0;
-
-int aout = 0;
 
 
 //////////////////////////////////////

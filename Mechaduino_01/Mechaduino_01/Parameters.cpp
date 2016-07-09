@@ -12,7 +12,7 @@ volatile float Ts = 0.0003333333;
 
 volatile float pKp = 19.75;
 volatile float pKi = 0.10;
-volatile float pKd = 0.3;
+volatile float pKd = 5.0;
 
 volatile float vKp = 0.05;
 volatile float vKi = 200.00 * Ts;
