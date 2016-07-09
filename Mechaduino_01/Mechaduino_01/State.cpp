@@ -1,4 +1,5 @@
-//State
+//Contains the declaration of the state variables for the control loop  
+
 
 //interrupt vars
 
@@ -31,7 +32,6 @@ volatile int uMAX = 150;
 volatile float ITerm;
 
 volatile char mode;
-
 
 
 //___________________________________

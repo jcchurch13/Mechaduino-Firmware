@@ -1,11 +1,10 @@
-//Parameters
+//Contains the Mechaduino parameter defintions
 
-#include <math.h>
-#include <avr/pgmspace.h>
-#include <SPI.h>
+
 #include <Wire.h>
 
 #include "Parameters.h"
+
 
 //----Current Parameters-----
 
@@ -18,6 +17,7 @@ volatile float pKd = 0.10;
 volatile float vKp = 0.05;
 volatile float vKi = 200.00 * Ts;
 volatile float vKd = 0.00 / Ts;
+
 
 //////////////////////////////////////
 //////////////////PINS////////////////
@@ -35,7 +35,7 @@ const int chipSelectPin = A2;//5;//6; //output to chip select
 int step_pin  = 1;
 int dir_pin = 0;//2;
 
-//pins for debugging waveforms
+//pins for debugging waveforms:
 //int sine_out = 3;				
 //int encoder_out = 4;
 
@@ -50,13 +50,11 @@ int dir = 1;		//initialize stepping mode variables
 int step_state = 1;		
 
 
-
 long angle = 0; //holds processed angle value
 
 float anglefloat = 0;
 
 int a = 0;  // raw encoder value in closed loop and print_angle routine (should fix the latter to include LUT)
-
 
 
 volatile long step_count = 0;  //For step/dir interrupt

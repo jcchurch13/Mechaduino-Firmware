@@ -1,7 +1,8 @@
-//Utils
+//Contains the declarations for the functions used by the firmware
 
 #ifndef __UTILS_H__
 #define __UTIL_H__
+
 
 	void setupPins();
 	
@@ -12,7 +13,7 @@
 	void output(float theta, int effort);	
 
 	void commandW();	
-	
+		
 	void serialCheck();
 
 	void parameterQuery();
@@ -50,5 +51,6 @@
 	void parameterEditv();
 	
 	void parameterEdito();
+	
 
 #endif

@@ -1,13 +1,13 @@
-//Utils
+//Contains the definitions of the functions used by the firmware.
 
 
+#include <SPI.h>
+#include <Wire.h>
 
 #include "Parameters.h"
 #include "Controller.h"
 #include "Utils.h"
 #include "State.h"
-#include "Arduino.h"
-#include <Wire.h>
 
 
 void setupPins() {
@@ -56,7 +56,6 @@ void setupSPI() {
   SPI.beginTransaction(settingsA);
 
 }
-
 
 
 void stepInterrupt() {
@@ -649,7 +648,6 @@ float lookup_sine(int m)        ////////////////////////////////////////////////
 }
 
 
-
 void setupTCInterrupts() {
 
 
@@ -705,7 +703,6 @@ void disableTCInterrupts() {
 }
 
 
-
 void antiCoggingCal() {
   SerialUSB.println(" -----------------BEGIN ANTICOGGING CALIBRATION!----------------");
   mode = 'x';
@@ -735,7 +732,6 @@ void antiCoggingCal() {
 }
  
  
-
 void parameterEditmain() {
 
     SerialUSB.println();

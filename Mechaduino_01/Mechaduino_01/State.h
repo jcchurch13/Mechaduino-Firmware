@@ -1,7 +1,8 @@
-//Contains the State 
+//Contains the declaration of the state variables for the control loop  
 
 #ifndef __STATE_H__
 #define __STATE_H__
+
 
 //interrupt vars
 
@@ -39,9 +40,6 @@ extern int stepNumber;
 extern void output(float,int);
 
 
-
-
-
 extern volatile int uMAX;
 
 extern volatile float ITerm;
@@ -59,8 +57,6 @@ extern float current_angle; //current angle
 extern float diff_angle;
 extern int val1;
 extern int val2;
-
-
 
 
 #endif

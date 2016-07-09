@@ -1,14 +1,11 @@
-//TC5 Controller
+//Contains TC5 Controller definition
 
+
+#include <SPI.h>
 
 #include "State.h" 
 #include "Utils.h"
 #include "Parameters.h"
-
-#include <math.h>
-#include <avr/pgmspace.h>
-#include <SPI.h>
-#include <Wire.h>
 
 
 void TC5_Handler()
@@ -163,5 +160,3 @@ void TC5_Handler()
 
 
 }
-
-
