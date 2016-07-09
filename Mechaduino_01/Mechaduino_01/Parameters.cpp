@@ -40,6 +40,25 @@ int dir_pin = 0;//2;
 //int encoder_out = 4;
 
 
+
+const int spr = 200; //  200 steps per revolution
+const float aps = 360.0 / spr; // angle per step
+int cpr = 16384; //counts per rev
+
+
+int dir = 1;		//initialize stepping mode variables
+int step_state = 1;		
+
+
+
+long angle = 0; //holds processed angle value
+
+float anglefloat = 0;
+
+int a = 0;  // raw encoder value in closed loop and print_angle routine (should fix the latter to include LUT)
+
+
+
 volatile long step_count = 0;  //For step/dir interrupt
 
 volatile int interrupted = 0;
