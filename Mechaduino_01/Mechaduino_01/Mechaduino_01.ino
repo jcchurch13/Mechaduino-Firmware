@@ -88,11 +88,6 @@ void setup() {
   //  Wire.onReceive(receiveEvent); // register event
 
 
-  //tp
-
-  //pinMode(10, OUTPUT);
-  //pinMode(11, OUTPUT);
-  //pinMode(12, OUTPUT);
   SerialUSB.println("Mechaduino 0.1 begin...");
 
 }
@@ -111,104 +106,6 @@ void loop()
   serialCheck();
 
   // r=0.1125*step_count;
-
-  
-
-  // electronic gearing with analog
-  //  val = 0;
-  //  for (int i = 0; i < 10; i++){
-  //    val += analogRead(analogPin);    // read the input pin
-  //   // delay(1);
-  //  }
-  //
-  //  SerialUSB.println(0.01*((float)val));             // debug value
-  //  r = 0.01*((float)val);
-  //
-  //  aout = 10.0*yw;
-  //
-  //  if (aout > 1023){
-  //    aout = 1023;
-  //  }
-  //  else if (aout < 0){
-  //    aout = 0;
-  //  }
-  //
-  //  analogWriteResolution(10);p
-  //  analogWrite(A0,aout);
-  //
-
-
-  //  for (int i = 0; i < 1024; i++){
-  //    analogWrite(A0,i);
-  //    delay(2);
-  //  }
-
-
-
-  //  // tp dispenser:
-  //  mode = 'x';
-  //
-  //  digitalWrite(10, LOW);
-  //  digitalWrite(11, LOW);
-  //  digitalWrite(12, HIGH);
-  //
-  //  if (u > 70) {
-  //    digitalWrite(10, LOW);
-  //    digitalWrite(11, HIGH);
-  //    digitalWrite(12, LOW);
-  //    for (int i = 0; i < 2700; i++) {
-  //      r -= 0.2;
-  //      delay(1);
-  //    }
-  //      digitalWrite(10, HIGH);
-  //      digitalWrite(11, LOW);
-  //      digitalWrite(12, LOW);
-  //    delay(750);
-  //    r -= 45;
-  //    delay(50);
-  //    r += 135;
-  //    delay(250);
-  //    for (int i = 0; i < 1200; i++) {
-  //      r -= 0.2;
-  //      delay(1);
-  //    }
-  //  }
-
-
-
-  //    mode = 'x';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //  r = 90;
-  //  delay(2000);
-  //  r = 0;
-  //  delay(500);
-  //  r = -90;
-  //  delay (1000);
-
-  //    if (u>50){
-  //      r = -45;
-  //      delay(500);
-  //    }
-  //    else if (u< -50){
-  //      r = 45;
-  //      delay(500);
-  //    }
-  //
-
 
 
 
