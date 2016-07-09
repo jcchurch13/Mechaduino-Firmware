@@ -24,3 +24,23 @@ volatile long counter = 0;
 
 volatile long wrap_count = 0;
 volatile float y_1 = 0;
+
+
+volatile int uMAX = 150;
+
+volatile float ITerm;
+
+volatile char mode;
+
+
+
+//___________________________________
+
+const float pi = 3.14159;
+const int  half = 134;//128;
+
+float new_angle = 0.0; //input angle
+float current_angle = 0.0; //current angle
+float diff_angle = 0.0;
+int val1 = 0;
+int val2 = 0;

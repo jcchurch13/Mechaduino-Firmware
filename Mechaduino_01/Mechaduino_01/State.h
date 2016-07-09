@@ -42,23 +42,23 @@ extern void output(float,int);
 
 
 
-volatile int uMAX = 150;
+extern volatile int uMAX;
 
-volatile float ITerm;
+extern volatile float ITerm;
 
-volatile char mode;
+extern volatile char mode;
 
 
 //___________________________________
 
-const float pi = 3.14159;
-const int  half = 134;//128;
+extern const float pi;
+extern const int  half;//128;
 
-float new_angle = 0.0; //input angle
-float current_angle = 0.0; //current angle
-float diff_angle = 0.0;
-int val1 = 0;
-int val2 = 0;
+extern float new_angle; //input angle
+extern float current_angle; //current angle
+extern float diff_angle;
+extern int val1;
+extern int val2;
 
 
 
