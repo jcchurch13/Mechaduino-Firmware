@@ -31,6 +31,12 @@
 	
 	float lookup_sine(int m);
 	
+	void setupTCInterrupts();
+	
+	void enableTCInterrupts();
+	
+	void disableTCInterrupts();
+	
 	void parameterEditmain();
 	
 	void parameterEditp();

@@ -545,6 +545,65 @@ float lookup_sine(int m)        ////////////////////////////////////////////////
 
 
 
+void setupTCInterrupts() {
+
+
+
+  // Enable GCLK for TC4 and TC5 (timer counter input clock)
+  GCLK->CLKCTRL.reg = (uint16_t) (GCLK_CLKCTRL_CLKEN | GCLK_CLKCTRL_GEN_GCLK0 | GCLK_CLKCTRL_ID(GCM_TC4_TC5));
+  while (GCLK->STATUS.bit.SYNCBUSY);
+
+  TC5->COUNT16.CTRLA.reg &= ~TC_CTRLA_ENABLE;   // Disable TCx
+  WAIT_TC16_REGS_SYNC(TC5)                      // wait for sync
+
+  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_MODE_COUNT16;   // Set Timer counter Mode to 16 bits
+  WAIT_TC16_REGS_SYNC(TC5)
+
+  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_WAVEGEN_MFRQ; // Set TC as normal Normal Frq
+  WAIT_TC16_REGS_SYNC(TC5)
+
+  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_PRESCALER_DIV1;   // Set perscaler
+  WAIT_TC16_REGS_SYNC(TC5)
+
+
+  TC5->COUNT16.CC[0].reg = 0x3E72; //0x4AF0;
+  WAIT_TC16_REGS_SYNC(TC5)
+
+
+  TC5->COUNT16.INTENSET.reg = 0;              // disable all interrupts
+  TC5->COUNT16.INTENSET.bit.OVF = 1;          // enable overfollow
+  TC5->COUNT16.INTENSET.bit.MC0 = 1;         // enable compare match to CC0
+
+  // Enable InterruptVector
+  NVIC_EnableIRQ(TC5_IRQn);
+
+  // Enable TC
+  //  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_ENABLE;
+  //  WAIT_TC16_REGS_SYNC(TC5)
+
+
+
+
+}
+
+
+void enableTCInterrupts() {
+
+  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_ENABLE;    //Enable TC5
+  WAIT_TC16_REGS_SYNC(TC5)                      //wait for sync
+}
+
+
+void disableTCInterrupts() {
+
+
+  TC5->COUNT16.CTRLA.reg &= ~TC_CTRLA_ENABLE;   // Disable TC5
+  WAIT_TC16_REGS_SYNC(TC5)                      // wait for sync
+}
+
+
+
+
 void parameterEditmain() {
 
     SerialUSB.println();
