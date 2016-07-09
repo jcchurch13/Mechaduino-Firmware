@@ -13,7 +13,6 @@
 
 extern volatile float Ts;
 
-
 extern volatile float pKp;
 extern volatile float pKi;
 extern volatile float pKd;
@@ -29,21 +28,23 @@ const PROGMEM float force_lookup[] = {
 //////////////////////////////////////
 //////////////////PINS////////////////
 //////////////////////////////////////
-int IN_4 = 6;//11 - 1;
-int IN_3 = 5;//12 - 1;
-int VREF_2 = 4;//13 - 1;
-int VREF_1 = 9;//3;//8-1;
-int IN_2 = 7;//10 - 1;
-int IN_1 = 8;//9 - 1;
-int pulse = 13;//5;
-const int ledPin = 13;//5; //LED connected to digital pin 13
-const int chipSelectPin = A2;//5;//6; //output to chip select
+extern int IN_4;
+extern int IN_3;
+extern int VREF_2;
+extern int VREF_1;
+extern int IN_2;
+extern int IN_1;
+extern int pulse;
+extern const int ledPin;
+extern const int chipSelectPin;
 
-int step_pin  = 1;
-int dir_pin = 0;//2;
+extern int step_pin;
+extern int dir_pin;
 
-//int sine_out = //3;				// pins for debugging waveforms
-//int encoder_out = //4;
+
+//pins for debugging waveforms
+//extern int sine_out;				
+//extern int encoder_out;
 
 
 const PROGMEM float lookup[] = {
@@ -68,11 +69,11 @@ float anglefloat = 0;
 int a = 0;  // raw encoder value in closed loop and print_angle routine (should fix the latter to include LUT)
 
 
-volatile long step_count = 0;  //For step/dir interrupt
+extern volatile long step_count;  //For step/dir interrupt
 
-volatile int interrupted = 0;
+extern volatile int interrupted;
 
-int stepNumber = 0; // step index for cal routine
+extern int stepNumber; // step index for cal routine
 
 
 const PROGMEM float sine_lookup[] = {
