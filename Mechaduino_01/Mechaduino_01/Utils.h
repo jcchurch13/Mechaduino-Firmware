@@ -26,5 +26,13 @@
 	void receiveEvent(int howMany);
 	
 	float lookup_force(int m);
+	
+	void parameterEditmain();
+	
+	void parameterEditp();
+	
+	void parameterEditv();
+	
+	void parameterEdito();
 
 #endif

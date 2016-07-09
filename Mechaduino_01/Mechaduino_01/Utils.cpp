@@ -517,3 +517,164 @@ float lookup_force(int m)        ///////////////////////////////////////////////
 
   return b_out;
 }
+
+
+void parameterEditmain() {
+
+    SerialUSB.println();
+    SerialUSB.println("Edit parameters:");
+    SerialUSB.println();
+    SerialUSB.println("p ----- proportional loop");
+    SerialUSB.println("v ----- velocity loop");
+    SerialUSB.println("o ----- other");
+    SerialUSB.println("q ----- quit");
+    SerialUSB.println();
+
+    while (SerialUSB.available() == 0)  {}
+    char inChar2 = (char)SerialUSB.read();
+
+    switch (inChar2) {
+      case 'p':
+      {
+         parameterEditp();
+      }
+        break;
+
+      case 'v':
+      {    
+       parameterEditv();     
+      }      
+        break;
+
+      case 'o':
+      {
+        parameterEdito();
+      }
+        break;
+      default:
+      {}
+        break;
+    
+   
+
+          }
+}
+
+
+void parameterEditp(){
+
+
+  SerialUSB.println("Edit position loop gains:");
+        SerialUSB.println();
+        SerialUSB.print("p ----- pKp = ");
+        SerialUSB.println(pKp,DEC);
+        SerialUSB.print("i ----- pKi = ");
+        SerialUSB.println(pKi,DEC);
+        SerialUSB.print("d ----- pKd = ");
+        SerialUSB.println(pKd,DEC);
+        SerialUSB.println("q ----- quit");
+        SerialUSB.println();
+        
+        while (SerialUSB.available() == 0)  {}
+        char inChar3 = (char)SerialUSB.read();
+        
+        switch (inChar3) {
+            case 'p':
+              {
+              SerialUSB.println("pKp = ?");
+              while (SerialUSB.available() == 0)  {}
+              pKp = SerialUSB.parseFloat();
+              }
+              break;
+            case 'i':
+              {
+              SerialUSB.println("pKi = ?");
+              while (SerialUSB.available() == 0)  {}
+              pKi = SerialUSB.parseFloat();
+              }
+              break;
+            case 'd':  
+              {
+              SerialUSB.println("pKd = ?");
+              while (SerialUSB.available() == 0)  {}
+              pKd = SerialUSB.parseFloat();
+              }
+              break;
+            default:
+            {}
+              break;
+        }
+}
+
+void parameterEditv(){
+  SerialUSB.println("Edit velocity loop gains:");
+  SerialUSB.println();
+  SerialUSB.print("p ----- vKp = ");
+  SerialUSB.println(vKp,DEC);
+  SerialUSB.print("i ----- vKi = ");
+  SerialUSB.println(vKi,DEC);
+  SerialUSB.print("d ----- vKd = ");
+  SerialUSB.println(vKd,DEC);
+  SerialUSB.println("q ----- quit");
+  SerialUSB.println();
+  
+  while (SerialUSB.available() == 0)  {}
+  char inChar4 = (char)SerialUSB.read();
+  
+  switch (inChar4) {
+      case 'p':
+        {
+        SerialUSB.println("vKp = ?");
+        while (SerialUSB.available() == 0)  {}
+        vKp = SerialUSB.parseFloat();
+        }
+        break;
+      case 'i':
+        {
+        SerialUSB.println("vKi = ?");
+        while (SerialUSB.available() == 0)  {}
+        vKi = SerialUSB.parseFloat();
+        }
+        break;
+      case 'd':  
+        {
+        SerialUSB.println("vKd = ?");
+        while (SerialUSB.available() == 0)  {}
+        vKd = SerialUSB.parseFloat();
+        }
+        break;
+      default:
+      {}
+        break;             
+  }
+}
+
+
+
+void parameterEdito(){
+
+
+  SerialUSB.println("Edit other parameters:");
+        SerialUSB.println();
+        SerialUSB.print("p ----- PA = ");
+        SerialUSB.println(PA,DEC);
+        SerialUSB.println();
+
+        
+        while (SerialUSB.available() == 0)  {}
+        char inChar3 = (char)SerialUSB.read();
+        
+        switch (inChar3) {
+            case 'p':
+              {
+              SerialUSB.println("PA = ?");
+              while (SerialUSB.available() == 0)  {}
+              PA = SerialUSB.parseFloat();
+              }
+       
+              break;
+            default:
+            {}
+              break;
+        }
+}
