@@ -58,7 +58,6 @@
 
 
 
-#define WAIT_TC16_REGS_SYNC(x) while(x->COUNT16.STATUS.bit.SYNCBUSY);
 
 
 #include <math.h>
@@ -66,20 +65,8 @@
 #include <SPI.h>
 #include <Wire.h>
 
-#include "Controller.h"
-//#include "Parameters.h"
+
 #include "Utils.h"
-//#include "State.h"
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -247,22 +234,3 @@ void loop()
 
 
 }
-
-
-
-//////////////////////////////////////
-/////////////////FUNCTIONS/////////////////////
-//////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-

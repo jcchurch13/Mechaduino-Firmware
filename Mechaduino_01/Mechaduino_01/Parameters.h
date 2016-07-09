@@ -9,19 +9,18 @@
 #include <Wire.h>
 
 
-
 //----Current Parameters-----
 
-volatile float Ts = 0.0003333333;
+extern volatile float Ts;
 
-volatile float pKp = 19.75;
-volatile float pKi = 0.50;
-volatile float pKd = 0.10;
 
-volatile float vKp = 0.05;
-volatile float vKi = 200.00 * Ts;
-volatile float vKd = 0.00 / Ts;
+extern volatile float pKp;
+extern volatile float pKi;
+extern volatile float pKd;
 
+extern volatile float vKp;
+extern volatile float vKi;
+extern volatile float vKd;
 
 const PROGMEM float force_lookup[] = {
 };
