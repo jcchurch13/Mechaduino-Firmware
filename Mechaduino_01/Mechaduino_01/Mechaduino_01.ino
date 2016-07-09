@@ -56,22 +56,6 @@
 
 
 
-//----Current Parameters-----
-
-volatile float Ts = 0.0003333333;
-
-volatile float pKp = 19.75;
-volatile float pKi = 0.50;
-volatile float pKd = 0.10;
-
-volatile float vKp = 0.05;
-volatile float vKi = 200.00 * Ts;
-volatile float vKd = 0.00 / Ts;
-
-
-const PROGMEM float force_lookup[] = {
-};
-
 
 
 #define WAIT_TC16_REGS_SYNC(x) while(x->COUNT16.STATUS.bit.SYNCBUSY);
@@ -82,34 +66,12 @@ const PROGMEM float force_lookup[] = {
 #include <SPI.h>
 #include <Wire.h>
 
-
 #include "Controller.h"
-#include "Parameters.h"
+//#include "Parameters.h"
 #include "Utils.h"
 #include "State.h"
 
-const int spr = 200; //  200 steps per revolution
-const float aps = 360.0 / spr; // angle per step
-int cpr = 16384; //counts per rev
 
-
-int dir = 1;		//initialize stepping mode variables
-int step_state = 1;		
-
-
-
-long angle = 0; //holds processed angle value
-
-float anglefloat = 0;
-
-int a = 0;  // raw encoder value in closed loop and print_angle routine (should fix the latter to include LUT)
-
-
-volatile long step_count = 0;  //For step/dir interrupt
-
-volatile int interrupted = 0;
-
-int stepNumber = 0; // step index for cal routine
 
 
 //___________________________________
@@ -123,58 +85,6 @@ float diff_angle = 0.0;
 int val1 = 0;
 int val2 = 0;
 
-//////////////////////////////////////
-//////////////////PINS////////////////
-//////////////////////////////////////
-int IN_4 = 6;//11 - 1;
-int IN_3 = 5;//12 - 1;
-int VREF_2 = 4;//13 - 1;
-int VREF_1 = 9;//3;//8-1;
-int IN_2 = 7;//10 - 1;
-int IN_1 = 8;//9 - 1;
-int pulse = 13;//5;
-const int ledPin = 13;//5; //LED connected to digital pin 13
-const int chipSelectPin = A2;//5;//6; //output to chip select
-
-int step_pin  = 1;
-int dir_pin = 0;//2;
-
-//int sine_out = //3;				// pins for debugging waveforms
-//int encoder_out = //4;
-
-
-//interrupt vars
-
-volatile float ei = 0.0;
-volatile int U = 0;  //control effort (abs)
-volatile float r = 0.0;  //setpoint
-volatile float y = 0.0;  // measured angle
-volatile float yw = 0.0;
-volatile float yw_1 = 0.0;
-volatile float e = 0.0;  // e = r-y (error)
-volatile float p = 0.0;  // proportional effort
-volatile float i = 0.0;  // integral effort
-volatile float PA = 1.8
-;  //
-
-volatile float u = 0.0;  //real control effort (not abs)
-volatile float u_1 = 0.0;
-volatile float e_1 = 0.0;
-volatile float u_2 = 0.0;
-volatile float e_2 = 0.0;
-volatile float u_3 = 0.0;
-volatile float e_3 = 0.0;
-volatile long counter = 0;
-
-volatile long wrap_count = 0;
-volatile float y_1 = 0;
-
-
-volatile int uMAX = 150;
-
-volatile float ITerm;
-
-volatile char mode;
 
 
 
@@ -202,15 +112,6 @@ int aout = 0;
 //////////////////////////////////////
 /////////////////SETUP/////////////////////
 //////////////////////////////////////
-
-
-
-
-
-
-
-
-
 
 
 
@@ -371,299 +272,15 @@ void loop()
 //////////////////////////////////////
 
 
-void TC5_Handler()
-{
 
 
-  //unedited/old:
-  /*  // TcCount16* TC = (TcCount16*) TC3; // get timer struct
-    if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {  // A overflow caused the interrupt
-        interrupted = 1;
 
-      TC5->COUNT16.INTFLAG.bit.OVF = 1;    // writing a one clears the flag ovf flag
-    //  irq_ovf_count++;                 // for debug leds
-    }
 
-    // if (TC->INTFLAG.bit.MC0 == 1) {  // A compare to cc0 caused the interrupt
-    //  digitalWrite(pin_mc0_led, LOW);  // for debug leds
-     // TC->INTFLAG.bit.MC0 = 1;    // writing a one clears the flag ovf flag
-    // } */
 
 
 
-  ///new
-  // TcCount16* TC = (TcCount16*) TC3; // get timer struct
-  if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {  // A overflow caused the interrupt
 
 
-
-
-    a = readEncoder();
-    y = lookup_angle(a);
-
-
-    if ((y - y_1) < -180.0) {
-      wrap_count += 1;
-    }
-    else if ((y - y_1) > 180.0) {
-      wrap_count -= 1;
-    }
-    //y_1 = y;  pushed lower
-
-    yw = (y + (360.0 * wrap_count));
-
-
-
-
-
-
-    switch (mode) {
-
-      case 'x':
-        e = (r - yw);
-
-        ITerm += (pKi * e);
-        if (ITerm > 150) ITerm = 150;
-        else if (ITerm < -150) ITerm = -150;
-
-
-        u = ((pKp * e) + ITerm - (pKd * (yw - yw_1))); //ARDUINO library style
-        //u = u+lookup_force(a)-20;
-        //   u = u_1 + cA*e + cB*e_1 + cC*e_2;     //ppt linked in octave script
-
-        //  u = 20*e;//
-
-
-
-        break;
-
-      case 'v':
-
-
-        e = (r - ((yw - yw_1) * 500));//416.66667)); degrees per Tc to rpm
-
-        ITerm += (vKi * e);
-        if (ITerm > 200) ITerm = 200;
-        else if (ITerm < -200) ITerm = -200;
-
-
-        u = ((vKp * e) + ITerm - (vKd * (yw - yw_1)));//+ lookup_force(a)-20; //ARDUINO library style
-
-        break;
-
-      case 't':
-        u = 1.0 * r ;//+ 1.7*(lookup_force(a)-20);
-        break;
-
-      default:
-        u = 0;
-        break;
-    }
-
-
-
-
-
-//
-//    if (u > 0) {
-//      PA = 1.8;
-//    }
-//    else {
-//      PA = -1.8;
-//    }
-//
-//    y += PA;
-
-
-
-    if (u > 0) {
-      y+=PA;
-    }
-    else {
-      y -=PA;
-    }
-
-
-
-
-
-    if (u > uMAX) {                          //saturation limits max current command
-      u = uMAX;
-    }
-    else if (u < -uMAX) {
-      u = -uMAX;
-    }
-
-
-
-    U = abs(u);       //+lookup_force((((a-4213)%16384)+16384)%16384)-6); ///p);//+i);
-
-
-    if (abs(e) < 0.1) {
-      digitalWrite(pulse, HIGH);
-      //  SerialUSB.println(r);
-    }
-    else  {
-      digitalWrite(pulse, LOW);
-    }
-
-    output(-y, U);  //-y
-
-    e_3 = e_2;
-    e_2 = e_1;
-    e_1 = e;
-    u_3 = u_2;
-    u_2 = u_1;
-    u_1 = u;
-    yw_1 = yw;
-    y_1 = y;
-
-
-    TC5->COUNT16.INTFLAG.bit.OVF = 1;    // writing a one clears the flag ovf flag
-  }
-
-
-}
-
-
-
-void print_angle()                ///////////////////////////////////       PRINT_ANGLE   /////////////////////////////////
-{
-  a = 0;
-  delay(100);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a = a / 10;
-
-  anglefloat = a * 0.02197265625;
-  SerialUSB.print(stepNumber, DEC);
-  SerialUSB.print(" , ");
-  SerialUSB.print(stepNumber * aps, DEC);
-  SerialUSB.print(" , ");
-  SerialUSB.print(a, DEC);
-  SerialUSB.print(" , ");
-  SerialUSB.println(anglefloat, DEC);
-}
-
-
-
-
-void output(float theta, int effort) {                    //////////////////////////////////////////   OUTPUT   ///////////////////
-  static int start = 0;
-  static int finish = 0;
-  static int intangle;
-  static float floatangle;
-  static int modangle;
-
-
-
-
-
-
-
-
-
-
-
-  floatangle = (10000 * ( theta * 0.87266 + 2.3562) );//0.7854) );// 2.3562) );       //changed to 2.3 for NEMA23,NEMA17 dual..... opposite below
-  //floatangle = (10000 * ( theta * 0.87266 + 0.7854) );
-
-  intangle = (int)floatangle;
-  //  modangle = (((intangle % 628) + 628) % 628);
-  val1 = effort * lookup_sine(intangle);
-
-  analogWrite(VREF_2, abs(val1));
-
-  if (val1 >= 0)  {
-    digitalWrite(IN_4, HIGH);
-    //     PORTB |= (B00000001);
-    digitalWrite(IN_3, LOW);
-    //    PORTB &= ~(B00000010);
-
-  }
-  else  {
-    digitalWrite(IN_4, LOW);
-    //  PORTB &= ~(B00000001);
-    digitalWrite(IN_3, HIGH);
-    //    PORTB |= (B00000010);
-
-  }
-
-
-
-
-
-  floatangle = (10000 * (  theta * 0.8726646 + 0.7854) );//2.3562) );//0.7854) );
-  //floatangle = (10000 * ( theta * 0.87266 + 2.3562) );
-
-  intangle = (int)floatangle;
-  // modangle = (((intangle % 628) + 628) % 628);
-  val2 = effort * lookup_sine(intangle);
-
-  analogWrite(VREF_1, abs(val2));
-
-  if (val2 >= 0)  {
-    digitalWrite(IN_2, HIGH);
-    //     PORTB |= (B00000100);
-    digitalWrite(IN_1, LOW);
-    //     PORTB &= ~(B00001000);
-
-  }
-  else  {
-    digitalWrite(IN_2, LOW);
-    //   PORTB &= ~(B00000100);
-    digitalWrite(IN_1, HIGH);
-    //   PORTB |= (B00001000);
-
-  }
-
-
-
-
-
-}
-
-
-
-
-int readEncoder()           //////////////////////////////////////////////////////   READENCODER   ////////////////////////////
-{
-  long angleTemp;
-  digitalWrite(chipSelectPin, LOW);
-
-  //angle = SPI.transfer(0xFF);
-  byte b1 = SPI.transfer(0xFF);
-  byte b2 = SPI.transfer(0xFF);
-
-
-  angleTemp = (((b1 << 8) | b2) & 0B0011111111111111);
-  //  SerialUSB.println((angle & 0B0011111111111111)*0.02197265625);
-
-  digitalWrite(chipSelectPin, HIGH);
-  return angleTemp;
-
-
-
-
-}
 
 
 
@@ -806,55 +423,8 @@ float lookup_force(int m)        ///////////////////////////////////////////////
 
 
 
-void stepInterrupt() {
-  if (digitalRead(dir_pin))
-  {
-    step_count += 1;
-  }
-  else
-  {
-    step_count -= 1;
-  }
 
 
-}
-
-
-void setupPins() {
-
-  pinMode(VREF_2, OUTPUT);
-  pinMode(VREF_1, OUTPUT);
-  pinMode(IN_4, OUTPUT);
-  pinMode(IN_3, OUTPUT);
-  pinMode(IN_2, OUTPUT);
-  pinMode(IN_1, OUTPUT);
-  pinMode(pulse, OUTPUT);
-  pinMode(step_pin, INPUT);
-  pinMode(dir_pin, INPUT);
-
-  pinMode(3, OUTPUT);
-  pinMode(4, OUTPUT);
-
-  attachInterrupt(1, stepInterrupt, RISING);
-
-
-
-  analogWrite(VREF_2, 64);
-  analogWrite(VREF_1, 64);
-
-  digitalWrite(IN_4, HIGH);
-  digitalWrite(IN_3, LOW);
-  digitalWrite(IN_2, HIGH);
-  digitalWrite(IN_1, LOW);
-
-  pinMode(ledPin, OUTPUT); // visual signal of I/O to chip
-  // pinMode(clockPin, OUTPUT); // SCK
-  pinMode(chipSelectPin, OUTPUT); // CSn -- has to toggle high and low to signal chip to start data transfer
-  //  pinMode(inputPin, INPUT); // SDA
-
-
-
-}
 
 
 void setupSPI() {

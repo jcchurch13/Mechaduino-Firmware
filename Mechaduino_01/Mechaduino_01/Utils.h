@@ -3,10 +3,20 @@
 #ifndef __UTILS_H__
 #define __UTIL_H__
 
-		float lookup_angle(int n);
-	
-		void oneStep(void);
+	void setupPins();
 		
-		void receiveEvent(int howMany);
+	void stepInterrupt();
+
+	void output(float theta, int effort);		
+
+	float lookup_angle(int n);
+	
+	void oneStep(void);
+		
+	int readEncoder();
+		
+	void print_angle();
+		
+	void receiveEvent(int howMany);
 
 #endif
