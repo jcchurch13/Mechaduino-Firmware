@@ -74,18 +74,6 @@
 
 
 
-//___________________________________
-
-const float pi = 3.14159;
-const int  half = 134;//128;
-
-float new_angle = 0.0; //input angle
-float current_angle = 0.0; //current angle
-float diff_angle = 0.0;
-int val1 = 0;
-int val2 = 0;
-
-
 
 
 
