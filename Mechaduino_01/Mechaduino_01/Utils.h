@@ -4,12 +4,16 @@
 #define __UTIL_H__
 
 	void setupPins();
+	
+	void setupSPI();
 		
 	void stepInterrupt();
 
 	void output(float theta, int effort);	
 
 	void commandW();	
+	
+	void serialCheck();
 
 	void parameterQuery();
 	
@@ -36,6 +40,8 @@
 	void enableTCInterrupts();
 	
 	void disableTCInterrupts();
+	
+	void antiCoggingCal();
 	
 	void parameterEditmain();
 	

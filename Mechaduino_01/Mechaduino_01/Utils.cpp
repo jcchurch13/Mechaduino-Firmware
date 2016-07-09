@@ -43,6 +43,19 @@ void setupPins() {
 
 }
 
+void setupSPI() {
+
+  SPISettings settingsA(400000, MSBFIRST, SPI_MODE1);             ///400000, MSBFIRST, SPI_MODE1);
+
+  SPI.begin();    //AS5047D SPI uses mode=1 (CPOL=0, CPHA=1)
+  SerialUSB.println("Begin...");
+  delay(1000);
+  SPI.beginTransaction(settingsA);
+
+}
+
+
+
 void stepInterrupt() {
   if (digitalRead(dir_pin))
   {
@@ -262,6 +275,95 @@ void commandW() {
 
 
 }
+
+
+void serialCheck() {
+
+  if (SerialUSB.available()) {
+
+    char inChar = (char)SerialUSB.read();
+
+    switch (inChar) {
+
+
+      case 'p':             //print
+        print_angle();
+        break;
+
+      case 's':             //step
+        oneStep();
+        print_angle();
+        break;
+
+      case 'd':             //dir
+        if (dir == 1) {
+          dir = 0;
+        }
+        else {
+          dir = 1;
+        }
+        break;
+
+      case 'w':
+        commandW();           //cal routine
+        break;
+
+      case 'e':
+        readEncoderDiagnostics();   //encoder error?
+        break;
+
+      case 'y':
+        enableTCInterrupts();      //enable closed loop
+        break;
+
+      case 'n':
+        disableTCInterrupts();      //disable closed loop
+        break;
+
+      case 'r':             //new setpoint
+        SerialUSB.println("Enter setpoint:");
+        while (SerialUSB.available() == 0)  {}
+        r = SerialUSB.parseFloat();
+        break;
+
+      case 'x':
+        mode = 'x';           //position loop
+        break;
+
+      case 'v':
+        mode = 'v';           //velocity loop
+        break;
+
+      case 't':
+        mode = 't';           //torque loop
+        break;
+
+      case 'c':
+        mode = 'c';           //custom loop
+        break;
+
+      case 'q':
+        parameterQuery();     // prints copy-able parameters
+        break;
+
+      case 'a':             //anticogging
+        antiCoggingCal();
+        break;
+
+      case 'k':
+        { 
+          parameterEditmain();
+          
+          break;
+        }
+
+      default:
+        break;
+    }
+  }
+
+}
+
 
 void parameterQuery() {
   SerialUSB.println(' ');
@@ -586,13 +688,11 @@ void setupTCInterrupts() {
 
 }
 
-
 void enableTCInterrupts() {
 
   TC5->COUNT16.CTRLA.reg |= TC_CTRLA_ENABLE;    //Enable TC5
   WAIT_TC16_REGS_SYNC(TC5)                      //wait for sync
 }
-
 
 void disableTCInterrupts() {
 
@@ -603,6 +703,35 @@ void disableTCInterrupts() {
 
 
 
+void antiCoggingCal() {
+  SerialUSB.println(" -----------------BEGIN ANTICOGGING CALIBRATION!----------------");
+  mode = 'x';
+  r = lookup_angle(1);
+  enableTCInterrupts();
+  delay(1000);
+
+
+  for (int i = 1; i < 657; i++) {
+    r = lookup_angle(i);
+    SerialUSB.print(r, DEC);
+    SerialUSB.print(" , ");
+    delay(100);
+    SerialUSB.println(u, DEC);
+  }
+  SerialUSB.println(" -----------------REVERSE!----------------");
+
+  for (int i = 656; i > 0; i--) {
+    r = lookup_angle(i);
+    SerialUSB.print(r, DEC);
+    SerialUSB.print(" , ");
+    delay(100);
+    SerialUSB.println(u, DEC);
+  }
+  SerialUSB.println(" -----------------DONE!----------------");
+  disableTCInterrupts();
+}
+ 
+ 
 
 void parameterEditmain() {
 
@@ -644,7 +773,6 @@ void parameterEditmain() {
 
           }
 }
-
 
 void parameterEditp(){
 
@@ -733,8 +861,6 @@ void parameterEditv(){
         break;             
   }
 }
-
-
 
 void parameterEdito(){
 
