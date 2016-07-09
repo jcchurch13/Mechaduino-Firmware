@@ -496,6 +496,10 @@ void receiveEvent(int howMany)
   r = 0.1 * ((float)x);
 }
 
+int mod(int xMod, int mMod) {
+  return (xMod % mMod + mMod) % mMod;
+}
+
 
 float lookup_force(int m)        /////////////////////////////////////////////////  LOOKUP_force   /////////////////////////////
 {
@@ -517,6 +521,28 @@ float lookup_force(int m)        ///////////////////////////////////////////////
 
   return b_out;
 }
+
+float lookup_sine(int m)        /////////////////////////////////////////////////  LOOKUP_SINE   /////////////////////////////
+{
+  float b_out;
+
+  m = (0.01 * (((m % 62832) + 62832) % 62832)) + 0.5; //+0.5 for rounding
+
+  //SerialUSB.println(m);
+
+  if (m > 314) {
+    m = m - 314;
+    b_out = -pgm_read_float_near(sine_lookup + m);
+
+  }
+  else
+  {
+    b_out = pgm_read_float_near(sine_lookup + m);
+  }
+
+  return b_out;
+}
+
 
 
 void parameterEditmain() {

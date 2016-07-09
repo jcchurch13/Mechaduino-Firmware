@@ -27,6 +27,10 @@
 	
 	float lookup_force(int m);
 	
+	int mod(int xMod, int mMod);
+	
+	float lookup_sine(int m);
+	
 	void parameterEditmain();
 	
 	void parameterEditp();
