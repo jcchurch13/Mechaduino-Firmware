@@ -677,8 +677,13 @@ void setupTCInterrupts() {
   TC5->COUNT16.INTENSET.bit.OVF = 1;          // enable overfollow
   TC5->COUNT16.INTENSET.bit.MC0 = 1;         // enable compare match to CC0
 
+
+  NVIC_SetPriority(TC5_IRQn, 1);
+
+  
   // Enable InterruptVector
   NVIC_EnableIRQ(TC5_IRQn);
+
 
   // Enable TC
   //  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_ENABLE;

@@ -44,8 +44,8 @@
 
 
 #include "Utils.h"
-
-
+#include "Parameters.h"
+#include "state.h"
 
 //////////////////////////////////////
 /////////////////SETUP////////////////
@@ -90,6 +90,7 @@ void loop()
   serialCheck();
 
   // r=0.1125*step_count;
+  r=0.1*step_count;
 
 
 

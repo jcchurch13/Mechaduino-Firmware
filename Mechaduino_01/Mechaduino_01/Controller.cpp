@@ -137,7 +137,7 @@ void TC5_Handler()
 
     if (abs(e) < 0.1) {
       digitalWrite(pulse, HIGH);
-      //  SerialUSB.println(r);
+        SerialUSB.println(r);
     }
     else  {
       digitalWrite(pulse, LOW);
