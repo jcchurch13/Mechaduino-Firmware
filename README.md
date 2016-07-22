@@ -1,4 +1,4 @@
-![image](images/header.png)
+![image](images/header.PNG)
 
 Here are some preliminary instructions on how to get the your Mechaduino up and running.  We will continue to improve this documentation in the coming weeks...this rough overview is just to point anyone who is curious in the right direction!
 
