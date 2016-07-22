@@ -55,6 +55,12 @@ As long as you have "  serialCheck();" in your main loop, you can use the follow
   p  -  print [step count] , [assumed angle] , [encoder reading]  **this needs to be updated to include calibrated values
 
   ...see serialCheck() in Utils for more details
+  
+## Firmware Structure:
+
+Here's where everything is in the multi-file arrangement for the time being:
+
+![image](images/firmware_structure.PNG)
 
 ## Coming Soon:
 
