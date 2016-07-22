@@ -67,7 +67,7 @@ Here's where everything is in the multi-file arrangement for the time being:
 Some example code, specifically a standalone step/dir interface (for 3D printers, etc), and other basic routines.
 
 
-###License
+##License
 
 All Mechaduino related materials are released under the
 [Creative Commons Attribution Share-Alike 4.0 License](https://creativecommons.org/licenses/by-sa/4.0/)
