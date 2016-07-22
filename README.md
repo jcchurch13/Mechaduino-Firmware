@@ -1,6 +1,6 @@
 ![image](images/header.PNG)
 
-Here are some preliminary instructions on how to get the your Mechaduino up and running.  We will continue to improve this documentation in the coming weeks...this rough overview is just to point anyone who is curious in the right direction!
+Here are some preliminary instructions on how to get your Mechaduino up and running.  We will continue to improve this documentation in the coming weeks...this rough overview is just to point anyone who is curious in the right direction!
 
 ![image](images/example1.gif)
 
@@ -18,17 +18,17 @@ The first thing you will need to do is run the encoder calibration routine.
 
 With the Mechaduino connected to your computer, open a serial monitor (115200 baud) in the Arduino IDE.  You will need to provide V+ to the Mechaduino to power the motor drivers (needed to calibrate).  Type "s" and press enter a couple times to verify that everything is working.  The Mechaduino should step like a stepper.  It is currently in open loop mode.  press "d" and the stepping direction will change.  
 
-Now, make sure nothing will touch the Mechaduino shaft during calibration. Type "w"  to start the calibration routine(... may change the letter soon).  The Mechaduino will now step through all full steps to calibrate the encoder.   When the routine is done, a very long lookup table (16,384 entries) will be printed to the serial terminal.  These are the calibrated angles at each encoder count.  You will need to copy these into the Parameters.cpp file here:
+Now, make sure nothing will touch the Mechaduino shaft during calibration. Type "w"  to start the calibration routine (... may change the letter soon).  The Mechaduino will now step through all full steps to calibrate the encoder.   When the routine is done, a very long lookup table (16,384 entries) will be printed to the serial terminal.  These are the calibrated angles at each encoder count.  You will need to copy these into the Parameters.cpp file here:
 
 const PROGMEM float lookup[] = {PUT LOOKUP TABLE HERE}
 
-Note: you can easily select the whole lookup table from the serial monitor by clicking on the following line and dragging the cursor up.
+Note: you can easily select the whole lookup table from the serial monitor by clicking on the next line and dragging the cursor up.
 
-Sve, compile, and re-upload the firmware to your Mechaduino.  you are all calibrated.
+Save, compile, and re-upload the firmware to your Mechaduino.  you are all calibrated.
 
 ## Basic Commands:
 
-As long as you have "  serialCheck();" in your main loop, you can use the following built in commands to control the mechaduino from a serial monitor:
+As long as you have "serialCheck();" in your main loop, you can use the following built in commands to control the mechaduino from a serial monitor:
 
   s  -  step
 
