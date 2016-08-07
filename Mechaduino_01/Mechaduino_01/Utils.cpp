@@ -326,6 +326,7 @@ void serialCheck() {
         SerialUSB.println("Enter setpoint:");
         while (SerialUSB.available() == 0)  {}
         r = SerialUSB.parseFloat();
+        SerialUSB.println(r);
         break;
 
       case 'x':
@@ -392,7 +393,7 @@ void parameterQuery() {
 
   SerialUSB.println(' ');
 
-  SerialUSB.print("cvolatile float vKp = ");
+  SerialUSB.print("volatile float vKp = ");
   SerialUSB.print(vKp);
   SerialUSB.println(";");
 
@@ -438,7 +439,7 @@ void oneStep() {           /////////////////////////////////   oneStep    //////
 
   //output(1.8 * step_state, 128); //1.8 = 90/50
 
-  output(1.8 * stepNumber, 128); //1.8 = 90/50
+  output(1.8 * stepNumber, 64); //1.8 = 90/50
 
   delay(10);
 }
@@ -801,6 +802,8 @@ void parameterEditp(){
               SerialUSB.println("pKp = ?");
               while (SerialUSB.available() == 0)  {}
               pKp = SerialUSB.parseFloat();
+              SerialUSB.print("new pKp = ");
+              SerialUSB.println(pKp,DEC);
               }
               break;
             case 'i':
@@ -808,6 +811,8 @@ void parameterEditp(){
               SerialUSB.println("pKi = ?");
               while (SerialUSB.available() == 0)  {}
               pKi = SerialUSB.parseFloat();
+              SerialUSB.print("new pKi = ");
+              SerialUSB.println(pKi,DEC);
               }
               break;
             case 'd':  
@@ -815,6 +820,8 @@ void parameterEditp(){
               SerialUSB.println("pKd = ?");
               while (SerialUSB.available() == 0)  {}
               pKd = SerialUSB.parseFloat();
+              SerialUSB.print("new pKd = ");
+              SerialUSB.println(pKd,DEC);
               }
               break;
             default:
@@ -844,6 +851,8 @@ void parameterEditv(){
         SerialUSB.println("vKp = ?");
         while (SerialUSB.available() == 0)  {}
         vKp = SerialUSB.parseFloat();
+        SerialUSB.print("new vKp = ");
+        SerialUSB.println(vKp,DEC);
         }
         break;
       case 'i':
@@ -851,6 +860,8 @@ void parameterEditv(){
         SerialUSB.println("vKi = ?");
         while (SerialUSB.available() == 0)  {}
         vKi = SerialUSB.parseFloat();
+        SerialUSB.print("new vKi = ");
+        SerialUSB.println(vKi,DEC);
         }
         break;
       case 'd':  
@@ -858,6 +869,8 @@ void parameterEditv(){
         SerialUSB.println("vKd = ?");
         while (SerialUSB.available() == 0)  {}
         vKd = SerialUSB.parseFloat();
+        SerialUSB.print("new vKd = ");
+        SerialUSB.println(vKd,DEC);
         }
         break;
       default:
@@ -885,6 +898,8 @@ void parameterEdito(){
               SerialUSB.println("PA = ?");
               while (SerialUSB.available() == 0)  {}
               PA = SerialUSB.parseFloat();
+              SerialUSB.print("new PA = ");
+              SerialUSB.println(PA,DEC);
               }
        
               break;
