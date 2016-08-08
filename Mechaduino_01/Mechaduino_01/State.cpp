@@ -1,4 +1,4 @@
-//Contains the declaration of the state variables for the control loop  
+  //Contains the declaration of the state variables for the control loop  
 
 
 //interrupt vars
@@ -27,7 +27,11 @@ volatile long wrap_count = 0;
 volatile float y_1 = 0;
 
 
-volatile int uMAX = 150;
+
+const float iMAX = 1.0;
+const float rSense = 0.150;
+
+volatile int uMAX = (255/3.3)*(iMAX*10*rSense);
 
 volatile float ITerm;
 
