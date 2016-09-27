@@ -7,6 +7,7 @@
 //----Current Parameters-----
 
 extern volatile float Ts;
+extern volatile float Fs;
 
 extern volatile float pKp;
 extern volatile float pKi;

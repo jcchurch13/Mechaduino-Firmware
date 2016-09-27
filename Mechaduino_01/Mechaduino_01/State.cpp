@@ -40,7 +40,7 @@ volatile char mode;
 
 //___________________________________
 
-const float pi = 3.14159;
+const float pi = 3.14159265359;
 const int  half = 134;//128;
 
 float new_angle = 0.0; //input angle

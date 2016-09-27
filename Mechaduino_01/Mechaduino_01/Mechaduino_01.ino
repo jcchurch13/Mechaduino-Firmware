@@ -62,11 +62,11 @@ void setup() {
 
   // while (!SerialUSB) {};     //wait for serial
 
-  delay(500);
+  delay(5000);  
 
 
-   // enableTCInterrupts();     //start in closed loop mode
-  //  mode = 'x';
+  //  enableTCInterrupts();     //start in closed loop mode
+   // mode = 'x';
   //
   //  Wire.begin(4);                // join i2c bus with address #8
   //  Wire.onReceive(receiveEvent); // register event
@@ -84,12 +84,12 @@ void setup() {
 
 void loop()
 {
-  //mode = 'x';
+
 
 
   serialCheck();
   
-  // r=0.1125*step_count;
+  //r=0.1125*step_count;
  // r=0.1*step_count;
 
 
