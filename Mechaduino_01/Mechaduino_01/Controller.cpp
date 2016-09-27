@@ -76,7 +76,7 @@ void TC5_Handler()
       case 'v':
 
 
-        e = (r - ((yw - yw_1) * 500));//416.66667)); degrees per Tc to rpm
+        e = (r - ((yw - yw_1) * Fs*0.16666667));//error in degrees per rpm (sample frequency in Hz * (60 seconds/min) / (360 degrees/rev) )
 
         ITerm += (vKi * e);
         if (ITerm > 200) ITerm = 200;
