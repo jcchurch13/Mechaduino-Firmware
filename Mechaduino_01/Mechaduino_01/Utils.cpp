@@ -245,7 +245,7 @@ void commandW() {
   SerialUSB.println("newLookup:");
   SerialUSB.println(" ");
 
-  for (int i = iStart; i < (iStart + spr); i++) {
+  for (int i = iStart; i < (iStart + spr+1); i++) {
     ticks = fullStepReadings[mod((i + 1), spr)] - fullStepReadings[mod((i), spr)];
 
     if (ticks < -15000) {
@@ -258,24 +258,59 @@ void commandW() {
     //SerialUSB.println(ticks);
 
     if (ticks > 1) {
-      for (int j = jStart; j < (jStart + ticks); j++) {
-        lookupAngle = 0.001 * mod(1000 * (aps * i + ((aps * j )/ float(ticks))), 360000.0);
-       // SerialUSB.print(lookupAngle,DEC);
-       // SerialUSB.print(" , ");
-        lookupAngle = (1.8000000000000 * float(i) + ((1.8000000000000 * float(j) )/ float(ticks)));
-       // SerialUSB.print(lookupAngle,DEC);
-        SerialUSB.print(fullStepReadings[i]+j,DEC);
-        SerialUSB.print(" , ");
-        
+      
+      if (i==iStart){
+        for (int j = jStart; j < ticks; j++) {
+          lookupAngle = 0.001 * mod(1000 * ((aps * i) + ((aps * j )/ float(ticks))), 360000.0);
+          SerialUSB.print(lookupAngle);
+          SerialUSB.print(" , ");        
+              }
       }
+      
+      else if (i==(iStart+spr)){
+        for (int j = 0; j < jStart; j++) {
+          lookupAngle = 0.001 * mod(1000 * ((aps * i) + ((aps * j )/ float(ticks))), 360000.0);
+          SerialUSB.print(lookupAngle);
+          SerialUSB.print(" , ");        
+              }
+      }
+      else{
+        for (int j = 0; j <ticks; j++) {
+          lookupAngle = 0.001 * mod(1000 * ((aps * i) + ((aps * j )/ float(ticks))), 360000.0);
+          SerialUSB.print(lookupAngle);
+          SerialUSB.print(" , ");        
+              }
+      }
+    
+    
+    
     }
+    
     else if (ticks < 1) {
-      for (int j = jStart - ticks; j > (jStart); j--) {
-        lookupAngle = 0.001 * mod(1000 * (aps * (i) + (aps * ((ticks + j)) / float(ticks))), 3600000.0);
-        SerialUSB.print(lookupAngle);
-        SerialUSB.print(" , ");
+      if (i==iStart){
+        for (int j =- ticks; j > (jStart); j--) {
+          lookupAngle = 0.001 * mod(1000 * (aps * (i) + (aps * ((ticks + j)) / float(ticks))), 360000.0);
+          SerialUSB.print(lookupAngle);
+          SerialUSB.print(" , ");
+        }
       }
+      else if (i==iStart+spr){
+        for (int j = jStart; j >0; j--) {
+          lookupAngle = 0.001 * mod(1000 * (aps * (i) + (aps * ((ticks + j)) / float(ticks))), 360000.0);
+          SerialUSB.print(lookupAngle);
+          SerialUSB.print(" , ");
+        }
+      }
+      else{
+        for (int j = - ticks; j >0; j--) {
+          lookupAngle = 0.001 * mod(1000 * (aps * (i) + (aps * ((ticks + j)) / float(ticks))), 360000.0);
+          SerialUSB.print(lookupAngle);
+          SerialUSB.print(" , ");
+        }
+      }
+            
     }
+
 
   }
   SerialUSB.println(" ");
