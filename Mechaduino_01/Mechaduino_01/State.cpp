@@ -15,7 +15,7 @@ volatile float i = 0.0;  // integral effort
 volatile float PA = 1.8;  //
 
 volatile float u = 0.0;  //real control effort (not abs)
-volatile float u_1 = 0.0;
+volatile float u_1 = 0.0;   //value of u at previous time step, etc...
 volatile float e_1 = 0.0;
 volatile float u_2 = 0.0;
 volatile float e_2 = 0.0;
@@ -23,12 +23,11 @@ volatile float u_3 = 0.0;
 volatile float e_3 = 0.0;
 volatile long counter = 0;
 
-volatile long wrap_count = 0;
+volatile long wrap_count = 0;  //keeps track of how many revolutions the motor has gone though (so you can command angles outside of 0-360)
 volatile float y_1 = 0;
 
 
 
-const float iMAX = 1.0;
 const float rSense = 0.150;
 
 volatile int uMAX = (255/3.3)*(iMAX*10*rSense);
