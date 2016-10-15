@@ -60,6 +60,7 @@ https://creativecommons.org/licenses/by-sa/4.0/
 #include "Utils.h"
 #include "Parameters.h"
 #include "state.h"
+#include "analogFastWrite.h"
 
 //////////////////////////////////////
 /////////////////SETUP////////////////
