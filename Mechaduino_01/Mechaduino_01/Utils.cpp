@@ -8,7 +8,7 @@
 #include "Controller.h"
 #include "Utils.h"
 #include "State.h"
-
+#include "analogFastWrite.h"
 
 void setupPins() {
 
@@ -29,8 +29,8 @@ void setupPins() {
 
 
 
-  analogWrite(VREF_2, 64);
-  analogWrite(VREF_1, 64);
+  analogFastWrite(VREF_2, 64);
+  analogFastWrite(VREF_1, 64);
 
   digitalWrite(IN_4, HIGH);
   digitalWrite(IN_3, LOW);
@@ -87,7 +87,7 @@ void output(float theta, int effort) {                    //////////////////////
   //  modangle = (((intangle % 628) + 628) % 628);
   val1 = effort * lookup_sine(intangle);
 
-  analogWrite(VREF_2, abs(val1));
+  analogFastWrite(VREF_2, abs(val1));
 
   if (val1 >= 0)  {
     digitalWrite(IN_4, HIGH);
@@ -115,7 +115,7 @@ void output(float theta, int effort) {                    //////////////////////
   // modangle = (((intangle % 628) + 628) % 628);
   val2 = effort * lookup_sine(intangle);
 
-  analogWrite(VREF_1, abs(val2));
+  analogFastWrite(VREF_1, abs(val2));
 
   if (val2 >= 0)  {
     digitalWrite(IN_2, HIGH);
