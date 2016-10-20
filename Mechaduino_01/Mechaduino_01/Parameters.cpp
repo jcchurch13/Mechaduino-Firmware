@@ -1,6 +1,5 @@
 //Contains the Mechaduino parameter defintions
 
-
 #include <Wire.h>
 
 #include "Parameters.h"
