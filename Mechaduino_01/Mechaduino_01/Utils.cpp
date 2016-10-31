@@ -966,13 +966,13 @@ void hybridStep(){
 
   yw = (y + (360.0 * wrap_count));
   
-  if (yw < 0.1125*step_count-0.9) {
+  if (yw < 0.1125*step_count-1.8) {
     missed_steps -= 1;
   }
-  else if (yw > 0.1125*step_count+0.9) {
+  else if (yw > 0.1125*step_count+1.8) {
     missed_steps += 1;
   }
  // SerialUSB.println(missed_steps,DEC);
-  output(0.1125 * step_count+missed_steps, (255/3.3)*(iLevel*10*rSense)); 
+  output(0.1125 *(step_count+missed_steps), (255/3.3)*(iLevel*10*rSense)); 
 }
 
