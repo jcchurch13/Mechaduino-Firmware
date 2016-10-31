@@ -1,4 +1,5 @@
 //Contains TC5 Controller definition
+//The main control loop is executed by the TC5 timer interrupt:
 
 
 #include <SPI.h>

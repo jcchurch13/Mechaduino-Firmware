@@ -5,7 +5,21 @@
     
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
+
+
+  
+All Mechaduino related materials are released under the
+
+Creative Commons Attribution Share-Alike 4.0 License
+
+https://creativecommons.org/licenses/by-sa/4.0/
+
+
+
   Many thanks to Will Church and Marco Farrugia.
+
+
+  
 
   
   
@@ -45,7 +59,7 @@
 
 #include "Utils.h"
 #include "Parameters.h"
-#include "state.h"
+#include "State.h"
 #include "analogFastWrite.h"
 
 //////////////////////////////////////
@@ -64,7 +78,7 @@ void setup() {
 
   // while (!SerialUSB) {};     //wait for serial
 
-  delay(5000);  
+  delay(5000);  //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
 
 
    // enableTCInterrupts();     //start in closed loop mode
@@ -86,15 +100,10 @@ void setup() {
 
 void loop()
 {
-
-
   
-  serialCheck();
+ // serialCheck();
   
   //r=0.1125*step_count;
-
-  //delay(10);
-  //hybridStep();
 
 }
 
