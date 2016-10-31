@@ -100,21 +100,11 @@ void setup() {
 
 void loop()
 {
-
-
-<<<<<<< HEAD
-
-  serialCheck();           //checks the serial port for commands
-  
-  //r=0.1125*step_count;   //step_count is updated by the D1 pin interrupt
- // r=0.1*step_count;
-
-=======
   
   serialCheck();
   
   //r=0.1125*step_count;
->>>>>>> refs/remotes/origin/development
+
 
   //delay(10);
   //hybridStep();
