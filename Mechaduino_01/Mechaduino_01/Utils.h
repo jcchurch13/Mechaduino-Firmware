@@ -51,6 +51,8 @@
 	void parameterEditv();
 	
 	void parameterEdito();
+  
+  void hybridStep();
 	
 
 #endif

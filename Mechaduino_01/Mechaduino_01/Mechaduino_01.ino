@@ -66,6 +66,7 @@ https://creativecommons.org/licenses/by-sa/4.0/
 /////////////////SETUP////////////////
 //////////////////////////////////////
 
+
 void setup() {
 
 
@@ -80,8 +81,8 @@ void setup() {
   delay(5000);  //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
 
 
-  //  enableTCInterrupts();     //start in closed loop mode
-   // mode = 'x';
+   // enableTCInterrupts();     //start in closed loop mode
+  //  mode = 'x';
   //
   //  Wire.begin(4);                // join i2c bus with address #8
   //  Wire.onReceive(receiveEvent); // register event
@@ -101,12 +102,22 @@ void loop()
 {
 
 
+<<<<<<< HEAD
 
   serialCheck();           //checks the serial port for commands
   
   //r=0.1125*step_count;   //step_count is updated by the D1 pin interrupt
  // r=0.1*step_count;
 
+=======
+  
+  serialCheck();
+  
+  //r=0.1125*step_count;
+>>>>>>> refs/remotes/origin/development
 
+  //delay(10);
+  //hybridStep();
 
 }
+
