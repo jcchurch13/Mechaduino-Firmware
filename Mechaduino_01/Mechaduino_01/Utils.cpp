@@ -80,7 +80,7 @@ void output(float theta, int effort) {                    //////////////////////
 
 
 
-  floatangle = (10000 * ( theta * 0.87266 + 2.3562) );//0.7854) );// 2.3562) );       //changed to 2.3 for NEMA23,NEMA17 dual..... opposite below
+  floatangle = (10000 * ( theta * 0.87266 + 2.3562) );//0.7854) );// 2.3562) );       
   //floatangle = (10000 * ( theta * 0.87266 + 0.7854) );
 
   intangle = (int)floatangle;
@@ -381,6 +381,10 @@ void serialCheck() {
         mode = 't';           //torque loop
         break;
 
+      case 'h':               //hybrid mode
+        mode = 'h';
+        break;
+        
       case 'c':
         mode = 'c';           //custom loop
         break;
@@ -949,30 +953,30 @@ void parameterEdito(){
         }
 }
 
-void hybridStep(){
-  static int missed_steps = 0;
-  static float iLevel = 0.6;  //hybrid stepping current level.  In this mode, this current is continuous (unlike closed loop mode). Be very careful raising this value as you risk overheating the A4954 driver!
-  static float rSense = 0.15;
-
-  a = readEncoder();
-  y = lookup_angle(a);
-  if ((y - y_1) < -180.0) {
-    wrap_count += 1;
-  }
-  else if ((y - y_1) > 180.0) {
-    wrap_count -= 1;
-  }
-  y_1 = y; 
-
-  yw = (y + (360.0 * wrap_count));
-  
-  if (yw < 0.1125*step_count-1.8) {
-    missed_steps -= 1;
-  }
-  else if (yw > 0.1125*step_count+1.8) {
-    missed_steps += 1;
-  }
- // SerialUSB.println(missed_steps,DEC);
-  output(0.1125 *(step_count+missed_steps), (255/3.3)*(iLevel*10*rSense)); 
-}
+//void hybridStep(){
+//  static int missed_steps = 0;
+//  static float iLevel = 0.6;  //hybrid stepping current level.  In this mode, this current is continuous (unlike closed loop mode). Be very careful raising this value as you risk overheating the A4954 driver!
+//  static float rSense = 0.15;
+//
+//  a = readEncoder();
+//  y = lookup_angle(a);
+//  if ((y - y_1) < -180.0) {
+//    wrap_count += 1;
+//  }
+//  else if ((y - y_1) > 180.0) {
+//    wrap_count -= 1;
+//  }
+//  y_1 = y; 
+//
+//  yw = (y + (360.0 * wrap_count));
+//  
+//  if (yw < 0.1125*step_count-1.8) {
+//    missed_steps -= 1;
+//  }
+//  else if (yw > 0.1125*step_count+1.8) {
+//    missed_steps += 1;
+//  }
+//
+//  output(0.1125 *(-(step_count-missed_steps)), (255/3.3)*(iLevel*10*rSense)); 
+//}
 

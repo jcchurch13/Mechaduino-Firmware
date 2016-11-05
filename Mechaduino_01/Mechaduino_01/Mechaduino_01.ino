@@ -81,7 +81,7 @@ void setup() {
   delay(5000);  //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
 
 
-   // enableTCInterrupts();     //start in closed loop mode
+  //  enableTCInterrupts();     //start in closed loop mode
   //  mode = 'x';
   //
   //  Wire.begin(4);                // join i2c bus with address #8
@@ -101,9 +101,11 @@ void setup() {
 void loop()
 {
   
- // serialCheck();
+  serialCheck();
   
-  //r=0.1125*step_count;
+  //r=0.05625*step_count;
+
+  
 
 }
 
