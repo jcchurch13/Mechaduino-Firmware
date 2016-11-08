@@ -101,7 +101,7 @@ void setup() {
 void loop()
 {
   
- // serialCheck();
+  serialCheck();
   
   //r=0.1125*step_count;
 
