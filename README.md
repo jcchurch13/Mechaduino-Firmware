@@ -1,6 +1,12 @@
 ![image](images/header.PNG)
 
-Here are some preliminary instructions on how to get your Mechaduino up and running.  We will continue to improve this documentation in the coming weeks...this rough overview is just to point anyone who is curious in the right direction!
+For the latest, most up-to-date instructions on how to configure your Mechaduino, please check our [hackaday.io](https://hackaday.io/project/11224-mechaduino) page.  In particular, check out the [instructions](https://hackaday.io/project/11224/instructions) section.  
+
+The latest firmware can be found here on github
+
+We’ve also created a [google group](https://groups.google.com/forum/#%21forum/mechaduino) for users to share technical info.  
+
+Here is a quick overview of how to get your Mechaduino up and running. for more details, please try the link above.
 
 ![image](images/example1.gif)
 
