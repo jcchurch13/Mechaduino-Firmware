@@ -36,21 +36,21 @@ void TC5_Handler(){   // gets called with FPID frequency
 
 
   if (mode == 'h'){
-    mode_h();
+    hybridControl();
   }
   else{
       switch (mode) {
   
         case 'x':
-          mode_x();  
+          positionControl();  
           break;
           
         case 'v':
-          mode_v();
+          velocityControl();
           break;
   
         case 't':
-          mode_t();
+          torqueControl();
           break;
   
         default:

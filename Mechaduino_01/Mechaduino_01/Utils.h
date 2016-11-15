@@ -53,6 +53,14 @@
 	void parameterEdito();
   
   void hybridStep();
+
+  void hybridControl();
+
+  void positionControl();
+
+  void velocityControl();
+  
+  void torqueControl();
 	
 
 #endif
