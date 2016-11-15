@@ -980,3 +980,53 @@ void parameterEdito(){
 //  output(0.1125 *(-(step_count-missed_steps)), (255/3.3)*(iLevel*10*rSense)); 
 //}
 
+
+void mode_h(){
+  
+  static int missed_steps = 0;
+  static float iLevel = 0.6;  //hybrid stepping current level.  In this mode, this current is continuous (unlike closed loop mode). Be very careful raising this value as you risk overheating the A4954 driver!
+  static float rSense = 0.15;
+  
+  if (yw < r-1.8) {
+    missed_steps -= 1;
+  }
+  else if (yw > r+1.8) {
+    missed_steps += 1;
+  }
+
+  output(0.1125 *(-(r-missed_steps)), (255/3.3)*(iLevel*10*rSense)); 
+    
+}
+
+void mode_x(){
+   e = (r - yw);
+  
+          ITerm += (pKi * e);
+          if (ITerm > 150) ITerm = 150;
+          else if (ITerm < -150) ITerm = -150;
+  
+  
+          u = ((pKp * e) + ITerm - (pKd * (yw - yw_1))); //ARDUINO library style
+          //u = u+lookup_force(a)-20;
+          //   u = u_1 + cA*e + cB*e_1 + cC*e_2;     //ppt linked in octave script
+  
+          //  u = 20*e;//
+}
+
+void mode_v(){
+  e = (r - ((yw - yw_1) * Fs*0.16666667));//error in degrees per rpm (sample frequency in Hz * (60 seconds/min) / (360 degrees/rev) )
+  
+          ITerm += (vKi * e);
+          if (ITerm > 200) ITerm = 200;
+          else if (ITerm < -200) ITerm = -200;
+  
+  
+          u = ((vKp * e) + ITerm - (vKd * (yw - yw_1)));//+ lookup_force(a)-20; //ARDUINO library style
+  
+
+}
+
+void mode_t(){
+  u = 1.0 * r ;//+ 1.7*(lookup_force(a)-20);
+}
+
