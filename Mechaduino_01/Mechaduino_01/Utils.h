@@ -10,6 +10,8 @@
 		
 	void stepInterrupt();
 
+  void dirInterrupt();
+
 	void output(float theta, int effort);	
 
 	void commandW();	
@@ -61,6 +63,7 @@
   void velocityControl();
   
   void torqueControl();
-	
+
+  void serialMenu();
 
 #endif

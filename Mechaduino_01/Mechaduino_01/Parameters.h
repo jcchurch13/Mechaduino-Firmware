@@ -34,10 +34,7 @@ extern const int chipSelectPin;
 extern int step_pin;
 extern int dir_pin;
 
-//pins for debugging waveforms:
-//extern int sine_out;				
-//extern int encoder_out;
-
+extern const float stepangle;
 
 extern const int spr; //  200 steps per revolution
 extern const float aps; // angle per step

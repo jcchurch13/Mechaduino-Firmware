@@ -68,17 +68,14 @@ https://creativecommons.org/licenses/by-sa/4.0/
 
 
 void setup() {
-
-
+  SerialUSB.begin(115200);
+  delay(3000);
+  serialMenu();
   setupPins();
   setupSPI();
   setupTCInterrupts();
 
-  SerialUSB.begin(115200);
-
-  // while (!SerialUSB) {};     //wait for serial
-
-  delay(5000);  //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
+    //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
 
 
   //  enableTCInterrupts();     //start in closed loop mode
@@ -87,8 +84,6 @@ void setup() {
   //  Wire.begin(4);                // join i2c bus with address #8
   //  Wire.onReceive(receiveEvent); // register event
 
-
-  SerialUSB.println("Mechaduino 0.1 begin...");
 
 }
 

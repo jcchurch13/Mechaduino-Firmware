@@ -81,11 +81,11 @@ void TC5_Handler(){   // gets called with FPID frequency
   
  // turn on LED if error is less than 0.1 
       if (abs(e) < 0.1) {
-        digitalWrite(pulse, HIGH);
+        digitalWrite(ledPin, HIGH);
        //   SerialUSB.println(r);
       }
       else  {
-        digitalWrite(pulse, LOW);
+        digitalWrite(ledPin, LOW);
       }
 
 

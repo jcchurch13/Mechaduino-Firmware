@@ -18,14 +18,21 @@ void setupPins() {
   pinMode(IN_3, OUTPUT);
   pinMode(IN_2, OUTPUT);
   pinMode(IN_1, OUTPUT);
-  pinMode(pulse, OUTPUT);
+
   pinMode(step_pin, INPUT);
   pinMode(dir_pin, INPUT);
+  
+  pinMode(chipSelectPin, OUTPUT); // CSn -- has to toggle high and low to signal chip to start data transfer
+  
+  pinMode(ledPin, OUTPUT); // 
 
-  pinMode(3, OUTPUT);
-  pinMode(4, OUTPUT);
+  
+  // pinMode(clockPin, OUTPUT); // SCL    for I2C 
+  // pinMode(inputPin, INPUT); // SDA
+
 
   attachInterrupt(1, stepInterrupt, RISING);
+  attachInterrupt(dir_pin, dirInterrupt, CHANGE);
 
   analogFastWrite(VREF_2, 64);
   analogFastWrite(VREF_1, 64);
@@ -35,10 +42,6 @@ void setupPins() {
   digitalWrite(IN_2, HIGH);
   digitalWrite(IN_1, LOW);
 
-  pinMode(ledPin, OUTPUT); // visual signal of I/O to chip
-  // pinMode(clockPin, OUTPUT); // SCK
-  pinMode(chipSelectPin, OUTPUT); // CSn -- has to toggle high and low to signal chip to start data transfer
-  //  pinMode(inputPin, INPUT); // SDA
 
 
 
@@ -49,7 +52,7 @@ void setupSPI() {
   SPISettings settingsA(400000, MSBFIRST, SPI_MODE1);             ///400000, MSBFIRST, SPI_MODE1);
 
   SPI.begin();    //AS5047D SPI uses mode=1 (CPOL=0, CPHA=1)
-  SerialUSB.println("Begin...");
+  SerialUSB.println("Beginning SPI communication with AS5047 encoder...");
   delay(1000);
   SPI.beginTransaction(settingsA);
 
@@ -57,8 +60,13 @@ void setupSPI() {
 
 
 void stepInterrupt() {
-  if (digitalRead(dir_pin))step_count += 1;
-  else step_count -= 1;
+  if (dir) r += stepangle;
+  else r -= stepangle;
+}
+
+void dirInterrupt() {
+  if (REG_PORT_IN0 & PORT_PA11) dir = false; // check if dir_pin is HIGH
+  else dir = true;
 }
 
 
@@ -125,11 +133,11 @@ void commandW() {   /// this is the calibration routine
   float lookupAngle = 0.0;
 
   encoderReading = readEncoder();
-  dir = 1;
+  dir = true;
   oneStep();
   delay(500);
 
-  if ((readEncoder() - encoderReading) < 0)   //check which way motor moves when dir = 1
+  if ((readEncoder() - encoderReading) < 0)   //check which way motor moves when dir = true
   {
     SerialUSB.println("Wired backwards");    // rewiring either phase should fix this.  You may get a false message if you happen to be near the point where the encoder rolls over...
     return;
@@ -137,16 +145,16 @@ void commandW() {   /// this is the calibration routine
 
   while (stepNumber != 0) {       //go to step zero
     if (stepNumber > 0) {
-      dir = 1;
+      dir = true;
     }
     else
     {
-      dir = 0;
+      dir = false;
     }
     oneStep();
     delay(100);
   }
-  dir = 1;
+  dir = true;
   for (int x = 0; x < spr; x++) {     //step through all full step positions, recording their encoder readings
 
     encoderReading = 0;
@@ -302,11 +310,11 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
         break;
 
       case 'd':             //dir
-        if (dir == 1) {
-          dir = 0;
+        if (dir) {
+          dir = false;
         }
         else {
-          dir = 1;
+          dir = true;
         }
         break;
 
@@ -362,8 +370,11 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
         break;
 
       case 'k':
- 
         parameterEditmain();     
+        break;
+      
+      case 'm':
+         serialMenu();     
         break;
       
 
@@ -434,7 +445,7 @@ float lookup_angle(int n)
 
 void oneStep() {           /////////////////////////////////   oneStep    ///////////////////////////////
 
-  if (dir == 0) {
+  if (!dir) {
     stepNumber += 1;
   }
   else {
@@ -469,48 +480,47 @@ void readEncoderDiagnostics()           ////////////////////////////////////////
   digitalWrite(chipSelectPin, LOW);
 
   ///////////////////////////////////////////////READ DIAAGC (0x3FFC)
-  SerialUSB.print("DIAAGC (0x3FFC)   ");
+  SerialUSB.println("------------------------------------------------");
 
+  SerialUSB.println("Checking AS5047 diagnostic and error registers");
+  SerialUSB.println("See AS5047 datasheet for details");
+  SerialUSB.println(" ");
+  ;
+  
   SPI.transfer(0xFF);
   SPI.transfer(0xFC);
+  
   digitalWrite(chipSelectPin, HIGH);
-
   delay(1);
   digitalWrite(chipSelectPin, LOW);
 
   byte b1 = SPI.transfer(0xC0);
   byte b2 = SPI.transfer(0x00);
 
-
+  SerialUSB.print("Check DIAAGC register (0x3FFC) ...  ");
+  SerialUSB.println(" ");
+ 
   angleTemp = (((b1 << 8) | b2) & 0B1111111111111111);
   SerialUSB.println((angleTemp | 0B1110000000000000000 ), BIN);
 
-  if (angleTemp & (1 << 14)) {
-    SerialUSB.println("  Error occurred  ");
-  }
-  if (angleTemp & (1 << 11)) {
-    SerialUSB.println("  MAGH - magnetic field strength too high, set if AGC = 0x00. This indicates the non-linearity error may be increased");
-  }
-  if (angleTemp & (1 << 10)) {
-    SerialUSB.println("  MAGL - magnetic field strength too low, set if AGC = 0xFF. This indicates the output noise of the measured angle may be increased");
-  }
-  if (angleTemp & (1 << 9)) {
-    SerialUSB.println("  COF - CORDIC overflow. This indicates the measured angle is not reliable");
-  }
-  if (angleTemp & (1 << 8)) {
-    SerialUSB.println("  LF - offset compensation completed. At power-up, an internal offset compensation procedure is started, and this bit is set when the procedure is completed");
-  }
+  if (angleTemp & (1 << 14))    SerialUSB.println("  Error occurred  ");
+ 
+  if (angleTemp & (1 << 11))    SerialUSB.println("  MAGH - magnetic field strength too high, set if AGC = 0x00. This indicates the non-linearity error may be increased");
+ 
+  if (angleTemp & (1 << 10))    SerialUSB.println("  MAGL - magnetic field strength too low, set if AGC = 0xFF. This indicates the output noise of the measured angle may be increased");
+
+  if (angleTemp & (1 << 9))     SerialUSB.println("  COF - CORDIC overflow. This indicates the measured angle is not reliable");
+  
+  if (angleTemp & (1 << 8))     SerialUSB.println("  LF - offset compensation completed. At power-up, an internal offset compensation procedure is started, and this bit is set when the procedure is completed");
+
+  if (!((angleTemp & (1 << 14))|(angleTemp & (1 << 11))|(angleTemp & (1 << 10))|(angleTemp & (1 << 9))))  SerialUSB.println("Looks good!");
   SerialUSB.println(" ");
 
+
   digitalWrite(chipSelectPin, HIGH);
-
-
   delay(1);
-
   digitalWrite(chipSelectPin, LOW);
-  ///////////////////////////////////////////////READ ERRFL (0x0001)
-  SerialUSB.print("ERRFL (0x0001)   ");
-
+  
   SPI.transfer(0x40);
   SPI.transfer(0x01);
   digitalWrite(chipSelectPin, HIGH);
@@ -521,22 +531,28 @@ void readEncoderDiagnostics()           ////////////////////////////////////////
   b1 = SPI.transfer(0xC0);
   b2 = SPI.transfer(0x00);
 
+  
+  SerialUSB.print("Check ERRFL register (0x0001) ...  ");
+  SerialUSB.println(" ");
+  
+
 
   angleTemp = (((b1 << 8) | b2) & 0B1111111111111111);
-  SerialUSB.print((angleTemp | 0B1110000000000000000 ), BIN);
+  SerialUSB.println((angleTemp | 0B1110000000000000000 ), BIN);
 
   if (angleTemp & (1 << 14)) {
-    SerialUSB.print("  Error occurred  ");
+    SerialUSB.println("  Error occurred  ");
   }
   if (angleTemp & (1 << 2)) {
-    SerialUSB.print("  parity error ");
+    SerialUSB.println("  parity error ");
   }
   if (angleTemp & (1 << 1)) {
-    SerialUSB.print("  invalid register  ");
+    SerialUSB.println("  invalid register  ");
   }
   if (angleTemp & (1 << 0)) {
-    SerialUSB.print("  framing error  ");
+    SerialUSB.println("  framing error  ");
   }
+  if (!((angleTemp & (1 << 14))|(angleTemp & (1 << 2))|(angleTemp & (1 << 1))|(angleTemp & (1 << 0))))  SerialUSB.println("Looks good!");
 
   SerialUSB.println(" ");
 
@@ -950,5 +966,38 @@ void velocityControl(){
 
 void torqueControl(){
   u = 1.0 * r ;     //directly set control effort
+}
+
+void serialMenu() {
+  SerialUSB.println("");
+  SerialUSB.println("");
+  SerialUSB.println("----- Mechaduino 0.1 -----");
+  //SerialUSB.print("Identifier: ");
+  //SerialUSB.println(identifier);
+  SerialUSB.println("");
+  SerialUSB.println("");
+  SerialUSB.println("Main menu");
+  SerialUSB.println("");
+  SerialUSB.println(" s  -  step");
+  SerialUSB.println(" d  -  dir");
+  SerialUSB.println(" p  -  print angle");
+  SerialUSB.println("");  
+  SerialUSB.println(" w  -  write new calibration table");
+  SerialUSB.println(" e  -  check encoder diagnositics");
+  SerialUSB.println(" q  -  parameter query");
+  SerialUSB.println("");
+  SerialUSB.println(" x  -  position mode");
+  SerialUSB.println(" v  -  velocity mode");
+  SerialUSB.println(" x  -  torque mode");
+  SerialUSB.println("");  
+  SerialUSB.println(" y  -  enable control loop");
+  SerialUSB.println(" n  -  disable control loop");
+  SerialUSB.println(" r  -  enter new setpoint");
+  SerialUSB.println("");  
+ // SerialUSB.println(" j  -  step response");
+  SerialUSB.println(" k  -  edit controller gains");
+  SerialUSB.println(" m  -  print main menu");
+ // SerialUSB.println(" f  -  get max loop frequency");
+  SerialUSB.println("");
 }
 

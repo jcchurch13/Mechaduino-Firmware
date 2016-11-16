@@ -36,8 +36,7 @@ volatile int uMAX = (255/3.3)*(iMAX*10*rSense);
 volatile float ITerm;
 
 volatile char mode;
-
-
+volatile bool dir = true;  
 //___________________________________
 
 const float pi = 3.14159265359;
