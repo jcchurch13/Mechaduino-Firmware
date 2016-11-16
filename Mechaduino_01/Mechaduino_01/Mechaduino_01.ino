@@ -69,21 +69,15 @@ https://creativecommons.org/licenses/by-sa/4.0/
 
 void setup() {
   SerialUSB.begin(115200);
-  delay(3000);
+  delay(3000);          //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
   serialMenu();
   setupPins();
   setupSPI();
   setupTCInterrupts();
 
-    //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
-
-
+  
   //  enableTCInterrupts();     //start in closed loop mode
   //  mode = 'x';
-  //
-  //  Wire.begin(4);                // join i2c bus with address #8
-  //  Wire.onReceive(receiveEvent); // register event
-
 
 }
 
@@ -98,7 +92,7 @@ void loop()
   
   serialCheck();
   
-  //r=0.05625*step_count;
+  //r=0.1125*step_count; --- no longer need this adjust step angle in parameters.cpp
 
   
 

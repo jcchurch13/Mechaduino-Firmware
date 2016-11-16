@@ -12,85 +12,51 @@
 void TC5_Handler(){   // gets called with FPID frequency
 
   
-  if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {  // A overflow caused the interrupt
-
-
-
+  if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {  // An overflow caused the interrupt
 
     a = readEncoder();
     y = lookup_angle(a);
-
-
-    if ((y - y_1) < -180.0) {
-      wrap_count += 1;
-    }
-    else if ((y - y_1) > 180.0) {
-      wrap_count -= 1;
-    }
+    
+    if ((y - y_1) < -180.0) wrap_count += 1;
+    else if ((y - y_1) > 180.0) wrap_count -= 1;
+    
     //y_1 = y;  pushed lower
 
     yw = (y + (360.0 * wrap_count));
-
-
-
 
 
   if (mode == 'h'){
     hybridControl();
   }
   else{
-      switch (mode) {
-  
+      switch (mode) {  
         case 'x':
           positionControl();  
-          break;
-          
+          break;          
         case 'v':
           velocityControl();
-          break;
-  
+          break;  
         case 't':
           torqueControl();
-          break;
-  
+          break;  
         default:
           u = 0;
           break;
       }
+  
+      if (u > 0) y+=PA;   //update phase excitation angle
+      else y -=PA;
+   
 
-  
-  //update phase excitation angle
-      if (u > 0) {
-        y+=PA;
-      }
-      else {
-        y -=PA;
-      }
-  
-  
-  
- // limit control effort 
-      if (u > uMAX) {                          //saturation limits max current command
-        u = uMAX;
-      }
-      else if (u < -uMAX) {
-        u = -uMAX;
-      }
-  
+      if (u > uMAX) u = uMAX;           // limit control effort
+      else if (u < -uMAX) u = -uMAX;    //saturation limits max current command
+
       U = abs(u);  
   
- // turn on LED if error is less than 0.1 
-      if (abs(e) < 0.1) {
-        digitalWrite(ledPin, HIGH);
-       //   SerialUSB.println(r);
-      }
-      else  {
-        digitalWrite(ledPin, LOW);
-      }
+      if (abs(e) < 0.1) digitalWrite(ledPin, HIGH);  // turn on LED if error is less than 0.1 
+      else digitalWrite(ledPin, LOW);
 
-
-  // update phase currents
-      output(-y, U);  //-y
+      output(-y, U);    // update phase currents
   }
       e_3 = e_2;
       e_2 = e_1;
