@@ -13,8 +13,9 @@ void TC5_Handler(){   // gets called with FPID frequency
 
   
   if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {  // An overflow caused the interrupt
-
+     REG_PORT_OUTSET0 = PORT_PA09;  //digitalWrite(3, HIGH);
     a = readEncoder();
+     REG_PORT_OUTCLR0 = PORT_PA09;  //digitalWrite(3, LOW);
     y = lookup_angle(a);
     
     if ((y - y_1) < -180.0) wrap_count += 1;
@@ -53,9 +54,11 @@ void TC5_Handler(){   // gets called with FPID frequency
 
       U = abs(u);  
   
-      if (abs(e) < 0.1) digitalWrite(ledPin, HIGH);  // turn on LED if error is less than 0.1 
-      else digitalWrite(ledPin, LOW);
-
+      if (abs(e) < 0.1) REG_PORT_OUTSET0 = PORT_PA17;   //digitalWrite(ledPin, HIGH);  // turn on LED if error is less than 0.1 
+      else REG_PORT_OUTCLR0 = PORT_PA17;    //digitalWrite(ledPin, LOW);
+      
+       REG_PORT_OUTSET0 = PORT_PA09;  //digitalWrite(3, HIGH);
+      
       output(-y, U);    // update phase currents
   }
       e_3 = e_2;
@@ -68,6 +71,7 @@ void TC5_Handler(){   // gets called with FPID frequency
       y_1 = y;
 
     TC5->COUNT16.INTFLAG.bit.OVF = 1;    // writing a one clears the flag ovf flag
+    REG_PORT_OUTCLR0 = PORT_PA09; //digitalWrite(3, LOW);
   }
 
 

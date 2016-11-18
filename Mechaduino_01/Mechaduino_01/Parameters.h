@@ -21,18 +21,18 @@ extern volatile float vKd;
 //////////////////////////////////////
 //////////////////PINS////////////////
 //////////////////////////////////////
-extern int IN_4;
-extern int IN_3;
-extern int VREF_2;
-extern int VREF_1;
-extern int IN_2;
-extern int IN_1;
-extern int pulse;
+extern const int IN_4;
+extern const int IN_3;
+extern const int VREF_2;
+extern const int VREF_1;
+extern const int IN_2;
+extern const int IN_1;
+extern const int pulse;
 extern const int ledPin;
 extern const int chipSelectPin;
 
-extern int step_pin;
-extern int dir_pin;
+extern const int step_pin;
+extern const int dir_pin;
 
 extern const float stepangle;
 

@@ -25,7 +25,7 @@ void setupPins() {
   pinMode(chipSelectPin, OUTPUT); // CSn -- has to toggle high and low to signal chip to start data transfer
   
   pinMode(ledPin, OUTPUT); // 
-
+  pinMode(3, OUTPUT); // 
   
   // pinMode(clockPin, OUTPUT); // SCL    for I2C 
   // pinMode(inputPin, INPUT); // SDA
@@ -49,7 +49,7 @@ void setupPins() {
 
 void setupSPI() {
 
-  SPISettings settingsA(400000, MSBFIRST, SPI_MODE1);             ///400000, MSBFIRST, SPI_MODE1);
+  SPISettings settingsA(10000000, MSBFIRST, SPI_MODE1);             ///400000, MSBFIRST, SPI_MODE1);
 
   SPI.begin();    //AS5047D SPI uses mode=1 (CPOL=0, CPHA=1)
   SerialUSB.println("Beginning SPI communication with AS5047 encoder...");
@@ -90,12 +90,16 @@ void output(float theta, int effort) {                    //////////////////////
   analogFastWrite(VREF_2, abs(val1));                        //set phase current 1
 
   if (val1 >= 0)  {                                          //set phase 1 driver direction control (see a4954 datasheet)
-    digitalWrite(IN_4, HIGH);
-    digitalWrite(IN_3, LOW);
+    REG_PORT_OUTSET0 = PORT_PA20;     //write IN_4 HIGH
+    REG_PORT_OUTCLR0 = PORT_PA15;     //write IN_3 LOW    
+   // digitalWrite(IN_4, HIGH);
+   // digitalWrite(IN_3, LOW);
   }
   else  {
-    digitalWrite(IN_4, LOW);
-    digitalWrite(IN_3, HIGH);
+    REG_PORT_OUTCLR0 = PORT_PA20;     //write IN_4 LOW
+    REG_PORT_OUTSET0 = PORT_PA15;     //write IN_3 HIGH
+    //digitalWrite(IN_4, LOW);
+    //digitalWrite(IN_3, HIGH);
   }
                                                                    // this next line calculates the second of the two phase "excitation angles" for a given rotor angle i degrees 
   floatangle = (10000 * (  theta * 0.8726646 + 0.7854) );          // theta*(pi/180)*(spr/4) + (pi/4)   ...spr/4 because excitation state is periodic every 4 steps (look at a traditional step patterns for clarification) 
@@ -107,12 +111,16 @@ void output(float theta, int effort) {                    //////////////////////
   analogFastWrite(VREF_1, abs(val2));                       //set phase 2 current
 
   if (val2 >= 0)  {                                         //set phase 2 driver direction control  (see a4954 datasheet)
-    digitalWrite(IN_2, HIGH);
-    digitalWrite(IN_1, LOW);
+    REG_PORT_OUTSET0 = PORT_PA21;     //write IN_2 HIGH
+    REG_PORT_OUTCLR0 = PORT_PA06;     //write IN_1 LOW    
+    //digitalWrite(IN_2, HIGH);
+    //digitalWrite(IN_1, LOW);
   }
   else  {
-    digitalWrite(IN_2, LOW);
-    digitalWrite(IN_1, HIGH);
+    REG_PORT_OUTCLR0 = PORT_PA21;     //write IN_2 LOW
+    REG_PORT_OUTSET0 = PORT_PA06;     //write IN_1 HIGH    
+    //digitalWrite(IN_2, LOW);
+    //digitalWrite(IN_1, HIGH);
   }
 }
 
@@ -460,15 +468,15 @@ void oneStep() {           /////////////////////////////////   oneStep    //////
 int readEncoder()           //////////////////////////////////////////////////////   READENCODER   ////////////////////////////
 {
   long angleTemp;
-  digitalWrite(chipSelectPin, LOW);
-
+   REG_PORT_OUTCLR0 = PORT_PB08;  //digitalWrite(chipSelectPin, LOW);
+  
   byte b1 = SPI.transfer(0xFF);
   byte b2 = SPI.transfer(0xFF);
 
   angleTemp = (((b1 << 8) | b2) & 0B0011111111111111);
   //  SerialUSB.println((angle & 0B0011111111111111)*0.02197265625);
 
-  digitalWrite(chipSelectPin, HIGH);
+   REG_PORT_OUTSET0 = PORT_PB08;  //digitalWrite(chipSelectPin, HIGH);
   return angleTemp;
 }
 

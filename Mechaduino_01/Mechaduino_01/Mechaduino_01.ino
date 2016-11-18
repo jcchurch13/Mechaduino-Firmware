@@ -16,7 +16,7 @@ https://creativecommons.org/licenses/by-sa/4.0/
 
 
 
-  Many thanks to Will Church and Marco Farrugia.
+  Many thanks to Will Church, Marco Farrugia, and Kai Wolter.
 
 
   

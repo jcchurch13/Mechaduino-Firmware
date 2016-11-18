@@ -29,17 +29,17 @@ const PROGMEM float lookup[] = {178.80 , 178.82 , 178.84 , 178.87 , 178.89 , 178
 //////////////////////////////////////
 //////////////////PINS////////////////
 //////////////////////////////////////
-int IN_4 = 6;
-int IN_3 = 5;
-int VREF_2 = 4;
-int VREF_1 = 9;
-int IN_2 = 7;
-int IN_1 = 8;
-const int ledPin = 13;//LED connected to digital pin 13
-const int chipSelectPin = A2; //output to chip select
-
-int step_pin  = 1;
-int dir_pin = 0;//2;
+const int IN_4 = 6;    //PA20
+const int IN_3 = 5;   //PA15
+const int VREF_2 = 4; //PA08
+const int VREF_1 = 9; //PA07
+const int IN_2 = 7;   //PA21
+const int IN_1 = 8;   //PA06
+const int ledPin = 13;  //PA17
+const int chipSelectPin = A2; //PB08
+const int dir_pin = 0;  //PORT_PA11
+const int step_pin = 1; //Port_PA10
+const int ena_pin = 2;  //PORT_PA14
 
 const float stepangle = 1.8/16.0;
 
