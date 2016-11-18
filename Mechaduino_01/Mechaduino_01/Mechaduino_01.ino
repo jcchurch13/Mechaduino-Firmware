@@ -1,56 +1,38 @@
-  
-/*
 
-  Mechaduino 0.1 Firmware  --multi file branch
-    
+/*
+  -------------------------------------------------------------
+  Mechaduino 0.1 Firmware  v0.1.1
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
-
-
-  
-All Mechaduino related materials are released under the
-
-Creative Commons Attribution Share-Alike 4.0 License
-
-https://creativecommons.org/licenses/by-sa/4.0/
-
-
+  All Mechaduino related materials are released under the
+  Creative Commons Attribution Share-Alike 4.0 License
+  https://creativecommons.org/licenses/by-sa/4.0/
 
   Many thanks to Will Church, Marco Farrugia, and Kai Wolter.
-
-
-  
-
-  
+  --------------------------------------------------------------
   
   Controlled via a SerialUSB terminal at 115200 baud.
 
   Implemented serial commands are:
 
+ s  -  step
+ d  -  dir
+ p  -  print angle [step count] , [assumed angle] , [encoder reading]
 
-  s  -  step
+ w  -  write new calibration table
+ e  -  check encoder diagnositics
+ q  -  parameter query
 
-  d  -  dir toggle
+ x  -  position mode
+ v  -  velocity mode
+ x  -  torque mode
 
-  w  -  encoder cal routine
-  
-  y  -  enable controller interrupts
+ y  -  enable control loop
+ n  -  disable control loop
+ r  -  enter new setpoint
 
-  n  - disable controller interrupts
-
-  r  -  enter new setpoint
-
-  x  - position mode
-
-  v  -  velocity mode
-
-  t  -  torque mode
-
-  q  - parameter query (prints current parameters)
-
-  e  -  reads encoder diagnostic register 
-
-  p  -  print [step count] , [assumed angle] , [encoder reading]
+ k  -  edit controller gains
+ m  -  print main menu
 
   ...see serialCheck() in Utils for more details
 
@@ -75,7 +57,7 @@ void setup() {
   setupSPI();
   setupTCInterrupts();
 
-  
+
   //  enableTCInterrupts();     //start in closed loop mode
   //  mode = 'x';
 
@@ -89,12 +71,13 @@ void setup() {
 
 void loop()
 {
-  
+
   serialCheck();
-  
+
   //r=0.1125*step_count; --- no longer need this adjust step angle in parameters.cpp
 
-  
+
 
 }
+
 

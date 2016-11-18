@@ -26,3 +26,4 @@
 #define PIN_EXISTS(PN) (defined(PN ##_PIN) && PN ##_PIN >= 0)
 
 #endif //__MACROS_H
+

@@ -8,7 +8,7 @@ extern "C" {
 
 static int _readResolution = 10;
 static int _ADCResolution = 10;
-static int _writeResolution = 8;
+static int _writeResolution = 10;
 
 // Wait for synchronization of registers between the clock domains
 static __inline__ void syncADC() __attribute__((always_inline, unused));
@@ -193,3 +193,4 @@ void analogFastWrite(uint32_t pin, uint32_t value)
 #ifdef __cplusplus
 }
 #endif
+
