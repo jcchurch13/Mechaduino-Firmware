@@ -75,12 +75,6 @@ void loop()
 
   serialCheck();
 
-
-//  for(int x = 128; x<138;x++){
-//  analogFastWrite(VREF_1,x);
-//  analogFastWrite(VREF_2,x);  
-//  delay(1000);
-//  }
   
   //r=0.1125*step_count; --- no longer need this adjust step angle in parameters.cpp
 
@@ -88,19 +82,6 @@ void loop()
 
 }
 
-void sineGen(){
-  int sin_1[3600];
-  int sin_2[3600];
-  for (int x = 0; x<=3600;x++){
-    sin_1[x] = 1024.0*sin((3.14159265358979*((x*0.1/180.0) + 0.75)));
-    sin_2[x] = 1024.0*sin((3.14159265358979*((x*0.1/180.0) + 0.25)));
-  }
-    for (int x = 0; x<=3600;x++){
-    SerialUSB.print(sin_1[x]);
-    SerialUSB.print(",");
-    SerialUSB.println(sin_2[x]);  
-  }
-  
-}
+
 
 

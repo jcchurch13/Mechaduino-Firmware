@@ -65,6 +65,8 @@
   void torqueControl();
 
   void serialMenu();
+  
+  void sineGen();
 
 #endif
 

@@ -63,5 +63,8 @@ extern const PROGMEM float sine_lookup[];
 extern const PROGMEM float lookup[];
 extern const PROGMEM float force_lookup[];
 
+extern  int sin_1[3600];
+extern  int sin_2[3600];
+
 #endif
 
