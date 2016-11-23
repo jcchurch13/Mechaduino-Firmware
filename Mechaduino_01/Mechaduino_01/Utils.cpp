@@ -460,8 +460,8 @@ void oneStep() {           /////////////////////////////////   oneStep    //////
     stepNumber -= 1;
   }
 
-  output(1.8 * stepNumber, 64); //updata 1.8 to aps..., second number is control effort
-
+  //output(1.8 * stepNumber, 64); //updata 1.8 to aps..., second number is control effort
+    output(aps* stepNumber, (int)(0.25*uMAX));
   delay(10);
 }
 

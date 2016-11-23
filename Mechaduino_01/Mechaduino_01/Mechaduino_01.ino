@@ -56,7 +56,8 @@ void setup() {
   setupPins();
   setupSPI();
   setupTCInterrupts();
-
+  
+  pinMode(3, OUTPUT);
 
   //  enableTCInterrupts();     //start in closed loop mode
   //  mode = 'x';
@@ -74,6 +75,12 @@ void loop()
 
   serialCheck();
 
+//  for(int x = 128; x<138;x++){
+//  analogFastWrite(VREF_1,x);
+//  analogFastWrite(VREF_2,x);  
+//  delay(1000);
+//  }
+  
   //r=0.1125*step_count; --- no longer need this adjust step angle in parameters.cpp
 
 
