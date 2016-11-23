@@ -9,13 +9,13 @@
 volatile float Fs = 3000.0;   //Sample frequency in Hz
 volatile float Ts = 1/Fs;     //Sample period
 
-volatile float pKp = 40;      //position mode PID vallues.  Depending on your motor/load/desired performance, you will need to tune these values.  You can also implement your own control scheme
-volatile float pKi = 1.20;
-volatile float pKd = 20.0;
+volatile float pKp = 10;      //position mode PID vallues.  Depending on your motor/load/desired performance, you will need to tune these values.  You can also implement your own control scheme
+volatile float pKi = 0.30;
+volatile float pKd = 5.0;
 
 
-volatile float vKp = 0.2;       //velocity mode PID vallues.  Depending on your motor/load/desired performance, you will need to tune these values.  You can also implement your own control scheme
-volatile float vKi = 800.00 * Ts;
+volatile float vKp = 0.05;       //velocity mode PID vallues.  Depending on your motor/load/desired performance, you will need to tune these values.  You can also implement your own control scheme
+volatile float vKi = 200.00 * Ts;
 volatile float vKd = 0.00 / Ts;
 
 //This is the encoder lookup table (created by calibration routine):
