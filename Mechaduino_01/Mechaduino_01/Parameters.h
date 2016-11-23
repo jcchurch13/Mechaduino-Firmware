@@ -42,7 +42,7 @@ extern int dir_pin;
 extern const int spr; //  200 steps per revolution
 extern const float aps; // angle per step
 extern int cpr; //counts per rev
-
+extern const float angle_multiplier;
 
 extern int dir;		//initialize stepping mode variables
 extern int step_state;

@@ -102,7 +102,6 @@ void loop()
 {
   
   serialCheck();
-  
   //r=0.1125*step_count;
 
 }

@@ -12,7 +12,7 @@ volatile float yw_1 = 0.0;
 volatile float e = 0.0;  // e = r-y (error)
 volatile float p = 0.0;  // proportional effort
 volatile float i = 0.0;  // integral effort
-volatile float PA = 1.8;  //
+volatile float PA = 1.8;// Phase advance...1.8 for 200 steps per rev, 0.9 for 400
 
 volatile float u = 0.0;  //real control effort (not abs)
 volatile float u_1 = 0.0;   //value of u at previous time step, etc...
@@ -40,7 +40,7 @@ volatile char mode;
 
 //___________________________________
 
-const float pi = 3.14159265359;
+const float pi= 3.14159265359;
 const int  half = 134;//128;
 
 float new_angle = 0.0; //input angle

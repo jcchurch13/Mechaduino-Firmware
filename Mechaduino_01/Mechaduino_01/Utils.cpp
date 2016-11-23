@@ -80,7 +80,7 @@ void output(float theta, int effort) {                    //////////////////////
 
 
 
-  floatangle = (10000 * ( theta * 0.87266 + 2.3562) );//0.7854) );// 2.3562) );       //changed to 2.3 for NEMA23,NEMA17 dual..... opposite below
+  floatangle = (10000 * ( theta * angle_multiplier + 2.3562) );//0.7854) );// 2.3562) );       //changed to 2.3 for NEMA23,NEMA17 dual..... opposite below
   //floatangle = (10000 * ( theta * 0.87266 + 0.7854) );
 
   intangle = (int)floatangle;
@@ -108,7 +108,7 @@ void output(float theta, int effort) {                    //////////////////////
 
 
 
-  floatangle = (10000 * (  theta * 0.8726646 + 0.7854) );//2.3562) );//0.7854) );
+  floatangle = (10000 * (  theta * angle_multiplier + 0.7854) );//2.3562) );//0.7854) );
   //floatangle = (10000 * ( theta * 0.87266 + 2.3562) );
 
   intangle = (int)floatangle;
@@ -479,7 +479,7 @@ void oneStep() {           /////////////////////////////////   oneStep    //////
 
   //output(1.8 * step_state, 128); //1.8 = 90/50
 
-  output(1.8 * stepNumber, 64); //1.8 = 90/50
+  output(aps * stepNumber, 50); //1.8 = 90/50
 
   delay(10);
 }
@@ -966,10 +966,10 @@ void hybridStep(){
 
   yw = (y + (360.0 * wrap_count));
   
-  if (yw < 0.1125*step_count-1.8) {
+  if (yw < 0.1125*step_count-aps) {
     missed_steps -= 1;
   }
-  else if (yw > 0.1125*step_count+1.8) {
+  else if (yw > 0.1125*step_count+aps) {
     missed_steps += 1;
   }
  // SerialUSB.println(missed_steps,DEC);
