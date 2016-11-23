@@ -86,7 +86,7 @@ void analogFastWrite(uint32_t pin, uint32_t value)
 
   if ((attr & PIN_ATTR_PWM) == PIN_ATTR_PWM)
   {
-    value = mapResolution(value, _writeResolution, 8);  // change to 10 for 10 bit... must also change  TCx->COUNT8.PER.reg = 0x400
+    value = mapResolution(value, _writeResolution, 8);  // change to 10 for 10 bit... must also change  TCx->COUNT8.PER.reg = 0x3FF
     uint32_t tcNum = GetTCNumber(pinDesc.ulPWMChannel);
     uint8_t tcChannel = GetTCChannelNumber(pinDesc.ulPWMChannel);
     static bool tcEnabled[TCC_INST_NUM+TC_INST_NUM];
@@ -155,7 +155,7 @@ void analogFastWrite(uint32_t pin, uint32_t value)
         TCCx->CC[tcChannel].reg = (uint32_t) value;
         syncTCC(TCCx);
         // Set PER to maximum counter value (resolution : 0xFF)
-        TCCx->PER.reg = 0xFF; //change to 0x400 for 10 bit... must also change mapping above
+        TCCx->PER.reg = 0xFF; //change to 0x43FF for 10 bit... must also change mapping above
         syncTCC(TCCx);
         // Enable TCCx
         TCCx->CTRLA.bit.ENABLE = 1;
