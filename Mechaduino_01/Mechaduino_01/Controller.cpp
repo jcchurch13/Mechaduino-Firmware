@@ -13,7 +13,8 @@ void TC5_Handler() {  // gets called with FPID frequency
 
 
   if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {  // An overflow caused the interrupt
-    REG_PORT_OUTSET0 = PORT_PA09;  //digitalWrite(3, HIGH);
+   
+    REG_PORT_OUTSET0 = PORT_PA09;  //digitalWrite(3, HIGH); //Fast Write to Digital 3
     a = readEncoder();
     REG_PORT_OUTCLR0 = PORT_PA09;  //digitalWrite(3, LOW);
     y = lookup_angle(a);
@@ -59,7 +60,7 @@ void TC5_Handler() {  // gets called with FPID frequency
 
       REG_PORT_OUTSET0 = PORT_PA09;  //digitalWrite(3, HIGH);
 
-      output(-y, U);    // update phase currents
+      output(-y, round(U));    // update phase currents
     }
     e_3 = e_2;
     e_2 = e_1;
@@ -69,9 +70,12 @@ void TC5_Handler() {  // gets called with FPID frequency
     u_1 = u;
     yw_1 = yw;
     y_1 = y;
-
+    if (print_yw ==  true){
+      SerialUSB.println(int(yw*1024));
+    }
     TC5->COUNT16.INTFLAG.bit.OVF = 1;    // writing a one clears the flag ovf flag
     REG_PORT_OUTCLR0 = PORT_PA09; //digitalWrite(3, LOW);
+
   }
 
 

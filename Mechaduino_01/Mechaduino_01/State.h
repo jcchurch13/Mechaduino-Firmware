@@ -58,6 +58,7 @@ extern float diff_angle;
 extern int val1;
 extern int val2;
 
+extern bool print_yw;
 
 #endif
 
