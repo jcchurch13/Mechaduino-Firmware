@@ -19,7 +19,7 @@
  d  -  dir
  p  -  print angle [step count] , [assumed angle] , [encoder reading]
 
- w  -  write new calibration table
+ c  -  calibration routine
  e  -  check encoder diagnositics
  q  -  parameter query
 
@@ -51,6 +51,7 @@
 
 void setup() {
   SerialUSB.begin(115200);
+  sineGen();
   delay(3000);          //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
   serialMenu();
   setupPins();
@@ -61,7 +62,7 @@ void setup() {
 
   //  enableTCInterrupts();     //start in closed loop mode
   //  mode = 'x';
-  sineGen();
+
 }
 
 
@@ -75,26 +76,8 @@ void loop()
 
   serialCheck();
 
-  stepResponse();
   //r=0.1125*step_count; --- no longer need this adjust step angle in parameters.cpp
-  delay(10000);
+
 
 
 }
-
-void stepResponse() {
-  enableTCInterrupts();     //start in closed loop mode
-  mode = 'x';
-  r = 0;
-  print_yw = true;
-  delay(100);
-  r = 180.0;
-  delay(400);
-  print_yw = false;
-  disableTCInterrupts();
-  
- 
-}
-
-
-

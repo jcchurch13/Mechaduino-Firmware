@@ -4,17 +4,17 @@
 #define __UTIL_H__
 
 
-	void setupPins();
+	void setupPins();       // initializes pins
 	
-	void setupSPI();
+	void setupSPI();        //initializes SPI
 		
-	void stepInterrupt();
+	void stepInterrupt();   //step interrupt handler
 
-  void dirInterrupt();
+  void dirInterrupt();    //dir interrupt handler
 
-	void output(float theta, int effort);	
+	void output(float theta, int effort);	  //calculates phase currents (commutation) and outputs to Vref pins
 
-	void commandW();	
+	void calibrate();	      //calibration routine
 		
 	void serialCheck();
 

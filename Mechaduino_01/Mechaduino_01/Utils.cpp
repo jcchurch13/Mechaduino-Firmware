@@ -69,17 +69,17 @@ void dirInterrupt() {
   else dir = true;
 }
 
-void output(float theta, int effort) {            
+void output(float theta, int effort) {
   static volatile int angle;
   static volatile int v_coil_A;
   static volatile int v_coil_B;
 
   static int sin_coil_A;
   static int sin_coil_B;
-  static int phase_multiplier = 10*spr/4; 
+  static int phase_multiplier = 10 * spr / 4;
 
-  //REG_PORT_OUTCLR0 = PORT_PA09; for debugging/timing   
-  
+  //REG_PORT_OUTCLR0 = PORT_PA09; for debugging/timing
+
   angle = mod((phase_multiplier * theta) , 3600);
 
   sin_coil_A = sin_1[angle];
@@ -92,8 +92,8 @@ void output(float theta, int effort) {
     sin_coil_B = sin_coil_B - 65536;
   }
 
-    v_coil_A = ((effort * sin_coil_A) / 1024);
-    v_coil_B = ((effort * sin_coil_B) / 1024);
+  v_coil_A = ((effort * sin_coil_A) / 1024);
+  v_coil_B = ((effort * sin_coil_B) / 1024);
 
   analogFastWrite(VREF_1, abs(v_coil_A));
   analogFastWrite(VREF_2, abs(v_coil_B));
@@ -115,7 +115,7 @@ void output(float theta, int effort) {
     REG_PORT_OUTCLR0 = PORT_PA20;     //write IN_4 LOW
     REG_PORT_OUTSET0 = PORT_PA15;     //write IN_3 HIGH
   }
-  //  REG_PORT_OUTSET0 = PORT_PA09;    for debugging/timing   
+  //  REG_PORT_OUTSET0 = PORT_PA09;    for debugging/timing
 }
 
 
@@ -173,7 +173,7 @@ void output(float theta, int effort) {
 //}
 
 
-void commandW() {   /// this is the calibration routine
+void calibrate() {   /// this is the calibration routine
 
   int encoderReading = 0;     //or float?  not sure if we can average for more res?
   int lastencoderReading = 0;
@@ -374,9 +374,13 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
         }
         break;
 
-      case 'w':
-        commandW();           //cal routine
+      case 'w':                //old command
+        calibrate();           //cal routine
         break;
+        
+      case 'c':
+        calibrate();           //cal routine
+        break;        
 
       case 'e':
         readEncoderDiagnostics();   //encoder error?
@@ -411,10 +415,6 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
 
       case 'h':               //hybrid mode
         mode = 'h';
-        break;
-
-      case 'c':
-        mode = 'c';           //custom loop
         break;
 
       case 'q':
@@ -509,15 +509,15 @@ void oneStep() {           /////////////////////////////////   oneStep    //////
   }
 
   //output(1.8 * stepNumber, 64); //updata 1.8 to aps..., second number is control effort
-    output(aps* stepNumber, (int)(0.25*uMAX));
+  output(aps * stepNumber, (int)(0.25 * uMAX));
   delay(10);
 }
 
 int readEncoder()           //////////////////////////////////////////////////////   READENCODER   ////////////////////////////
 {
   long angleTemp;
- // REG_PORT_OUTCLR0 = PORT_PB08;  //
- digitalWrite(chipSelectPin, LOW);
+  // REG_PORT_OUTCLR0 = PORT_PB08;  //
+  digitalWrite(chipSelectPin, LOW);
 
   byte b1 = SPI.transfer(0xFF);
   byte b2 = SPI.transfer(0xFF);
@@ -525,8 +525,8 @@ int readEncoder()           ////////////////////////////////////////////////////
   angleTemp = (((b1 << 8) | b2) & 0B0011111111111111);
   //  SerialUSB.println((angle & 0B0011111111111111)*0.02197265625);
 
- // REG_PORT_OUTSET0 = PORT_PB08;  //
- digitalWrite(chipSelectPin, HIGH);
+  // REG_PORT_OUTSET0 = PORT_PB08;  //
+  digitalWrite(chipSelectPin, HIGH);
   return angleTemp;
 }
 
@@ -729,7 +729,7 @@ void setupTCInterrupts() {  // configure the controller interrupt
   TC5->COUNT16.CTRLA.reg |= TC_CTRLA_PRESCALER_DIV1;   // Set perscaler
   WAIT_TC16_REGS_SYNC(TC5)
 
-  TC5->COUNT16.CC[0].reg = (int)( round(48000000/Fs));//0x3E72; //0x4AF0;
+  TC5->COUNT16.CC[0].reg = (int)( round(48000000 / Fs)); //0x3E72; //0x4AF0;
   WAIT_TC16_REGS_SYNC(TC5)
 
   TC5->COUNT16.INTENSET.reg = 0;              // disable all interrupts
@@ -784,6 +784,9 @@ void antiCoggingCal() {       //This is still under development...  The idea is 
   SerialUSB.println(" -----------------DONE!----------------");
   disableTCInterrupts();
 }
+
+
+
 
 
 void parameterEditmain() {
@@ -957,35 +960,9 @@ void parameterEdito() {
   }
 }
 
-//void hybridStep(){
-//  static int missed_steps = 0;
-//  static float iLevel = 0.6;  //hybrid stepping current level.  In this mode, this current is continuous (unlike closed loop mode). Be very careful raising this value as you risk overheating the A4954 driver!
-//  static float rSense = 0.15;
-//
-//  a = readEncoder();
-//  y = lookup_angle(a);
-//  if ((y - y_1) < -180.0) {
-//    wrap_count += 1;
-//  }
-//  else if ((y - y_1) > 180.0) {
-//    wrap_count -= 1;
-//  }
-//  y_1 = y;
-//
-//  yw = (y + (360.0 * wrap_count));
-//
-//  if (yw < 0.1125*step_count-1.8) {
-//    missed_steps -= 1;
-//  }
-//  else if (yw > 0.1125*step_count+1.8) {
-//    missed_steps += 1;
-//  }
-//
-//  output(0.1125 *(-(step_count-missed_steps)), (255/3.3)*(iLevel*10*rSense));
-//}
 
 
-void hybridControl() {
+void hybridControl() {        //still under development
 
   static int missed_steps = 0;
   static float iLevel = 0.6;  //hybrid stepping current level.  In this mode, this current is continuous (unlike closed loop mode). Be very careful raising this value as you risk overheating the A4954 driver!
@@ -1058,19 +1035,32 @@ void serialMenu() {
   // SerialUSB.println(" f  -  get max loop frequency");
   SerialUSB.println("");
 }
-void sineGen(){
-  for (int x = 0; x<=3600;x++){
-    sin_1[x] =round(1024.0*sin((3.14159265358979*((x*0.1/180.0) + 0.25))));
-    sin_2[x] = round(1024.0*sin((3.14159265358979*((x*0.1/180.0) + 0.75))));
+void sineGen() {
+  for (int x = 0; x <= 3600; x++) {
+    sin_1[x] = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.25))));
+    sin_2[x] = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.75))));
   }
-//    for (int x = 0; x<=3600;x++){     //print out commutation table
-//    SerialUSB.print(sin_1[x]);
-//    SerialUSB.print(",");
-//    SerialUSB.println(sin_2[x]);  
-//  }
-  
+  //    for (int x = 0; x<=3600;x++){     //print out commutation table
+  //    SerialUSB.print(sin_1[x]);
+  //    SerialUSB.print(",");
+  //    SerialUSB.println(sin_2[x]);
+  //  }
+
 }
 
 
+
+//void stepResponse() {     // not done yet...
+//  enableTCInterrupts();     //start in closed loop mode
+//  mode = 'x';
+//  r = 0;
+//  print_yw = true;
+//  delay(100);
+//  r = 180.0;
+//  delay(400);
+//  print_yw = false;
+//  disableTCInterrupts();
+//
+//}
 
 
