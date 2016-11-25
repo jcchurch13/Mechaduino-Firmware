@@ -1,3 +1,4 @@
+//187kHz PWM implementation.  Stock analogWrite is much slower and is very audible!
 
 #include "Arduino.h"
 #include "wiring_private.h"

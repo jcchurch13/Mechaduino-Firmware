@@ -1,3 +1,5 @@
+//187kHz PWM implementation.  Stock analogWrite is much slower and is very audible!
+
 #pragma once
 
 #include <stdint.h>

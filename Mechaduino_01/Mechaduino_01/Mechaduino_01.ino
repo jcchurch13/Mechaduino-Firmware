@@ -57,7 +57,7 @@ void setup() {
   
   
   SerialUSB.begin(115200);
-  delay(3000);              //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
+  delay(3000);              //This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.
   serialMenu();
   setupSPI();
   digitalWrite(13,LOW);

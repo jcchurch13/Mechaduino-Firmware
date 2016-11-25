@@ -4,69 +4,65 @@
 #define __UTIL_H__
 
 
-	void setupPins();       // initializes pins
+	void setupPins();                 // initializes pins
 	
-	void setupSPI();        //initializes SPI
+	void setupSPI();                  //initializes SPI
 		
-	void stepInterrupt();   //step interrupt handler
+	void stepInterrupt();             //step interrupt handler
 
-  void dirInterrupt();    //dir interrupt handler
+  void dirInterrupt();              //dir interrupt handler
 
 	void output(float theta, int effort);	  //calculates phase currents (commutation) and outputs to Vref pins
 
-	void calibrate();	      //calibration routine
+	void calibrate();	                //calibration routine
 		
-	void serialCheck();
+	void serialCheck();               //checks serial port for commands.  Must include this in loop() for serial interface to work
 
-	void parameterQuery();
+	void parameterQuery();            //Prints current parameters
 	
-	float lookup_angle(int n);
+	float lookup_angle(int n);        //takes encoder reading and returns calibration-corrected angle
 	
-	void oneStep(void);
+	void oneStep(void);               //take one step
 		
-	int readEncoder();
-	
-	void readEncoderDiagnostics();
+	int readEncoder();                //read raw encoder position
+	  
+	void readEncoderDiagnostics();    //check encoder diagnostics registers
 		
-	void print_angle();
-		
-	void receiveEvent(int howMany);
+	void print_angle();               //for debigging purposes in open loop mode:  prints [step count] , [assumed angle] , [encoder reading]
 	
-	float lookup_force(int m);
+	void receiveEvent(int howMany);   //for i2c interface...
 	
-	int mod(int xMod, int mMod);
+	float lookup_force(int m);        //for anti-cogging... under development
 	
-	float lookup_sine(int m);
+	int mod(int xMod, int mMod);      //modulo,  handles negative values properly    
 	
-	void setupTCInterrupts();
+	void setupTCInterrupts();         //configures control loop interrupt
 	
-	void enableTCInterrupts();
+	void enableTCInterrupts();        //enables control loop interrupt.  Use this to enable "closed-loop" modes
 	
-	void disableTCInterrupts();
+	void disableTCInterrupts();       //disables control loop interrupt.  Use this to diable "closed-loop" mode
 	
-	void antiCoggingCal();
+	void antiCoggingCal();            //under development...
 	
-	void parameterEditmain();
+	void parameterEditmain();         //parameter editing menu
 	
-	void parameterEditp();
+	void parameterEditp();            //parameter editing menu
 	
-	void parameterEditv();
+	void parameterEditv();            //parameter editing menu
 	
-	void parameterEdito();
+	void parameterEdito();            //parameter editing menu
+
+  void hybridControl();             //open loop stepping, but corrects for missed steps.  under development
+
+  void positionControl();           //position control code (PID)
+
+  void velocityControl();           //velocity control code (PID)
   
-  void hybridStep();
+  void torqueControl();             //current control code 
 
-  void hybridControl();
-
-  void positionControl();
-
-  void velocityControl();
+  void serialMenu();                //main menu
   
-  void torqueControl();
-
-  void serialMenu();
-  
-  void sineGen();
+  void sineGen();                   //generates sinusoidal commutation table. you can experiment with other commutation profiles 
 
 #endif
 
