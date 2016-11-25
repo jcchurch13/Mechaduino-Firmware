@@ -1,6 +1,6 @@
 ![image](images/header.PNG)
 
-Here are some preliminary instructions on how to get your Mechaduino up and running.  We will continue to improve this documentation in the coming weeks...this rough overview is just to point anyone who is curious in the right direction!
+Here are some preliminary instructions on how to get your Mechaduino up and running.  We're almost ready to release a manual explaining the Mechaduino hardware & firmware. Stay tuned!
 
 ![image](images/example1.gif)
 
@@ -53,10 +53,7 @@ As long as you have "serialCheck();" in your main loop, you can use the followin
  m  -  print main menu
 
   ...see serialCheck() in Utils for more details
-  
-
-## Coming Soon:
-We're almost ready to release a manual explaining the Mechaduino hardware & firmware.  Stay tuned!
+ 
 
 
 ##License
