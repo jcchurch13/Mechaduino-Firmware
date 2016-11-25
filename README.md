@@ -18,7 +18,7 @@ New firmware is in the default "master" branch, an older version is available in
 
 The first thing you will need to do is run the encoder calibration routine.
 
-With the Mechaduino connected to your computer, open a serial monitor (115200 baud) in the Arduino IDE.  You will need to provide V+ to the Mechaduino to power the motor drivers (needed to calibrate).  Type "s" and press enter a couple times to verify that everything is working.  The Mechaduino should step like a stepper.  It is currently in open loop mode.  press "d" and the stepping direction will change.  
+With the Mechaduino connected to your computer, open a serial monitor (115200 baud) in the Arduino IDE.  You will need to provide V+ to the Mechaduino to power the motor drivers (needed to calibrate).  A menu should appear explaining the basic commands (you can call the menu up at any time by typing 'm').  Type "s" and press enter a couple times to verify that everything is working.  The Mechaduino should step like a stepper.  It is currently in open loop mode.  press "d" and the stepping direction will change.  
 
 Now, make sure nothing will touch the Mechaduino shaft during calibration. Type "c"  to start the calibration routine.  The Mechaduino will now step through all full steps to calibrate the encoder.   When the routine is done, a very long lookup table (16,384 entries) will be printed to the serial terminal.  These are the calibrated angles at each encoder count.  You will need to copy these into the Parameters.cpp file here:
 
@@ -34,22 +34,31 @@ As long as you have "serialCheck();" in your main loop, you can use the followin
 
   
  s  -  step
+ 
  d  -  dir
+ 
  p  -  print angle [step count] , [assumed angle] , [encoder reading]
 
  c  -  calibration routine
+ 
  e  -  check encoder diagnositics
+ 
  q  -  parameter query
 
  x  -  position mode
+ 
  v  -  velocity mode
+ 
  x  -  torque mode
 
  y  -  enable control loop
+ 
  n  -  disable control loop
+ 
  r  -  enter new setpoint
 
  k  -  edit controller gains -- note, these edits are stored in volatile memory and will be reset if power is cycled
+ 
  m  -  print main menu
 
   ...see serialCheck() in Utils for more details
