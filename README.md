@@ -9,7 +9,9 @@ You will need to make sure your Mechaduino has the latest Arduino Zero bootloade
 
 ## Firmware:
 
-Compile the Mechaduino_01 firmware in the Arduino IDE and upload to your Mechaduino.(Mechaduino will appear as an Arduino Zero) New firmware is in the default "master" branch, an older version is available in the multi-file branch and also here(https://github.com/jcchurch13/Mechaduino-Firmware/releases) 
+Compile the Mechaduino_01 firmware in the Arduino IDE and upload to your Mechaduino.  (Mechaduino will appear as an Arduino Zero.)  
+
+New firmware is in the default "master" branch, an older version is available in the multi-file branch and also [here](https://github.com/jcchurch13/Mechaduino-Firmware/releases). 
 
 
 ## Calibration Routine:
