@@ -1,59 +1,45 @@
+
 /*
-
-
+  -------------------------------------------------------------
+  Mechaduino 0.1 Firmware  v0.1.1
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
+  All Mechaduino related materials are released under the
+  Creative Commons Attribution Share-Alike 4.0 License
+  https://creativecommons.org/licenses/by-sa/4.0/
+
+  Many thanks to Will Church, Marco Farrugia, and Kai Wolter.
+  --------------------------------------------------------------
+  
   Controlled via a SerialUSB terminal at 115200 baud.
 
+  Implemented serial commands are:
 
-  ____
-    |
-  0005|-> LED
-  0007|-> pulse
-  0009|-> IN_1
-  0010|-> IN_2
-  0012|-> IN_3
-  0011|-> IN_4
-    |->                   \
-  0008|-> VREF_1             \___A4954
-  0013|-> VREF_2            _/
-   4|->
-  0006|-> chipSelectPin
-   2|
-    |
-  SCK|-> clockPin
-  MOSI|-> MISO
-  MISO|-> MOSI
-  ____|
+ s  -  step
+ d  -  dir
+ p  -  print angle [step count] , [assumed angle] , [encoder reading]
 
+ c  -  calibration routine
+ e  -  check encoder diagnositics
+ q  -  parameter query
 
-  Implemented commands are:
+ x  -  position mode
+ v  -  velocity mode
+ x  -  torque mode
 
-  p  -  print [step count] , [assumed angle] , [encoder reading]
+ y  -  enable control loop
+ n  -  disable control loop
+ r  -  enter new setpoint
 
-  c  -  clear step count & assumed angle
+ k  -  edit controller gains -- note, these edits are stored in volatile memory and will be reset if power is cycled
+ m  -  print main menu
 
-  s  -  step
-
-  d  -  dir toggle
-
-  z  -  seek zero position
-
-  g  -  Go! steps around 400 times
-
-  w  -  Same as go, but stores encoder angles to EEPROM
-
-  r  -  returns EEPROM contents
-
-  a  -  prompts user to enter angle
-
-  y  -  sine sweep
-
-
+  ...see serialCheck() in Utils for more details
 
 */
 
 
+<<<<<<< HEAD
 
 //----Current Parameters-----
 
@@ -227,36 +213,25 @@ int aout = 0;
 
 
 
+=======
+#include "Utils.h"
+#include "Parameters.h"
+#include "State.h"
+#include "analogFastWrite.h"
+>>>>>>> refs/remotes/origin/development2
 
 //////////////////////////////////////
-/////////////////SETUP/////////////////////
+/////////////////SETUP////////////////
 //////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
 
 
 void setup() {
-
-
-  setupPins();
-  setupSPI();
+  digitalWrite(13,HIGH);        //turn LED on 
+  setupPins();                  
   setupTCInterrupts();
-
-  SerialUSB.begin(115200);
-
-  // while (!SerialUSB) {};     //wait for serial
-
-  delay(500);
+  sineGen(); 
   
+<<<<<<< HEAD
 
   enableTCInterrupts();     //start in closed loop mode
   mode = 'x';
@@ -316,36 +291,17 @@ void setup() {
 void loop()
 {
   //mode = 'x';
+=======
+  SerialUSB.begin(115200);
+>>>>>>> refs/remotes/origin/development2
   
+  delay(3000);                  //This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.  
+  serialMenu();
+  setupSPI();
   
-  serialCheck();
-
- // r=0.1125*step_count;
-
-  // electronic gearing with analog
-//  val = 0;
-//  for (int i = 0; i < 10; i++){
-//    val += analogRead(analogPin);    // read the input pin
-//   // delay(1);
-//  }
-// 
-//  SerialUSB.println(0.01*((float)val));             // debug value
-//  r = 0.01*((float)val);
-//
-//  aout = 10.0*yw;
-//
-//  if (aout > 1023){
-//    aout = 1023;
-//  }
-//  else if (aout < 0){
-//    aout = 0;
-//  }
-//  
-//  analogWriteResolution(10);
-//  analogWrite(A0,aout);
-// 
-
+  digitalWrite(13,LOW);         //turn LED off 
   
+<<<<<<< HEAD
 //  for (int i = 0; i < 1024; i++){
 //    analogWrite(A0,i);
 //    delay(2);
@@ -419,21 +375,22 @@ void loop()
   //
 
 
+=======
+  pinMode(3, OUTPUT);           //for debugging control loop timing on pin 3
+>>>>>>> refs/remotes/origin/development2
 
+  //  enableTCInterrupts();     //start in closed loop mode
+  //  mode = 'x';
 
 }
 
 
 
-
-
-
-
-
 //////////////////////////////////////
-/////////////////FUNCTIONS/////////////////////
+/////////////////LOOP/////////////////
 //////////////////////////////////////
 
+<<<<<<< HEAD
 
 //i2c recieve
 
@@ -887,461 +844,15 @@ float lookup_sine(int m)        ////////////////////////////////////////////////
 
 
 float lookup_force(int m)        /////////////////////////////////////////////////  LOOKUP_force   /////////////////////////////
+=======
+void loop()
+>>>>>>> refs/remotes/origin/development2
 {
-  float b_out;
-  //
-  //  m = (0.01*(((m % 62832) + 62832) % 62832))+0.5;  //+0.5 for rounding
-  //
-  //  //SerialUSB.println(m);
-  //
-  //  if (m > 314) {
-  //    m = m - 314;
-  //    b_out = -pgm_read_float_near(force_lookup + m);
-  //
-  //  }
-  //  else
-  //  {
-  b_out = pgm_read_float_near(force_lookup + m);
-  //  }
-  //  //SerialUSB.println(angle_out,DEC);
-  return b_out;
-}
 
+  serialCheck();
 
-
-void stepInterrupt() {
-  if (digitalRead(dir_pin))
-  {
-    step_count += 1;
-  }
-  else
-  {
-    step_count -= 1;
-  }
-
-
-}
-
-
-void setupPins() {
-
-  pinMode(VREF_2, OUTPUT);
-  pinMode(VREF_1, OUTPUT);
-  pinMode(IN_4, OUTPUT);
-  pinMode(IN_3, OUTPUT);
-  pinMode(IN_2, OUTPUT);
-  pinMode(IN_1, OUTPUT);
-  pinMode(pulse, OUTPUT);
-  pinMode(step_pin, INPUT);
-  pinMode(dir_pin, INPUT);
-
-  pinMode(3, OUTPUT);
-  pinMode(4, OUTPUT);
-
-  attachInterrupt(1, stepInterrupt, RISING);
-
-
-
-  analogWrite(VREF_2, 64);
-  analogWrite(VREF_1, 64);
-
-  digitalWrite(IN_4, HIGH);
-  digitalWrite(IN_3, LOW);
-  digitalWrite(IN_2, HIGH);
-  digitalWrite(IN_1, LOW);
-
-  pinMode(ledPin, OUTPUT); // visual signal of I/O to chip
-  // pinMode(clockPin, OUTPUT); // SCK
-  pinMode(chipSelectPin, OUTPUT); // CSn -- has to toggle high and low to signal chip to start data transfer
-  //  pinMode(inputPin, INPUT); // SDA
+  //r=0.1125*step_count; --- no longer need this, step interrupts enabled by default, adjust step angle in parameters.cpp
 
 
 
 }
-
-
-void setupSPI() {
-
-  SPISettings settingsA(400000, MSBFIRST, SPI_MODE1);             ///400000, MSBFIRST, SPI_MODE1);
-
-  SPI.begin();    //AS5047D SPI uses mode=1 (CPOL=0, CPHA=1)
-  SerialUSB.println("Begin...");
-  delay(1000);
-  SPI.beginTransaction(settingsA);
-
-}
-
-
-void setupTCInterrupts() {
-
-
-
-  // Enable GCLK for TC4 and TC5 (timer counter input clock)
-  GCLK->CLKCTRL.reg = (uint16_t) (GCLK_CLKCTRL_CLKEN | GCLK_CLKCTRL_GEN_GCLK0 | GCLK_CLKCTRL_ID(GCM_TC4_TC5));
-  while (GCLK->STATUS.bit.SYNCBUSY);
-
-  TC5->COUNT16.CTRLA.reg &= ~TC_CTRLA_ENABLE;   // Disable TCx
-  WAIT_TC16_REGS_SYNC(TC5)                      // wait for sync
-
-  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_MODE_COUNT16;   // Set Timer counter Mode to 16 bits
-  WAIT_TC16_REGS_SYNC(TC5)
-
-  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_WAVEGEN_MFRQ; // Set TC as normal Normal Frq
-  WAIT_TC16_REGS_SYNC(TC5)
-
-  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_PRESCALER_DIV1;   // Set perscaler
-  WAIT_TC16_REGS_SYNC(TC5)
-
-
-  TC5->COUNT16.CC[0].reg = 0x3E72; //0x4AF0;
-  WAIT_TC16_REGS_SYNC(TC5)
-
-
-  TC5->COUNT16.INTENSET.reg = 0;              // disable all interrupts
-  TC5->COUNT16.INTENSET.bit.OVF = 1;          // enable overfollow
-  TC5->COUNT16.INTENSET.bit.MC0 = 1;         // enable compare match to CC0
-
-  // Enable InterruptVector
-  NVIC_EnableIRQ(TC5_IRQn);
-
-  // Enable TC
-  //  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_ENABLE;
-  //  WAIT_TC16_REGS_SYNC(TC5)
-
-
-
-
-}
-
-
-void enableTCInterrupts() {
-
-  TC5->COUNT16.CTRLA.reg |= TC_CTRLA_ENABLE;    //Enable TC5
-  WAIT_TC16_REGS_SYNC(TC5)                      //wait for sync
-}
-
-
-void disableTCInterrupts() {
-
-
-  TC5->COUNT16.CTRLA.reg &= ~TC_CTRLA_ENABLE;   // Disable TC5
-  WAIT_TC16_REGS_SYNC(TC5)                      // wait for sync
-}
-
-
-
-void commandW() {
-
-  int encoderReading = 0;     //or float?  not sure if we can average for more res?
-  int lastencoderReading = 0;
-  int avg = 10;         //how many readings to average
-
-  int iStart = 0;
-  int jStart = 0;
-  int stepNo = 0;
-
-  int fullStepReadings[spr];
-  int fullStep = 0;
-  //  float newLookup[cpr];
-  int ticks = 0;
-
-  float lookupAngle = 0.0;
-
-  encoderReading = readEncoder();
-  dir = 1;
-  oneStep();
-  delay(500);
-
-  if ((readEncoder() - encoderReading) < 0)
-  {
-    //dir = 0;
-    SerialUSB.println("Wired backwards");
-    return;
-  }
-
-  while (stepNumber != 0) {
-    if (stepNumber > 0) {
-      dir = 1;
-    }
-    else
-    {
-      dir = 0;
-    }
-    oneStep();
-    delay(100);
-  }
-  dir = 1;
-  for (int x = 0; x < spr; x++) {
-
-    encoderReading = 0;
-    delay(100);
-
-    for (int reading = 0; reading < avg; reading++) {
-      encoderReading += readEncoder();
-      delay(10);
-    }
-
-    encoderReading = encoderReading / avg;
-
-    anglefloat = encoderReading * 0.02197265625;
-    fullStepReadings[x] = encoderReading;
-    SerialUSB.println(fullStepReadings[x], DEC);
-    oneStep();
-  }
-  SerialUSB.println(" ");
-  SerialUSB.println("ticks:");
-  SerialUSB.println(" ");
-  for (int i = 0; i < spr; i++) {
-    ticks = fullStepReadings[mod((i + 1), spr)] - fullStepReadings[mod((i), spr)];
-    if (ticks < -15000) {
-      ticks += cpr;
-
-    }
-    else if (ticks > 15000) {
-      ticks -= cpr;
-    }
-    SerialUSB.println(ticks);
-
-    if (ticks > 1) {
-      for (int j = 0; j < ticks; j++) {
-        stepNo = (mod(fullStepReadings[i] + j, cpr));
-        // SerialUSB.println(stepNo);
-        if (stepNo == 0) {
-          iStart = i;
-          jStart = j;
-        }
-
-      }
-    }
-
-    if (ticks < 1) {
-      for (int j = -ticks; j > 0; j--) {
-        stepNo = (mod(fullStepReadings[199 - i] + j, cpr));
-        // SerialUSB.println(stepNo);
-        if (stepNo == 0) {
-          iStart = i;
-          jStart = j;
-        }
-
-      }
-    }
-
-
-
-  }
-
-
-
-
-  SerialUSB.println(" ");
-  SerialUSB.println("newLookup:");
-  SerialUSB.println(" ");
-
-  for (int i = iStart; i < (iStart + spr); i++) {
-    ticks = fullStepReadings[mod((i + 1), spr)] - fullStepReadings[mod((i), spr)];
-
-    if (ticks < -15000) {
-      ticks += cpr;
-
-    }
-    else if (ticks > 15000) {
-      ticks -= cpr;
-    }
-    //SerialUSB.println(ticks);
-
-    if (ticks > 1) {
-      for (int j = jStart; j < (jStart + ticks); j++) {
-        lookupAngle = 0.01 * mod(100 * (aps * i + (aps * j / ticks)), 36000.0);
-        SerialUSB.print(lookupAngle);
-        SerialUSB.print(" , ");
-      }
-    }
-    else if (ticks < 1) {
-      for (int j = jStart - ticks; j > (jStart); j--) {
-        lookupAngle = 0.01 * mod(100 * (aps * (i) + (aps * (ticks + j) / ticks)), 36000.0);
-        SerialUSB.print(lookupAngle);
-        SerialUSB.print(" , ");
-      }
-    }
-
-  }
-  SerialUSB.println(" ");
-
-
-
-
-
-
-
-}
-
-
-
-
-void serialCheck() {
-
-  if (SerialUSB.available()) {
-
-    char inChar = (char)SerialUSB.read();
-
-    switch (inChar) {
-
-
-      case 'p':             //print
-        print_angle();
-        break;
-
-      case 's':             //step
-        oneStep();
-        print_angle();
-        break;
-
-      case 'd':             //dir
-        if (dir == 1) {
-          dir = 0;
-        }
-        else {
-          dir = 1;
-        }
-        break;
-
-      case 'w':
-        commandW();           //cal routine
-        break;
-
-      case 'e':
-        readEncoderDiagnostics();   //encoder error?
-        break;
-
-      case 'y':
-        enableTCInterrupts();      //enable closed loop
-        break;
-
-      case 'n':
-        disableTCInterrupts();      //disable closed loop
-        break;
-
-      case 'r':             //new setpoint
-        SerialUSB.println("Enter setpoint:");
-        while (SerialUSB.available() == 0)  {}
-        r = SerialUSB.parseFloat();
-        break;
-
-      case 'x':
-        mode = 'x';           //position loop
-        break;
-
-      case 'v':
-        mode = 'v';           //velocity loop
-        break;
-
-      case 't':
-        mode = 't';           //torque loop
-        break;
-
-      case 'c':
-        mode = 'c';           //custom loop
-        break;
-
-      case 'q':
-        parameterQuery();     // prints copy-able parameters
-        break;
-      
-      case 'a':             //anticogging
-        antiCoggingCal();
-        break;  
-
-      default:
-        break;
-    }
-  }
-
-}
-
-
-void parameterQuery() {
-  SerialUSB.println(' ');
-  SerialUSB.println("----Current Parameters-----");
-  SerialUSB.println(' ');
-  SerialUSB.println(' ');
-
-  SerialUSB.print("const float Ts = ");
-  SerialUSB.print(Ts, DEC);
-  SerialUSB.println(";");
-  SerialUSB.println(' ');
-
-  SerialUSB.print("const float pKp = ");
-  SerialUSB.print(pKp);
-  SerialUSB.println(";");
-
-  SerialUSB.print("const float pKi = ");
-  SerialUSB.print(pKi);
-  SerialUSB.println(";");
-
-  SerialUSB.print("const float pKd = ");
-  SerialUSB.print(pKd);
-  SerialUSB.println(";");
-
-  SerialUSB.println(' ');
-
-  SerialUSB.print("const float vKp = ");
-  SerialUSB.print(vKp);
-  SerialUSB.println(";");
-
-  SerialUSB.print("const float vKi = ");
-  SerialUSB.print(vKi / Ts);
-  SerialUSB.println(" * Ts;");
-
-  SerialUSB.print("const float vKd = ");
-  SerialUSB.print(vKd * Ts);
-  SerialUSB.println(" / Ts;");
-
-  SerialUSB.println(' ');
-
-  SerialUSB.println("const PROGMEM float lookup[] = {");
-  for (int i = 0; i < 16384; i++) {
-    SerialUSB.print(lookup_angle(i));
-    SerialUSB.print(", ");
-  }
-  SerialUSB.println("");
-  SerialUSB.println("};");
-
-
-
-}
-
-
-int mod(int xMod, int mMod) {
-  return (xMod % mMod + mMod) % mMod;
-}
-
-
-
-void antiCoggingCal() {
-  SerialUSB.println(" -----------------BEGIN ANTICOGGING CALIBRATION!----------------");
-  mode = 'x';
-  r = lookup_angle(1);
-  enableTCInterrupts();
-  delay(1000);
-  
-
-  for (int i = 1; i < 657; i++){
-    r = lookup_angle(i);
-    SerialUSB.print(r,DEC);
-    SerialUSB.print(" , ");
-    delay(100);
-    SerialUSB.println(u,DEC);    
-  }
-  SerialUSB.println(" -----------------REVERSE!----------------");
-
-  for (int i = 656; i > 0; i--){
-    r = lookup_angle(i);
-    SerialUSB.print(r,DEC);
-    SerialUSB.print(" , ");
-    delay(100);
-    SerialUSB.println(u,DEC);    
-  }
-  SerialUSB.println(" -----------------DONE!----------------");
-  disableTCInterrupts();
-}
-
