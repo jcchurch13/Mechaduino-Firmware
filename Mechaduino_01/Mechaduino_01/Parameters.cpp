@@ -7,16 +7,15 @@
 //----Current Parameters-----
 
 volatile float Fs = 6000.0;   //Sample frequency in Hz
-volatile float Ts = 1/Fs;     //Sample period
 
-volatile float pKp = 20;      //position mode PID vallues.  Depending on your motor/load/desired performance, you will need to tune these values.  You can also implement your own control scheme
+volatile float pKp = 15.0;      //position mode PID vallues.  Depending on your motor/load/desired performance, you will need to tune these values.  You can also implement your own control scheme
 volatile float pKi = 0.2;
-volatile float pKd = 5.0;
+volatile float pKd = 2.0;
 
 
 volatile float vKp = 0.05;       //velocity mode PID vallues.  Depending on your motor/load/desired performance, you will need to tune these values.  You can also implement your own control scheme
-volatile float vKi = 200.00 * Ts;
-volatile float vKd = 0.00 / Ts;
+volatile float vKi = 0.033;
+volatile float vKd = 3.0;
 
 //This is the encoder lookup table (created by calibration routine):
 
@@ -27,6 +26,19 @@ const PROGMEM float lookup[] = {
 
 
 
+const int spr = 200;                // 200 steps per revolution  -- for 400 step/rev, you should only need to edit this value
+const float aps = 360.0/ spr;       // angle per step
+int cpr = 16384;                    // counts per rev
+const float stepangle = aps/16.0;   // for hubrid step mode only...
+
+volatile float PA = aps;            // Phase advance...aps = 1.8 for 200 steps per rev, 0.9 for 400
+
+const float iMAX = 1.0;             // Be careful adjusting this.  While the A4954 driver is rated for 2.0 Amp peak currents, it cannot handle these currents continuously.  Depending on how you operate the Mechaduino, you may be able to safely raise this value...please refer to the A4954 datasheet for more info
+const float rSense = 0.150;
+volatile int uMAX = (255/3.3)*(iMAX*10*rSense);   // 255 for 8-bit pwm, 1023 for 10 bit, must also edit analogFastWrite
+
+
+const float pi = 3.14159265359;
 //////////////////////////////////////
 //////////////////PINS////////////////
 //////////////////////////////////////
@@ -42,30 +54,6 @@ const int dir_pin = 0;  //PORT_PA11
 const int step_pin = 1; //Port_PA10
 const int ena_pin = 2;  //PORT_PA14
 
-const float stepangle = 1.8/16.0;
-
-
-const int spr = 200; //  200 steps per revolution
-const float aps = 360.00000000000000000000000 / spr; // angle per step
-int cpr = 16384; //counts per rev
-
-
-
-int step_state = 1;		
-
-
-long angle = 0; //holds processed angle value
-
-float anglefloat = 0;
-
-int a = 0;  // raw encoder value in closed loop and print_angle routine (should fix the latter to use LUT)
-
-
-volatile long step_count = 0;  //For step/dir interrupt
-
-volatile int interrupted = 0;
-
-int stepNumber = 0; // step index for cal routine
 
 const PROGMEM float force_lookup[] = {  //for future use/development (anti-cogging)
 };

@@ -31,7 +31,7 @@
  n  -  disable control loop
  r  -  enter new setpoint
 
- k  -  edit controller gains
+ k  -  edit controller gains -- note, these edits are stored in volatile memory and will be reset if power is cycled
  m  -  print main menu
 
   ...see serialCheck() in Utils for more details
@@ -50,19 +50,20 @@
 
 
 void setup() {
-  digitalWrite(13,HIGH);
-  setupPins();  
+  digitalWrite(13,HIGH);        //turn LED on 
+  setupPins();                  
   setupTCInterrupts();
-  sineGen();
-  
+  sineGen(); 
   
   SerialUSB.begin(115200);
-  delay(3000);              //This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.
+  
+  delay(3000);                  //This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.  
   serialMenu();
   setupSPI();
-  digitalWrite(13,LOW);
   
-  pinMode(3, OUTPUT);
+  digitalWrite(13,LOW);         //turn LED off 
+  
+  pinMode(3, OUTPUT);           //for debugging control loop timing on pin 3
 
   //  enableTCInterrupts();     //start in closed loop mode
   //  mode = 'x';
@@ -80,7 +81,7 @@ void loop()
 
   serialCheck();
 
-  //r=0.1125*step_count; --- no longer need this adjust step angle in parameters.cpp
+  //r=0.1125*step_count; --- no longer need this, step interrupts enabled by default, adjust step angle in parameters.cpp
 
 
 

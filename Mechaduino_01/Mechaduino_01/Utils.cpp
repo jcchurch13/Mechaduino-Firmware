@@ -399,39 +399,44 @@ void parameterQuery() {         //print current parameters in a format that can 
   SerialUSB.println(' ');
   SerialUSB.println(' ');
 
-  SerialUSB.print("volatile float Ts = ");
-  SerialUSB.print(Ts, DEC);
-  SerialUSB.println(";");
+  SerialUSB.print("volatile float Fs = ");
+  SerialUSB.print(Fs, DEC);
+  SerialUSB.println(";  //Sample frequency in Hz");
   SerialUSB.println(' ');
 
   SerialUSB.print("volatile float pKp = ");
-  SerialUSB.print(pKp);
-  SerialUSB.println(";");
-
+  SerialUSB.print(pKp, DEC);
+  SerialUSB.println(";      //position mode PID vallues.");
   SerialUSB.print("volatile float pKi = ");
-  SerialUSB.print(pKi);
+  SerialUSB.print(pKi, DEC);
   SerialUSB.println(";");
 
   SerialUSB.print("volatile float pKd = ");
-  SerialUSB.print(pKd);
+  SerialUSB.print(pKd, DEC);
   SerialUSB.println(";");
 
   SerialUSB.println(' ');
 
   SerialUSB.print("volatile float vKp = ");
-  SerialUSB.print(vKp);
-  SerialUSB.println(";");
+  SerialUSB.print(vKp, DEC);
+  SerialUSB.println(";      //velocity mode PID vallues.");
 
   SerialUSB.print("volatile float vKi = ");
-  SerialUSB.print(vKi / Ts);
-  SerialUSB.println(" * Ts;");
+  SerialUSB.print(vKi , DEC);
+  SerialUSB.println(";");
+ // SerialUSB.println(vKi * Fs, DEC);
+ // SerialUSB.println(" / Fs;");
 
   SerialUSB.print("volatile float vKd = ");
-  SerialUSB.print(vKd * Ts);
-  SerialUSB.println(" / Ts;");
+  SerialUSB.print(vKd, DEC);
+  SerialUSB.println(";");
+ // SerialUSB.print(vKd / Fs);
+ // SerialUSB.println(" * FS;");
 
-  SerialUSB.println(' ');
-
+  SerialUSB.println("");
+  SerialUSB.println("//This is the encoder lookup table (created by calibration routine)");
+  SerialUSB.println("");
+  
   SerialUSB.println("const PROGMEM float lookup[] = {");
   for (int i = 0; i < 16384; i++) {
     SerialUSB.print(lookup_angle(i));
