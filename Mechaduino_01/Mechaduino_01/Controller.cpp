@@ -10,7 +10,7 @@
 
 
 void TC5_Handler() {  // gets called with FPID frequency
-
+  static int print_counter = 0;
 
   if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {  // An overflow caused the interrupt
    
@@ -72,7 +72,12 @@ void TC5_Handler() {  // gets called with FPID frequency
     yw_1 = yw;
     y_1 = y;
     if (print_yw ==  true){       //for step resonse... still under development
-      SerialUSB.println(int(yw*1024));
+      print_counter += 1;
+      
+      if (print_counter >= 5){
+        SerialUSB.println(int(yw*1024));
+        print_counter = 0;
+      }
     }
     TC5->COUNT16.INTFLAG.bit.OVF = 1;    // writing a one clears the flag ovf flag
     REG_PORT_OUTCLR0 = PORT_PA09; //digitalWrite(3, LOW);

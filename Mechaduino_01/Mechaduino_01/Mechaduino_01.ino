@@ -79,8 +79,7 @@ void setup() {
 void loop()
 {
 
-  serialCheck();
-
+    serialCheck();
   //r=0.1125*step_count; --- no longer need this, step interrupts enabled by default, adjust step angle in parameters.cpp
 
 

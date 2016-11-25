@@ -64,5 +64,6 @@
   
   void sineGen();                   //generates sinusoidal commutation table. you can experiment with other commutation profiles 
 
+  void stepResponse();
 #endif
 

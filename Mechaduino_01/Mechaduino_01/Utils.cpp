@@ -383,6 +383,10 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
       case 'm':
         serialMenu();
         break;
+        
+      case 'j':
+        stepResponse();
+        break;
 
 
       default:
@@ -774,53 +778,65 @@ void parameterEditmain() {
 }
 
 void parameterEditp() {
-
-
-  SerialUSB.println("Edit position loop gains:");
-  SerialUSB.println();
-  SerialUSB.print("p ----- pKp = ");
-  SerialUSB.println(pKp, DEC);
-  SerialUSB.print("i ----- pKi = ");
-  SerialUSB.println(pKi, DEC);
-  SerialUSB.print("d ----- pKd = ");
-  SerialUSB.println(pKd, DEC);
-  SerialUSB.println("q ----- quit");
-  SerialUSB.println();
-
-  while (SerialUSB.available() == 0)  {}
-  char inChar3 = (char)SerialUSB.read();
-
-  switch (inChar3) {
-    case 'p':
-      {
-        SerialUSB.println("pKp = ?");
-        while (SerialUSB.available() == 0)  {}
-        pKp = SerialUSB.parseFloat();
-        SerialUSB.print("new pKp = ");
-        SerialUSB.println(pKp, DEC);
-      }
-      break;
-    case 'i':
-      {
-        SerialUSB.println("pKi = ?");
-        while (SerialUSB.available() == 0)  {}
-        pKi = SerialUSB.parseFloat();
-        SerialUSB.print("new pKi = ");
-        SerialUSB.println(pKi, DEC);
-      }
-      break;
-    case 'd':
-      {
-        SerialUSB.println("pKd = ?");
-        while (SerialUSB.available() == 0)  {}
-        pKd = SerialUSB.parseFloat();
-        SerialUSB.print("new pKd = ");
-        SerialUSB.println(pKd, DEC);
-      }
-      break;
-    default:
-      {}
-      break;
+  
+  bool quit = false;
+  while(!quit){
+    SerialUSB.println("Edit position loop gains:");
+    SerialUSB.println();
+    SerialUSB.print("p ----- pKp = ");
+    SerialUSB.println(pKp, DEC);
+    SerialUSB.print("i ----- pKi = ");
+    SerialUSB.println(pKi, DEC);
+    SerialUSB.print("d ----- pKd = ");
+    SerialUSB.println(pKd, DEC);
+    SerialUSB.println("q ----- quit");
+    SerialUSB.println();
+    
+    while (SerialUSB.available() == 0)  {}
+    char inChar3 = (char)SerialUSB.read();
+    
+    switch (inChar3) {
+      case 'p':
+        {
+          SerialUSB.println("pKp = ?");
+          while (SerialUSB.available() == 0)  {}
+          pKp = SerialUSB.parseFloat();
+          SerialUSB.print("new pKp = ");
+          SerialUSB.println(pKp, DEC);
+          SerialUSB.println("");
+        }
+        break;
+      case 'i':
+        {
+          SerialUSB.println("pKi = ?");
+          while (SerialUSB.available() == 0)  {}
+          pKi = SerialUSB.parseFloat();
+          SerialUSB.print("new pKi = ");
+          SerialUSB.println(pKi, DEC);
+          SerialUSB.println("");
+        }
+        break;
+      case 'd':
+        {
+          SerialUSB.println("pKd = ?");
+          while (SerialUSB.available() == 0)  {}
+          pKd = SerialUSB.parseFloat();
+          SerialUSB.print("new pKd = ");
+          SerialUSB.println(pKd, DEC);
+          SerialUSB.println("");
+        }
+        break;
+      case 'q':
+        {  
+          quit = true;
+          SerialUSB.println("");
+          SerialUSB.println("done...");
+          SerialUSB.println("k");
+        }
+      default:
+        {}
+        break;
+    }
   }
 }
 
@@ -972,7 +988,7 @@ void serialMenu() {
   SerialUSB.println(" n  -  disable control loop");
   SerialUSB.println(" r  -  enter new setpoint");
   SerialUSB.println("");
-  // SerialUSB.println(" j  -  step response");
+   SerialUSB.println(" j  -  step response");
   SerialUSB.println(" k  -  edit controller gains");
   SerialUSB.println(" m  -  print main menu");
   // SerialUSB.println(" f  -  get max loop frequency");
@@ -993,17 +1009,44 @@ void sineGen() {
 
 
 
-//void stepResponse() {     // not done yet...
-//  enableTCInterrupts();     //start in closed loop mode
-//  mode = 'x';
-//  r = 0;
-//  print_yw = true;
-//  delay(100);
-//  r = 180.0;
-//  delay(400);
-//  print_yw = false;
-//  disableTCInterrupts();
-//
-//}
+void stepResponse() {     // not done yet...
+  SerialUSB.println("");
+  SerialUSB.println("--------------------------------");
+  SerialUSB.println("");
+  SerialUSB.println("Get ready for step response!");
+  SerialUSB.println("Close Serial Monitor and open Tools>>Serial Plotter");
+  SerialUSB.println("You have 10 seconds...");
+  enableTCInterrupts();     //start in closed loop mode
+  mode = 'x';
+  r = 0;
+  delay(1000);
+  SerialUSB.println("9...");
+  delay(1000);
+  SerialUSB.println("8...");
+  delay(1000);
+  SerialUSB.println("7...");
+  delay(1000);
+  SerialUSB.println("6...");
+  delay(1000);
+  SerialUSB.println("5...");
+  delay(1000);
+  SerialUSB.println("4...");
+  delay(1000);
+  SerialUSB.println("3...");
+  delay(1000);
+  SerialUSB.println("2...");
+  delay(1000);
+  SerialUSB.println("1...");
+  delay(1000);
+  print_yw = true;
+  delay(100);
+  r = 45.0;
+  delay(400);
+  print_yw = false;
+  r = 0;
+  delay(500);
+  disableTCInterrupts();
+
+}
 
 
