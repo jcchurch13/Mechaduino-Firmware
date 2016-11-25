@@ -50,13 +50,18 @@
 
 
 void setup() {
-  SerialUSB.begin(115200);
+  digitalWrite(13,HIGH);
   sineGen();
-  delay(3000);          //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
-  serialMenu();
   setupPins();
   setupSPI();
   setupTCInterrupts();
+ 
+  
+  SerialUSB.begin(115200);
+  delay(3000);              //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
+  serialMenu();
+
+  digitalWrite(13,LOW);
   
   pinMode(3, OUTPUT);
 

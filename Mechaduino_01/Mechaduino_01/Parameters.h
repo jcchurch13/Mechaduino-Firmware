@@ -40,7 +40,6 @@ extern const int spr; //  200 steps per revolution
 extern const float aps; // angle per step
 extern int cpr; //counts per rev
 
-
 extern int dir;		//initialize stepping mode variables
 extern int step_state;
 
@@ -64,7 +63,7 @@ extern const PROGMEM float lookup[];
 extern const PROGMEM float force_lookup[];
 
 extern  int sin_1[3600];
-extern  int sin_2[3600];
+//extern  int sin_2[3600];
 
 #endif
 

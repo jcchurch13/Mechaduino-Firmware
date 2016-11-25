@@ -34,8 +34,8 @@ void setupPins() {
   attachInterrupt(1, stepInterrupt, RISING);
   attachInterrupt(dir_pin, dirInterrupt, CHANGE);
 
-  analogFastWrite(VREF_2, 64);
-  analogFastWrite(VREF_1, 64);
+  analogFastWrite(VREF_2, 0.33 * uMAX);
+  analogFastWrite(VREF_1, 0.33 * uMAX);
 
   digitalWrite(IN_4, HIGH);
   digitalWrite(IN_3, LOW);
@@ -70,7 +70,8 @@ void dirInterrupt() {
 }
 
 void output(float theta, int effort) {
-  static volatile int angle;
+  static volatile int angle_1;
+  static volatile int angle_2;
   static volatile int v_coil_A;
   static volatile int v_coil_B;
 
@@ -80,14 +81,17 @@ void output(float theta, int effort) {
 
   //REG_PORT_OUTCLR0 = PORT_PA09; for debugging/timing
 
-  angle = mod((phase_multiplier * theta) , 3600);
-
-  sin_coil_A = sin_1[angle];
+  angle_1 = mod((phase_multiplier * theta) , 3600);
+  angle_2 = mod((phase_multiplier * theta)+900 , 3600);
+  
+  sin_coil_A = sin_1[angle_1];
   if (sin_coil_A > 1024) {
     sin_coil_A = sin_coil_A - 65536;
   }
 
-  sin_coil_B = sin_2[angle];
+//  sin_coil_B = sin_2[angle];
+
+  sin_coil_B = sin_1[angle_2];
   if (sin_coil_B > 1024) {
     sin_coil_B = sin_coil_B - 65536;
   }
@@ -182,8 +186,10 @@ void calibrate() {   /// this is the calibration routine
   int iStart = 0;     //encoder zero position index
   int jStart = 0;
   int stepNo = 0;
-
+  SerialUSB.println("made it here");
+  
   int fullStepReadings[spr];
+  SerialUSB.println("made it here");  
   int fullStep = 0;
   int ticks = 0;
   float lookupAngle = 0.0;
@@ -509,7 +515,7 @@ void oneStep() {           /////////////////////////////////   oneStep    //////
   }
 
   //output(1.8 * stepNumber, 64); //updata 1.8 to aps..., second number is control effort
-  output(aps * stepNumber, (int)(0.25 * uMAX));
+  output(aps * stepNumber, (int)(0.33 * uMAX));
   delay(10);
 }
 
@@ -697,18 +703,18 @@ float lookup_force(int m)        ///////////////////////////////////////////////
   return b_out;
 }
 
-float lookup_sine(int m)        /////////////////////////////////////////////////  LOOKUP_SINE   /////////////////////////////
-{
-  float b_out;
-  m = (0.01 * (((m % 62832) + 62832) % 62832)) + 0.5; //+0.5 for rounding
-  if (m > 314) {
-    m = m - 314;
-    b_out = -pgm_read_float_near(sine_lookup + m);
-  }
-  else b_out = pgm_read_float_near(sine_lookup + m);
-
-  return b_out;
-}
+//float lookup_sine(int m)        /////////////////////////////////////////////////  LOOKUP_SINE   /////////////////////////////
+//{
+//  float b_out;
+//  m = (0.01 * (((m % 62832) + 62832) % 62832)) + 0.5; //+0.5 for rounding
+//  if (m > 314) {
+//    m = m - 314;
+//    b_out = -pgm_read_float_near(sine_lookup + m);
+//  }
+//  else b_out = pgm_read_float_near(sine_lookup + m);
+//
+//  return b_out;
+//}
 
 
 void setupTCInterrupts() {  // configure the controller interrupt
@@ -968,10 +974,10 @@ void hybridControl() {        //still under development
   static float iLevel = 0.6;  //hybrid stepping current level.  In this mode, this current is continuous (unlike closed loop mode). Be very careful raising this value as you risk overheating the A4954 driver!
   static float rSense = 0.15;
 
-  if (yw < r - 1.8) {
+  if (yw < r - aps) {
     missed_steps -= 1;
   }
-  else if (yw > r + 1.8) {
+  else if (yw > r + aps) {
     missed_steps += 1;
   }
 
@@ -1017,7 +1023,7 @@ void serialMenu() {
   SerialUSB.println(" d  -  dir");
   SerialUSB.println(" p  -  print angle");
   SerialUSB.println("");
-  SerialUSB.println(" w  -  write new calibration table");
+  SerialUSB.println(" c  -  write new calibration table");
   SerialUSB.println(" e  -  check encoder diagnositics");
   SerialUSB.println(" q  -  parameter query");
   SerialUSB.println("");
@@ -1038,13 +1044,13 @@ void serialMenu() {
 void sineGen() {
   for (int x = 0; x <= 3600; x++) {
     sin_1[x] = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.25))));
-    sin_2[x] = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.75))));
+   // sin_2[x] = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.75))));    
   }
-  //    for (int x = 0; x<=3600;x++){     //print out commutation table
-  //    SerialUSB.print(sin_1[x]);
-  //    SerialUSB.print(",");
-  //    SerialUSB.println(sin_2[x]);
-  //  }
+//      for (int x = 0; x<=3600;x++){     //print out commutation table
+//      SerialUSB.print(sin_1[x]);
+//      SerialUSB.print(",");
+//      SerialUSB.print(sin_2[x]);
+//    }
 
 }
 
