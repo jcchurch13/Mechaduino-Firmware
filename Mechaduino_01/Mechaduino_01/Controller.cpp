@@ -16,9 +16,10 @@ void TC5_Handler() {  // gets called with FPID frequency
    
     REG_PORT_OUTSET0 = PORT_PA09;  //digitalWrite(3, HIGH); //Fast Write to Digital 3
     a = readEncoder();
-    REG_PORT_OUTCLR0 = PORT_PA09;  //digitalWrite(3, LOW);
+   
     y = lookup_angle(a);
-
+     REG_PORT_OUTCLR0 = PORT_PA09;  //digitalWrite(3, LOW);
+   
     if ((y - y_1) < -180.0) wrap_count += 1;
     else if ((y - y_1) > 180.0) wrap_count -= 1;
 

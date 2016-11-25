@@ -53,17 +53,16 @@ extern int a;  // raw encoder value in closed loop and print_angle routine (shou
 
 extern volatile long step_count;  //For step/dir interrupt
 
-extern volatile int interrupted;
+//extern volatile int interrupted;
 
 extern int stepNumber; // step index for cal routine
 
 
-extern const PROGMEM float sine_lookup[];
 extern const PROGMEM float lookup[];
 extern const PROGMEM float force_lookup[];
 
 extern  int sin_1[3600];
-//extern  int sin_2[3600];
+
 
 #endif
 

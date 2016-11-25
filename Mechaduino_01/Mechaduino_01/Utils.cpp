@@ -42,9 +42,6 @@ void setupPins() {
   digitalWrite(IN_2, HIGH);
   digitalWrite(IN_1, LOW);
 
-
-
-
 }
 
 void setupSPI() {
@@ -89,8 +86,6 @@ void output(float theta, int effort) {
     sin_coil_A = sin_coil_A - 65536;
   }
 
-//  sin_coil_B = sin_2[angle];
-
   sin_coil_B = sin_1[angle_2];
   if (sin_coil_B > 1024) {
     sin_coil_B = sin_coil_B - 65536;
@@ -123,59 +118,6 @@ void output(float theta, int effort) {
 }
 
 
-//void output(float theta, int effort) {                    //////////////////////////////////////////   OUTPUT   ///////////////////
-//  static int start = 0;
-//  static int finish = 0;
-//  static int intangle;
-//  static float floatangle;
-//  static int modangle;
-//
-//
-//  // this next line calculates one of the two phase "excitation angles" for a given rotor angle i degrees
-//  floatangle = (10000 * ( theta * 0.87266 + 2.3562) );       // theta*(pi/180)*(spr/4) + (3*pi/4)   ...spr/4 because excitation state is periodic every 4 steps (look at a traditional step patterns for clarification)
-//  // 10000 scales this to work with sine lookup table
-//
-//  intangle = (int)floatangle;
-//  //  modangle = (((intangle % 628) + 628) % 628);
-//  val1 = effort * lookup_sine(intangle);
-//
-//  analogFastWrite(VREF_2, abs(val1));                        //set phase current 1
-//
-//  if (val1 >= 0)  {                                          //set phase 1 driver direction control (see a4954 datasheet)
-//    REG_PORT_OUTSET0 = PORT_PA20;     //write IN_4 HIGH
-//    REG_PORT_OUTCLR0 = PORT_PA15;     //write IN_3 LOW
-//    // digitalWrite(IN_4, HIGH);
-//    // digitalWrite(IN_3, LOW);
-//  }
-//  else  {
-//    REG_PORT_OUTCLR0 = PORT_PA20;     //write IN_4 LOW
-//    REG_PORT_OUTSET0 = PORT_PA15;     //write IN_3 HIGH
-//    //digitalWrite(IN_4, LOW);
-//    //digitalWrite(IN_3, HIGH);
-//  }
-//  // this next line calculates the second of the two phase "excitation angles" for a given rotor angle i degrees
-//  floatangle = (10000 * (  theta * 0.8726646 + 0.7854) );          // theta*(pi/180)*(spr/4) + (pi/4)   ...spr/4 because excitation state is periodic every 4 steps (look at a traditional step patterns for clarification)
-//  // 10000 scales this to work with sine lookup table
-//  intangle = (int)floatangle;
-//  // modangle = (((intangle % 628) + 628) % 628);
-//  val2 = effort * lookup_sine(intangle);
-//
-//  analogFastWrite(VREF_1, abs(val2));                       //set phase 2 current
-//
-//  if (val2 >= 0)  {                                         //set phase 2 driver direction control  (see a4954 datasheet)
-//    REG_PORT_OUTSET0 = PORT_PA21;     //write IN_2 HIGH
-//    REG_PORT_OUTCLR0 = PORT_PA06;     //write IN_1 LOW
-//    //digitalWrite(IN_2, HIGH);
-//    //digitalWrite(IN_1, LOW);
-//  }
-//  else  {
-//    REG_PORT_OUTCLR0 = PORT_PA21;     //write IN_2 LOW
-//    REG_PORT_OUTSET0 = PORT_PA06;     //write IN_1 HIGH
-//    //digitalWrite(IN_2, LOW);
-//    //digitalWrite(IN_1, HIGH);
-//  }
-//}
-
 
 void calibrate() {   /// this is the calibration routine
 
@@ -186,13 +128,13 @@ void calibrate() {   /// this is the calibration routine
   int iStart = 0;     //encoder zero position index
   int jStart = 0;
   int stepNo = 0;
-  SerialUSB.println("made it here");
   
   int fullStepReadings[spr];
-  SerialUSB.println("made it here");  
+    
   int fullStep = 0;
   int ticks = 0;
   float lookupAngle = 0.0;
+  SerialUSB.println("Beginning calibration routine...");
 
   encoderReading = readEncoder();
   dir = true;
@@ -230,12 +172,15 @@ void calibrate() {   /// this is the calibration routine
 
     anglefloat = encoderReading * 0.02197265625;    //encoderReading * 360/16384
     fullStepReadings[x] = encoderReading;
-    SerialUSB.println(fullStepReadings[x], DEC);      //print readings as a sanity check
+   // SerialUSB.println(fullStepReadings[x], DEC);      //print readings as a sanity check
+    SerialUSB.print(100.0*x/spr,1);
+    SerialUSB.println("%");
+    
     oneStep();
   }
-  SerialUSB.println(" ");
-  SerialUSB.println("ticks:");                        //"ticks" represents the number of encoder counts between successive steps... these should be around 82 for a 1.8 degree stepper
-  SerialUSB.println(" ");
+ // SerialUSB.println(" ");
+ // SerialUSB.println("ticks:");                        //"ticks" represents the number of encoder counts between successive steps... these should be around 82 for a 1.8 degree stepper
+ // SerialUSB.println(" ");
   for (int i = 0; i < spr; i++) {
     ticks = fullStepReadings[mod((i + 1), spr)] - fullStepReadings[mod((i), spr)];
     if (ticks < -15000) {
@@ -245,7 +190,7 @@ void calibrate() {   /// this is the calibration routine
     else if (ticks > 15000) {
       ticks -= cpr;
     }
-    SerialUSB.println(ticks);
+   // SerialUSB.println(ticks);
 
     if (ticks > 1) {                                    //note starting point with iStart,jStart
       for (int j = 0; j < ticks; j++) {
@@ -1046,11 +991,11 @@ void sineGen() {
     sin_1[x] = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.25))));
    // sin_2[x] = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.75))));    
   }
-//      for (int x = 0; x<=3600;x++){     //print out commutation table
-//      SerialUSB.print(sin_1[x]);
-//      SerialUSB.print(",");
-//      SerialUSB.print(sin_2[x]);
-//    }
+   //   for (int x = 0; x<=3600;x++){     //print out commutation table
+   //   SerialUSB.println(sin_1[x]);
+   //   SerialUSB.print(",");
+   //   SerialUSB.print(sin_2[x]);
+   // }
 
 }
 
