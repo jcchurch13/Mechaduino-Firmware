@@ -20,8 +20,6 @@
 
 	void parameterQuery();            //Prints current parameters
 	
-	float lookup_angle(int n);        //takes encoder reading and returns calibration-corrected angle
-	
 	void oneStep(void);               //take one step
 		
 	int readEncoder();                //read raw encoder position
