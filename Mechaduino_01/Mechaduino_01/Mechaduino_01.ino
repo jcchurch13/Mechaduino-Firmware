@@ -65,8 +65,8 @@ void setup() {
   
   pinMode(3, OUTPUT);           //for debugging control loop timing on pin 3
 
-  //  enableTCInterrupts();     //start in closed loop mode
-  //  mode = 'x';
+    enableTCInterrupts();     //start in closed loop mode
+    mode = 't';
 
 }
 
@@ -78,8 +78,49 @@ void setup() {
 
 void loop()
 {
-
+    
     serialCheck();
+    static int val_1 = 0;
+    static int val_2 = 0;
+    static int val_3 = 0;
+    static int val_4 = 0;
+    static int val_5 = 0;
+    static int val_6 = 0;
+    static int val_7 = 0;
+    static int val_8 = 0;
+    static int val_9 = 0;
+    int val = analogRead(0)-512;
+    
+//    SerialUSB.print(val);
+//    SerialUSB.print(" , ");
+    //delay(1);
+    if (val>10) {
+       if (val>30) {
+          val = 0;
+       }
+       else val = 10;
+
+      }
+    
+
+    else if (val<-10) {
+      if (val<-30) {
+          val = 0;
+      }
+      else val = -10;
+    }
+
+    r = 2*(val+val_1+val_2+val_3+val_4+val_5+val_6+val_7+val_8+val_9)+1*((val+val_1+val_2+val_3+val_4+val_5+val_6+val_7+val_8+val_9)/abs((val+val_1+val_2+val_3+val_4+val_5+val_6+val_7+val_8+val_9)));
+    SerialUSB.println(r);
+    val_9 = val_8;    
+    val_8 = val_7;    
+    val_7 = val_6;
+    val_6 = val_5;
+    val_5 = val_4;
+    val_4 = val_3;
+    val_3 = val_2;
+    val_2 = val_1;
+    val_1 = val;
   //r=0.1125*step_count; --- no longer need this, step interrupts enabled by default, adjust step angle in parameters.cpp
 
 
