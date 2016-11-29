@@ -52,14 +52,7 @@ void setup() {
   digitalWrite(13,HIGH);        //turn LED on 
   setupPins();                  
   setupTCInterrupts();
-<<<<<<< HEAD
-  sineGen(); 
-  stepNumber = 0;  //this fixes a memory bug.... better fix coming soon.
-  
 
-=======
-    
->>>>>>> refs/remotes/origin/development2
   SerialUSB.begin(115200);
   delay(3000);                  //This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.  
   serialMenu();
