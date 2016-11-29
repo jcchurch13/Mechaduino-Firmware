@@ -53,6 +53,7 @@ void setup() {
   setupPins();                  
   setupTCInterrupts();
   sineGen(); 
+  stepNumber = 0;  //this fixes a memory bug.... better fix coming soon.
   
 
   SerialUSB.begin(115200);
