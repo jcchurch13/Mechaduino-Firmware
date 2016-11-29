@@ -373,6 +373,10 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
       case 'k':
         parameterEditmain();
         break;
+        
+      case 'g':
+        sineGen();
+        break;
 
       case 'm':
         serialMenu();
@@ -977,20 +981,26 @@ void serialMenu() {
   SerialUSB.println("");
    SerialUSB.println(" j  -  step response");
   SerialUSB.println(" k  -  edit controller gains");
+  SerialUSB.println(" g  -  generate sine commutation table");
   SerialUSB.println(" m  -  print main menu");
   // SerialUSB.println(" f  -  get max loop frequency");
   SerialUSB.println("");
 }
 void sineGen() {
+  int temp;
+     SerialUSB.println("");
+     SerialUSB.println("The sineGen() function in Utils.cpp generates a sinusoidal commutation table.");
+     SerialUSB.println("You can experiment with different commutation profiles by modifying this table.");
+     SerialUSB.println("The below table should be copied into sine_1 in Parameters.cpp.");   
+     SerialUSB.println("");
+     delay(3000);
+     SerialUSB.println("Printing sine look up table:...");
+     SerialUSB.println("");
   for (int x = 0; x <= 3600; x++) {
-    sin_1[x] = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.25))));
-   // sin_2[x] = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.75))));    
+    temp = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.25))));
+   SerialUSB.print(temp);
+   SerialUSB.print(", ");  
   }
-   //   for (int x = 0; x<=3600;x++){     //print out commutation table
-   //   SerialUSB.println(sin_1[x]);
-   //   SerialUSB.print(",");
-   //   SerialUSB.print(sin_2[x]);
-   // }
 
 }
 
