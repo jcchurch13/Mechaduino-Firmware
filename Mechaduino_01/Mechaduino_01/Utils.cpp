@@ -67,23 +67,29 @@ void dirInterrupt() {
 }
 
 void output(float theta, int effort) {
-   int angle_1;
-   int angle_2;
-   int v_coil_A;
-   int v_coil_B;
+  static volatile int angle_1;
+  static volatile int angle_2;
+  static volatile int v_coil_A;
+  static volatile int v_coil_B;
 
-   int sin_coil_A;
-   int sin_coil_B;
-   int phase_multiplier = 10 * spr / 4;
+  static int sin_coil_A;
+  static int sin_coil_B;
+  static int phase_multiplier = 10 * spr / 4;
 
   //REG_PORT_OUTCLR0 = PORT_PA09; for debugging/timing
 
   angle_1 = mod((phase_multiplier * theta) , 3600);
   angle_2 = mod((phase_multiplier * theta)+900 , 3600);
   
-  sin_coil_A  = sin_1[angle_1];
+  sin_coil_A = sin_1[angle_1];
+  if (sin_coil_A > 1024) {
+    sin_coil_A = sin_coil_A - 65536;
+  }
 
   sin_coil_B = sin_1[angle_2];
+  if (sin_coil_B > 1024) {
+    sin_coil_B = sin_coil_B - 65536;
+  }
 
   v_coil_A = ((effort * sin_coil_A) / 1024);
   v_coil_B = ((effort * sin_coil_B) / 1024);
@@ -435,9 +441,9 @@ void parameterQuery() {         //print current parameters in a format that can 
   SerialUSB.println("//This is the encoder lookup table (created by calibration routine)");
   SerialUSB.println("");
   
-  SerialUSB.println("const float lookup[] = {");
+  SerialUSB.println("const PROGMEM float lookup[] = {");
   for (int i = 0; i < 16384; i++) {
-    SerialUSB.print(lookup[i]);
+    SerialUSB.print(lookup_angle(i));
     SerialUSB.print(", ");
   }
   SerialUSB.println("");
@@ -446,6 +452,12 @@ void parameterQuery() {         //print current parameters in a format that can 
 }
 
 
+float lookup_angle(int n)
+{
+  float a_out;
+  a_out = pgm_read_float_near(lookup + n);
+  return a_out;
+}
 
 void oneStep() {           /////////////////////////////////   oneStep    ///////////////////////////////
 
@@ -464,16 +476,17 @@ void oneStep() {           /////////////////////////////////   oneStep    //////
 int readEncoder()           //////////////////////////////////////////////////////   READENCODER   ////////////////////////////
 {
   long angleTemp;
-   REG_PORT_OUTCLR1 = PORT_PB09;  //
-  //digitalWrite(chipSelectPin, LOW);
+  // REG_PORT_OUTCLR0 = PORT_PB08;  //
+  digitalWrite(chipSelectPin, LOW);
 
   byte b1 = SPI.transfer(0xFF);
   byte b2 = SPI.transfer(0xFF);
 
   angleTemp = (((b1 << 8) | b2) & 0B0011111111111111);
+  //  SerialUSB.println((angle & 0B0011111111111111)*0.02197265625);
 
-  REG_PORT_OUTSET1 = PORT_PB09;  //
-  //digitalWrite(chipSelectPin, HIGH);
+  // REG_PORT_OUTSET0 = PORT_PB08;  //
+  digitalWrite(chipSelectPin, HIGH);
   return angleTemp;
 }
 
@@ -694,13 +707,13 @@ void disableTCInterrupts() {  //disables the controller interrupt ("closed loop 
 void antiCoggingCal() {       //This is still under development...  The idea is that we can calibrate out the stepper motor's detent torque by measuring the torque required to hold all possible positions.
   SerialUSB.println(" -----------------BEGIN ANTICOGGING CALIBRATION!----------------");
   mode = 'x';
-  r = lookup[1];
+  r = lookup_angle(1);
   enableTCInterrupts();
   delay(1000);
 
 
   for (int i = 1; i < 657; i++) {
-    r = lookup[i];
+    r = lookup_angle(i);
     SerialUSB.print(r, DEC);
     SerialUSB.print(" , ");
     delay(100);
@@ -709,7 +722,7 @@ void antiCoggingCal() {       //This is still under development...  The idea is 
   SerialUSB.println(" -----------------REVERSE!----------------");
 
   for (int i = 656; i > 0; i--) {
-    r = lookup[i];
+    r = lookup_angle(i);
     SerialUSB.print(r, DEC);
     SerialUSB.print(" , ");
     delay(100);
@@ -929,8 +942,8 @@ void positionControl() {
   e = (r - yw);
 
   ITerm += (pKi * e);                             //Integral wind up limit
-  if (ITerm > 150.0) ITerm = 150.0;
-  else if (ITerm < -150.0) ITerm = -150.0;
+  if (ITerm > 150) ITerm = 150;
+  else if (ITerm < -150) ITerm = -150;
 
   u = ((pKp * e) + ITerm - (pKd * (yw - yw_1))); //ARDUINO library style PID controller
 }
@@ -1027,7 +1040,7 @@ void stepResponse() {     // not done yet...
   delay(1000);
   print_yw = true;
   delay(100);
-  r = 10.0;
+  r = 45.0;
   delay(400);
   print_yw = false;
   r = 0;
