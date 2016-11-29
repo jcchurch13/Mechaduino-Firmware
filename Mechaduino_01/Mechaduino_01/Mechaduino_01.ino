@@ -53,8 +53,6 @@ void setup() {
   digitalWrite(13,HIGH);        //turn LED on 
   setupPins();                  
   setupTCInterrupts();
-  sineGen(); 
-  stepNumber = 0;  //this fixes a memory bug.... better fix coming soon.
     
   SerialUSB.begin(115200);
   
@@ -64,8 +62,7 @@ void setup() {
   
   digitalWrite(13,LOW);         //turn LED off 
   
-  pinMode(3, OUTPUT);           //for debugging control loop timing on pin 3
-
+  pinMode(3, OUTPUT);           //for debugging control loop timing on pin 3 
 
   //  enableTCInterrupts();     //start in closed loop mode
   //  mode = 'x';
