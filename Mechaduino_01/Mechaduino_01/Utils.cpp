@@ -67,29 +67,23 @@ void dirInterrupt() {
 }
 
 void output(float theta, int effort) {
-  static volatile int angle_1;
-  static volatile int angle_2;
-  static volatile int v_coil_A;
-  static volatile int v_coil_B;
+   int angle_1;
+   int angle_2;
+   int v_coil_A;
+   int v_coil_B;
 
-  static int sin_coil_A;
-  static int sin_coil_B;
-  static int phase_multiplier = 10 * spr / 4;
+   int sin_coil_A;
+   int sin_coil_B;
+   int phase_multiplier = 10 * spr / 4;
 
   //REG_PORT_OUTCLR0 = PORT_PA09; for debugging/timing
 
   angle_1 = mod((phase_multiplier * theta) , 3600);
   angle_2 = mod((phase_multiplier * theta)+900 , 3600);
   
-  sin_coil_A = sin_1[angle_1];
-  if (sin_coil_A > 1024) {
-    sin_coil_A = sin_coil_A - 65536;
-  }
+  sin_coil_A  = sin_1[angle_1];
 
   sin_coil_B = sin_1[angle_2];
-  if (sin_coil_B > 1024) {
-    sin_coil_B = sin_coil_B - 65536;
-  }
 
   v_coil_A = ((effort * sin_coil_A) / 1024);
   v_coil_B = ((effort * sin_coil_B) / 1024);
@@ -383,6 +377,10 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
       case 'm':
         serialMenu();
         break;
+        
+      case 'j':
+        stepResponse();
+        break;
 
 
       default:
@@ -437,9 +435,9 @@ void parameterQuery() {         //print current parameters in a format that can 
   SerialUSB.println("//This is the encoder lookup table (created by calibration routine)");
   SerialUSB.println("");
   
-  SerialUSB.println("const PROGMEM float lookup[] = {");
+  SerialUSB.println("const float lookup[] = {");
   for (int i = 0; i < 16384; i++) {
-    SerialUSB.print(lookup_angle(i));
+    SerialUSB.print(lookup[i]);
     SerialUSB.print(", ");
   }
   SerialUSB.println("");
@@ -448,12 +446,6 @@ void parameterQuery() {         //print current parameters in a format that can 
 }
 
 
-float lookup_angle(int n)
-{
-  float a_out;
-  a_out = pgm_read_float_near(lookup + n);
-  return a_out;
-}
 
 void oneStep() {           /////////////////////////////////   oneStep    ///////////////////////////////
 
@@ -472,17 +464,16 @@ void oneStep() {           /////////////////////////////////   oneStep    //////
 int readEncoder()           //////////////////////////////////////////////////////   READENCODER   ////////////////////////////
 {
   long angleTemp;
-  // REG_PORT_OUTCLR0 = PORT_PB08;  //
-  digitalWrite(chipSelectPin, LOW);
+   REG_PORT_OUTCLR1 = PORT_PB09;  //
+  //digitalWrite(chipSelectPin, LOW);
 
   byte b1 = SPI.transfer(0xFF);
   byte b2 = SPI.transfer(0xFF);
 
   angleTemp = (((b1 << 8) | b2) & 0B0011111111111111);
-  //  SerialUSB.println((angle & 0B0011111111111111)*0.02197265625);
 
-  // REG_PORT_OUTSET0 = PORT_PB08;  //
-  digitalWrite(chipSelectPin, HIGH);
+  REG_PORT_OUTSET1 = PORT_PB09;  //
+  //digitalWrite(chipSelectPin, HIGH);
   return angleTemp;
 }
 
@@ -703,13 +694,13 @@ void disableTCInterrupts() {  //disables the controller interrupt ("closed loop 
 void antiCoggingCal() {       //This is still under development...  The idea is that we can calibrate out the stepper motor's detent torque by measuring the torque required to hold all possible positions.
   SerialUSB.println(" -----------------BEGIN ANTICOGGING CALIBRATION!----------------");
   mode = 'x';
-  r = lookup_angle(1);
+  r = lookup[1];
   enableTCInterrupts();
   delay(1000);
 
 
   for (int i = 1; i < 657; i++) {
-    r = lookup_angle(i);
+    r = lookup[i];
     SerialUSB.print(r, DEC);
     SerialUSB.print(" , ");
     delay(100);
@@ -718,7 +709,7 @@ void antiCoggingCal() {       //This is still under development...  The idea is 
   SerialUSB.println(" -----------------REVERSE!----------------");
 
   for (int i = 656; i > 0; i--) {
-    r = lookup_angle(i);
+    r = lookup[i];
     SerialUSB.print(r, DEC);
     SerialUSB.print(" , ");
     delay(100);
@@ -774,53 +765,65 @@ void parameterEditmain() {
 }
 
 void parameterEditp() {
-
-
-  SerialUSB.println("Edit position loop gains:");
-  SerialUSB.println();
-  SerialUSB.print("p ----- pKp = ");
-  SerialUSB.println(pKp, DEC);
-  SerialUSB.print("i ----- pKi = ");
-  SerialUSB.println(pKi, DEC);
-  SerialUSB.print("d ----- pKd = ");
-  SerialUSB.println(pKd, DEC);
-  SerialUSB.println("q ----- quit");
-  SerialUSB.println();
-
-  while (SerialUSB.available() == 0)  {}
-  char inChar3 = (char)SerialUSB.read();
-
-  switch (inChar3) {
-    case 'p':
-      {
-        SerialUSB.println("pKp = ?");
-        while (SerialUSB.available() == 0)  {}
-        pKp = SerialUSB.parseFloat();
-        SerialUSB.print("new pKp = ");
-        SerialUSB.println(pKp, DEC);
-      }
-      break;
-    case 'i':
-      {
-        SerialUSB.println("pKi = ?");
-        while (SerialUSB.available() == 0)  {}
-        pKi = SerialUSB.parseFloat();
-        SerialUSB.print("new pKi = ");
-        SerialUSB.println(pKi, DEC);
-      }
-      break;
-    case 'd':
-      {
-        SerialUSB.println("pKd = ?");
-        while (SerialUSB.available() == 0)  {}
-        pKd = SerialUSB.parseFloat();
-        SerialUSB.print("new pKd = ");
-        SerialUSB.println(pKd, DEC);
-      }
-      break;
-    default:
-      {}
-      break;
+  
+  bool quit = false;
+  while(!quit){
+    SerialUSB.println("Edit position loop gains:");
+    SerialUSB.println();
+    SerialUSB.print("p ----- pKp = ");
+    SerialUSB.println(pKp, DEC);
+    SerialUSB.print("i ----- pKi = ");
+    SerialUSB.println(pKi, DEC);
+    SerialUSB.print("d ----- pKd = ");
+    SerialUSB.println(pKd, DEC);
+    SerialUSB.println("q ----- quit");
+    SerialUSB.println();
+    
+    while (SerialUSB.available() == 0)  {}
+    char inChar3 = (char)SerialUSB.read();
+    
+    switch (inChar3) {
+      case 'p':
+        {
+          SerialUSB.println("pKp = ?");
+          while (SerialUSB.available() == 0)  {}
+          pKp = SerialUSB.parseFloat();
+          SerialUSB.print("new pKp = ");
+          SerialUSB.println(pKp, DEC);
+          SerialUSB.println("");
+        }
+        break;
+      case 'i':
+        {
+          SerialUSB.println("pKi = ?");
+          while (SerialUSB.available() == 0)  {}
+          pKi = SerialUSB.parseFloat();
+          SerialUSB.print("new pKi = ");
+          SerialUSB.println(pKi, DEC);
+          SerialUSB.println("");
+        }
+        break;
+      case 'd':
+        {
+          SerialUSB.println("pKd = ?");
+          while (SerialUSB.available() == 0)  {}
+          pKd = SerialUSB.parseFloat();
+          SerialUSB.print("new pKd = ");
+          SerialUSB.println(pKd, DEC);
+          SerialUSB.println("");
+        }
+        break;
+      case 'q':
+        {  
+          quit = true;
+          SerialUSB.println("");
+          SerialUSB.println("done...");
+          SerialUSB.println("k");
+        }
+      default:
+        {}
+        break;
+    }
   }
 }
 
@@ -926,8 +929,8 @@ void positionControl() {
   e = (r - yw);
 
   ITerm += (pKi * e);                             //Integral wind up limit
-  if (ITerm > 150) ITerm = 150;
-  else if (ITerm < -150) ITerm = -150;
+  if (ITerm > 150.0) ITerm = 150.0;
+  else if (ITerm < -150.0) ITerm = -150.0;
 
   u = ((pKp * e) + ITerm - (pKd * (yw - yw_1))); //ARDUINO library style PID controller
 }
@@ -972,7 +975,7 @@ void serialMenu() {
   SerialUSB.println(" n  -  disable control loop");
   SerialUSB.println(" r  -  enter new setpoint");
   SerialUSB.println("");
-  // SerialUSB.println(" j  -  step response");
+   SerialUSB.println(" j  -  step response");
   SerialUSB.println(" k  -  edit controller gains");
   SerialUSB.println(" m  -  print main menu");
   // SerialUSB.println(" f  -  get max loop frequency");
@@ -993,17 +996,44 @@ void sineGen() {
 
 
 
-//void stepResponse() {     // not done yet...
-//  enableTCInterrupts();     //start in closed loop mode
-//  mode = 'x';
-//  r = 0;
-//  print_yw = true;
-//  delay(100);
-//  r = 180.0;
-//  delay(400);
-//  print_yw = false;
-//  disableTCInterrupts();
-//
-//}
+void stepResponse() {     // not done yet...
+  SerialUSB.println("");
+  SerialUSB.println("--------------------------------");
+  SerialUSB.println("");
+  SerialUSB.println("Get ready for step response!");
+  SerialUSB.println("Close Serial Monitor and open Tools>>Serial Plotter");
+  SerialUSB.println("You have 10 seconds...");
+  enableTCInterrupts();     //start in closed loop mode
+  mode = 'x';
+  r = 0;
+  delay(1000);
+  SerialUSB.println("9...");
+  delay(1000);
+  SerialUSB.println("8...");
+  delay(1000);
+  SerialUSB.println("7...");
+  delay(1000);
+  SerialUSB.println("6...");
+  delay(1000);
+  SerialUSB.println("5...");
+  delay(1000);
+  SerialUSB.println("4...");
+  delay(1000);
+  SerialUSB.println("3...");
+  delay(1000);
+  SerialUSB.println("2...");
+  delay(1000);
+  SerialUSB.println("1...");
+  delay(1000);
+  print_yw = true;
+  delay(100);
+  r = 10.0;
+  delay(400);
+  print_yw = false;
+  r = 0;
+  delay(500);
+  disableTCInterrupts();
+
+}
 
 
