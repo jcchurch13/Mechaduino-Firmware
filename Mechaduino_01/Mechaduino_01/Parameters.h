@@ -54,8 +54,8 @@ extern const int dir_pin;
 
 extern const PROGMEM float force_lookup[];
 
+//extern  int sin_1[3600];
 extern  int sin_1[3600];
-
 
 #endif
 

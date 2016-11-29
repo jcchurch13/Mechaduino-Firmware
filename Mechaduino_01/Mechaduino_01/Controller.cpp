@@ -15,10 +15,9 @@ void TC5_Handler() {  // gets called with FPID frequency
   if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {  // An overflow caused the interrupt
    
     REG_PORT_OUTSET0 = PORT_PA09;  //digitalWrite(3, HIGH); //Fast Write to Digital 3 for debugging
-    a = readEncoder();
-   
-    y = lookup_angle(a);
-     REG_PORT_OUTCLR0 = PORT_PA09;  //digitalWrite(3, LOW);
+
+  y = lookup[readEncoder()];
+  //   REG_PORT_OUTCLR0 = PORT_PA09;  //digitalWrite(3, LOW);
    
     if ((y - y_1) < -180.0) wrap_count += 1;
     else if ((y - y_1) > 180.0) wrap_count -= 1;
@@ -47,30 +46,38 @@ void TC5_Handler() {  // gets called with FPID frequency
           break;
       }
 
-      if (u > 0) y += PA; //update phase excitation angle
-      else y -= PA;
 
-
-      if (u > uMAX) u = uMAX;           // limit control effort
-      else if (u < -uMAX) u = -uMAX;    //saturation limits max current command
+    if (u > 0)
+      {
+      y += PA;          //update phase excitation angle
+      if (u > uMAX)     // limit control effort
+        u = uMAX;       //saturation limits max current command
+      }
+    else
+      {
+      y -= PA;          //update phase excitation angle
+      if (u < -uMAX)    // limit control effort
+        u = -uMAX;      //saturation limits max current command
+      }
 
       U = abs(u);
 
       if (abs(e) < 0.1) REG_PORT_OUTSET0 = PORT_PA17;   //digitalWrite(ledPin, HIGH);  // turn on LED if error is less than 0.1
       else REG_PORT_OUTCLR0 = PORT_PA17;    //digitalWrite(ledPin, LOW);
 
-      REG_PORT_OUTSET0 = PORT_PA09;  //digitalWrite(3, HIGH);
+     // REG_PORT_OUTSET0 = PORT_PA09;  //digitalWrite(3, HIGH);
 
       output(-y, round(U));    // update phase currents
     }
-    e_3 = e_2;
-    e_2 = e_1;
-    e_1 = e;
-    u_3 = u_2;
-    u_2 = u_1;
-    u_1 = u;
+   // e_3 = e_2;
+   // e_2 = e_1;
+   // e_1 = e;
+   // u_3 = u_2;
+   // u_2 = u_1;
+   // u_1 = u;
     yw_1 = yw;
     y_1 = y;
+    
     if (print_yw ==  true){       //for step resonse... still under development
       print_counter += 1;
       
