@@ -38,7 +38,6 @@
 
 */
 
-
 #include "Utils.h"
 #include "Parameters.h"
 #include "State.h"
@@ -53,20 +52,18 @@ void setup() {
   digitalWrite(13,HIGH);        //turn LED on 
   setupPins();                  
   setupTCInterrupts();
-    
+
   SerialUSB.begin(115200);
-  
   delay(3000);                  //This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.  
   serialMenu();
   setupSPI();
-  
   digitalWrite(13,LOW);         //turn LED off 
   
   pinMode(3, OUTPUT);           //for debugging control loop timing on pin 3 
 
+
   //  enableTCInterrupts();     //start in closed loop mode
   //  mode = 'x';
-
 }
 
 
@@ -74,6 +71,7 @@ void setup() {
 //////////////////////////////////////
 /////////////////LOOP/////////////////
 //////////////////////////////////////
+
 
 void loop()
 {
