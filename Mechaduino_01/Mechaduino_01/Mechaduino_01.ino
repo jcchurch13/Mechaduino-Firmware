@@ -1,61 +1,42 @@
-  
-/*
 
-  Mechaduino 0.1 Firmware  --multi file branch
-    
+/*
+  -------------------------------------------------------------
+  Mechaduino 0.1 Firmware  v0.1.1
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
+  All Mechaduino related materials are released under the
+  Creative Commons Attribution Share-Alike 4.0 License
+  https://creativecommons.org/licenses/by-sa/4.0/
 
-
-  
-All Mechaduino related materials are released under the
-
-Creative Commons Attribution Share-Alike 4.0 License
-
-https://creativecommons.org/licenses/by-sa/4.0/
-
-
-
-  Many thanks to Will Church and Marco Farrugia.
-
-
-  
-
-  
+  Many thanks to Will Church, Marco Farrugia, and Kai Wolter.
+  --------------------------------------------------------------
   
   Controlled via a SerialUSB terminal at 115200 baud.
 
   Implemented serial commands are:
 
+ s  -  step
+ d  -  dir
+ p  -  print angle [step count] , [assumed angle] , [encoder reading]
 
-  s  -  step
+ c  -  calibration routine
+ e  -  check encoder diagnositics
+ q  -  parameter query
 
-  d  -  dir toggle
+ x  -  position mode
+ v  -  velocity mode
+ x  -  torque mode
 
-  w  -  encoder cal routine
-  
-  y  -  enable controller interrupts
+ y  -  enable control loop
+ n  -  disable control loop
+ r  -  enter new setpoint
 
-  n  - disable controller interrupts
-
-  r  -  enter new setpoint
-
-  x  - position mode
-
-  v  -  velocity mode
-
-  t  -  torque mode
-
-  q  - parameter query (prints current parameters)
-
-  e  -  reads encoder diagnostic register 
-
-  p  -  print [step count] , [assumed angle] , [encoder reading]
+ k  -  edit controller gains -- note, these edits are stored in volatile memory and will be reset if power is cycled
+ m  -  print main menu
 
   ...see serialCheck() in Utils for more details
 
 */
-
 
 #include "Utils.h"
 #include "Parameters.h"
@@ -68,28 +49,21 @@ https://creativecommons.org/licenses/by-sa/4.0/
 
 
 void setup() {
-
-
-  setupPins();
-  setupSPI();
+  digitalWrite(13,HIGH);        //turn LED on 
+  setupPins();                  
   setupTCInterrupts();
 
   SerialUSB.begin(115200);
-
-  // while (!SerialUSB) {};     //wait for serial
-
-  delay(5000);  //This delay seems to make it easier to establish a conncetion when the Mechaduino is configured to start in closed loop mode.
+  delay(3000);                  //This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.  
+  serialMenu();
+  setupSPI();
+  digitalWrite(13,LOW);         //turn LED off 
+  
+  pinMode(3, OUTPUT);           //for debugging control loop timing on pin 3 
 
 
   //  enableTCInterrupts();     //start in closed loop mode
   //  mode = 'x';
-  //
-  //  Wire.begin(4);                // join i2c bus with address #8
-  //  Wire.onReceive(receiveEvent); // register event
-
-
-  SerialUSB.println("Mechaduino 0.1 begin...");
-
 }
 
 
@@ -98,14 +72,13 @@ void setup() {
 /////////////////LOOP/////////////////
 //////////////////////////////////////
 
+
 void loop()
 {
-  
-  serialCheck();
-  
-  //r=0.05625*step_count;
 
-  
+    serialCheck();
+  //r=0.1125*step_count; --- no longer need this, step interrupts enabled by default, adjust step angle in parameters.cpp
+
+
 
 }
-
