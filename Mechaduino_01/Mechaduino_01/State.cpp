@@ -36,7 +36,7 @@ int stepNumber = 0; // step index for cal routine
 
 
 volatile float ITerm;
-volatile char mode;
+char mode;
 volatile bool dir = true;  
 //___________________________________
 

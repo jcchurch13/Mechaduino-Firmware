@@ -62,6 +62,6 @@
   
   void sineGen();                   //generates sinusoidal commutation table. you can experiment with other commutation profiles 
 
-  void stepResponse();
+  void stepResponse();              //generates position mode step response in Serial Plotter
 #endif
 
