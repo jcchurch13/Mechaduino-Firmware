@@ -50,7 +50,7 @@ extern void output(float,int);
 
 extern volatile float ITerm;
 
-extern volatile char mode;
+extern char mode;
 
 
 //___________________________________

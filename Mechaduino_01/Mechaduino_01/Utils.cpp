@@ -43,11 +43,10 @@ void setupPins() {
   analogFastWrite(VREF_2, 0.33 * uMAX);
   analogFastWrite(VREF_1, 0.33 * uMAX);
 
-  digitalWrite(IN_4, HIGH);
-  digitalWrite(IN_3, LOW);
-  digitalWrite(IN_2, HIGH);
-  digitalWrite(IN_1, LOW);
-
+  IN_4_HIGH();   //  digitalWrite(IN_4, HIGH);
+  IN_3_LOW();    //  digitalWrite(IN_3, LOW);
+  IN_2_HIGH();   //  digitalWrite(IN_2, HIGH);
+  IN_1_LOW();    //  digitalWrite(IN_1, LOW);
 }
 
 void setupSPI() {
@@ -84,7 +83,7 @@ void output(float theta, int effort) {
 
   //REG_PORT_OUTCLR0 = PORT_PA09; for debugging/timing
 
-  angle_1 = mod((phase_multiplier * theta) , 3600);
+  angle_1 = mod((phase_multiplier * theta) , 3600);   //
   angle_2 = mod((phase_multiplier * theta)+900 , 3600);
   
   sin_coil_A  = sin_1[angle_1];
@@ -98,23 +97,23 @@ void output(float theta, int effort) {
   analogFastWrite(VREF_2, abs(v_coil_B));
 
   if (v_coil_A >= 0)  {
-    REG_PORT_OUTSET0 = PORT_PA21;     //write IN_2 HIGH
-    REG_PORT_OUTCLR0 = PORT_PA06;     //write IN_1 LOW
+    IN_2_HIGH();  //REG_PORT_OUTSET0 = PORT_PA21;     //write IN_2 HIGH
+    IN_1_LOW();   //REG_PORT_OUTCLR0 = PORT_PA06;     //write IN_1 LOW
   }
   else  {
-    REG_PORT_OUTCLR0 = PORT_PA21;     //write IN_2 LOW
-    REG_PORT_OUTSET0 = PORT_PA06;     //write IN_1 HIGH
+    IN_2_LOW();   //REG_PORT_OUTCLR0 = PORT_PA21;     //write IN_2 LOW
+    IN_1_HIGH();  //REG_PORT_OUTSET0 = PORT_PA06;     //write IN_1 HIGH
   }
 
   if (v_coil_B >= 0)  {
-    REG_PORT_OUTSET0 = PORT_PA20;     //write IN_4 HIGH
-    REG_PORT_OUTCLR0 = PORT_PA15;     //write IN_3 LOW
+    IN_4_HIGH();  //REG_PORT_OUTSET0 = PORT_PA20;     //write IN_4 HIGH
+    IN_3_LOW();   //REG_PORT_OUTCLR0 = PORT_PA15;     //write IN_3 LOW
   }
   else  {
-    REG_PORT_OUTCLR0 = PORT_PA20;     //write IN_4 LOW
-    REG_PORT_OUTSET0 = PORT_PA15;     //write IN_3 HIGH
+    IN_4_LOW();     //REG_PORT_OUTCLR0 = PORT_PA20;     //write IN_4 LOW
+    IN_3_HIGH();    //REG_PORT_OUTSET0 = PORT_PA15;     //write IN_3 HIGH
   }
-  //  REG_PORT_OUTSET0 = PORT_PA09;    for debugging/timing
+
 }
 
 
@@ -474,16 +473,15 @@ void oneStep() {           /////////////////////////////////   oneStep    //////
 int readEncoder()           //////////////////////////////////////////////////////   READENCODER   ////////////////////////////
 {
   long angleTemp;
-   REG_PORT_OUTCLR1 = PORT_PB09;  //
-  //digitalWrite(chipSelectPin, LOW);
+  
+  CHIPSELECT_LOW(); //digitalWrite(chipSelectPin, LOW);
 
   byte b1 = SPI.transfer(0xFF);
   byte b2 = SPI.transfer(0xFF);
 
   angleTemp = (((b1 << 8) | b2) & 0B0011111111111111);
 
-  REG_PORT_OUTSET1 = PORT_PB09;  //
-  //digitalWrite(chipSelectPin, HIGH);
+  CHIPSELECT_HIGH();   //digitalWrite(chipSelectPin, HIGH);
   return angleTemp;
 }
 
@@ -492,7 +490,7 @@ int readEncoder()           ////////////////////////////////////////////////////
 void readEncoderDiagnostics()           //////////////////////////////////////////////////////   READENCODERDIAGNOSTICS   ////////////////////////////
 {
   long angleTemp;
-  digitalWrite(chipSelectPin, LOW);
+  CHIPSELECT_LOW(); //digitalWrite(chipSelectPin, LOW);
 
   ///////////////////////////////////////////////READ DIAAGC (0x3FFC)
   SerialUSB.println("------------------------------------------------");
@@ -505,9 +503,9 @@ void readEncoderDiagnostics()           ////////////////////////////////////////
   SPI.transfer(0xFF);
   SPI.transfer(0xFC);
 
-  digitalWrite(chipSelectPin, HIGH);
+  CHIPSELECT_HIGH();   //digitalWrite(chipSelectPin, HIGH);
   delay(1);
-  digitalWrite(chipSelectPin, LOW);
+  CHIPSELECT_LOW();    //digitalWrite(chipSelectPin, LOW);
 
   byte b1 = SPI.transfer(0xC0);
   byte b2 = SPI.transfer(0x00);
@@ -532,16 +530,16 @@ void readEncoderDiagnostics()           ////////////////////////////////////////
   SerialUSB.println(" ");
 
 
-  digitalWrite(chipSelectPin, HIGH);
+  CHIPSELECT_HIGH();   //digitalWrite(chipSelectPin, HIGH);
   delay(1);
-  digitalWrite(chipSelectPin, LOW);
+  CHIPSELECT_LOW();    //digitalWrite(chipSelectPin, LOW);
 
   SPI.transfer(0x40);
   SPI.transfer(0x01);
-  digitalWrite(chipSelectPin, HIGH);
+  CHIPSELECT_HIGH();   //digitalWrite(chipSelectPin, HIGH);
 
   delay(1);
-  digitalWrite(chipSelectPin, LOW);
+  CHIPSELECT_LOW();    //digitalWrite(chipSelectPin, LOW);
 
   b1 = SPI.transfer(0xC0);
   b2 = SPI.transfer(0x00);
@@ -571,7 +569,7 @@ void readEncoderDiagnostics()           ////////////////////////////////////////
 
   SerialUSB.println(" ");
 
-  digitalWrite(chipSelectPin, HIGH);
+  CHIPSELECT_HIGH();   //digitalWrite(chipSelectPin, HIGH);
 
 
   delay(1);
@@ -632,27 +630,6 @@ int mod(int xMod, int mMod) {
   return (xMod % mMod + mMod) % mMod;
 }
 
-
-float lookup_force(int m)        /////////////////////////////////////////////////  LOOKUP_force   /////////////////////////////
-{
-  float b_out;
-  //
-  //  m = (0.01*(((m % 62832) + 62832) % 62832))+0.5;  //+0.5 for rounding
-  //
-  //  //SerialUSB.println(m);
-  //
-  //  if (m > 314) {
-  //    m = m - 314;
-  //    b_out = -pgm_read_float_near(force_lookup + m);
-  //
-  //  }
-  //  else
-  //  {
-  b_out = pgm_read_float_near(force_lookup + m);
-  //  }
-
-  return b_out;
-}
 
 
 void setupTCInterrupts() {  // configure the controller interrupt

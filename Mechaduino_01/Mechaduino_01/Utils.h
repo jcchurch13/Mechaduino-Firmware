@@ -30,8 +30,6 @@
 	
 	void receiveEvent(int howMany);   //for i2c interface...
 	
-	float lookup_force(int m);        //for anti-cogging... under development
-	
 	int mod(int xMod, int mMod);      //modulo,  handles negative values properly    
 	
 	void setupTCInterrupts();         //configures control loop interrupt
