@@ -62,8 +62,8 @@ void setup() {
   pinMode(3, OUTPUT);           //for debugging control loop timing on pin 3 
 
 
-  //  enableTCInterrupts();     //start in closed loop mode
-  //  mode = 'x';
+  //  enableTCInterrupts();     // uncomment these lines to start in closed loop 
+  //  mode = 'x';               // position mode
 }
 
 
