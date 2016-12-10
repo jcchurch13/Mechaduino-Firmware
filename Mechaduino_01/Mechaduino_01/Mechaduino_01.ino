@@ -31,8 +31,11 @@
  n  -  disable control loop
  r  -  enter new setpoint
 
+ j  -  step response
  k  -  edit controller gains -- note, these edits are stored in volatile memory and will be reset if power is cycled
+ g  -  generate sine commutation table
  m  -  print main menu
+
 
   ...see serialCheck() in Utils for more details
 
@@ -49,21 +52,20 @@
 
 
 void setup() {
-  digitalWrite(13,HIGH);        //turn LED on 
-  setupPins();                  
-  setupTCInterrupts();
+  digitalWrite(ledPin,HIGH);        //turn LED on 
+  setupPins();                      //configure pins
+  setupTCInterrupts();              //configure controller interrupt
 
-  SerialUSB.begin(115200);
-  delay(3000);                  //This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.  
+  SerialUSB.begin(115200);      
+  delay(3000);                      //This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.  
   serialMenu();
   setupSPI();
-  digitalWrite(13,LOW);         //turn LED off 
+  digitalWrite(ledPin,LOW);         //turn LED off 
   
-  pinMode(3, OUTPUT);           //for debugging control loop timing on pin 3 
+  //configureStepDir();
+  //  enableTCInterrupts();         // uncomment these lines to start in closed loop 
+  //  mode = 'x';                   // position mode
 
-
-  //  enableTCInterrupts();     // uncomment these lines to start in closed loop 
-  //  mode = 'x';               // position mode
 }
 
 
@@ -77,7 +79,7 @@ void loop()
 {
 
     serialCheck();
-  //r=0.1125*step_count; --- no longer need this, step interrupts enabled by default, adjust step angle in parameters.cpp
+  //r=0.1125*step_count; --- don't use this anymore, step interrupts enabled above by "configureStepDir()", adjust step angle in parameters.cpp
 
 
 

@@ -7,6 +7,8 @@
 	void setupPins();                 // initializes pins
 	
 	void setupSPI();                  //initializes SPI
+
+  void configureStepDir();
 		
 	void stepInterrupt();             //step interrupt handler
 

@@ -17,7 +17,7 @@ extern volatile float vKp;
 extern volatile float vKi;
 extern volatile float vKd;
 
-extern const PROGMEM float lookup[];
+extern const float lookup[];
 
 
 extern const int spr; //  200 steps per revolution

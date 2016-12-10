@@ -22,7 +22,7 @@ void TC5_Handler() {  // gets called with FPID frequency
     if ((y - y_1) < -180.0) wrap_count += 1;
     else if ((y - y_1) > 180.0) wrap_count -= 1;
 
-    //y_1 = y;  pushed lower
+    
 
     yw = (y + (360.0 * wrap_count));
 
@@ -46,7 +46,9 @@ void TC5_Handler() {  // gets called with FPID frequency
           break;
       }
 
+    y_1 = y;  //copy current value to previous value for next control cycle before PA angle added
 
+    
     if (u > 0)
       {
       y += PA;          //update phase excitation angle
@@ -68,14 +70,14 @@ void TC5_Handler() {  // gets called with FPID frequency
 
       output(-y, round(U));    // update phase currents
     }
-   // e_3 = e_2;
-   // e_2 = e_1;
+   // e_3 = e_2;    //copy current values to previous values for next control cycle
+   // e_2 = e_1;    //these past values can be useful for more complex controllers/filters     
    // e_1 = e;
    // u_3 = u_2;
    // u_2 = u_1;
    // u_1 = u;
     yw_1 = yw;
-    y_1 = y;
+    //y_1 = y;
     
     if (print_yw ==  true){       //for step resonse... still under development
       print_counter += 1;

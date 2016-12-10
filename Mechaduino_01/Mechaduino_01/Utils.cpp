@@ -19,9 +19,6 @@ void setupPins() {
   pinMode(IN_2, OUTPUT);
   pinMode(IN_1, OUTPUT);
 
-  pinMode(step_pin, INPUT);
-  pinMode(dir_pin, INPUT);
-
   pinMode(chipSelectPin, OUTPUT); // CSn -- has to toggle high and low to signal chip to start data transfer
 
   
@@ -29,16 +26,12 @@ void setupPins() {
   pinMode(TEST1, OUTPUT);
   pinMode(TEST2, OUTPUT);
 #endif
-  
+
   pinMode(ledPin, OUTPUT); //
-  pinMode(3, OUTPUT); //
 
   // pinMode(clockPin, OUTPUT); // SCL    for I2C
   // pinMode(inputPin, INPUT); // SDA
 
-
-  attachInterrupt(1, stepInterrupt, RISING);
-  attachInterrupt(dir_pin, dirInterrupt, CHANGE);
 
   analogFastWrite(VREF_2, 0.33 * uMAX);
   analogFastWrite(VREF_1, 0.33 * uMAX);
@@ -58,6 +51,13 @@ void setupSPI() {
   delay(1000);
   SPI.beginTransaction(settingsA);
 
+}
+
+void configureStepDir() {
+  pinMode(step_pin, INPUT);
+  pinMode(dir_pin, INPUT);
+  attachInterrupt(step_pin, stepInterrupt, RISING);
+  attachInterrupt(dir_pin, dirInterrupt, CHANGE);
 }
 
 
@@ -963,7 +963,7 @@ void serialMenu() {
   SerialUSB.println(" r  -  enter new setpoint");
   SerialUSB.println("");
    SerialUSB.println(" j  -  step response");
-  SerialUSB.println(" k  -  edit controller gains");
+  SerialUSB.println(" k  -  edit controller gains -- note, these edits are stored in volatile memory and will be reset if power is cycled");
   SerialUSB.println(" g  -  generate sine commutation table");
   SerialUSB.println(" m  -  print main menu");
   // SerialUSB.println(" f  -  get max loop frequency");
