@@ -44,6 +44,7 @@ extern volatile int uMAX;
 
 #define step_pin 1
 #define dir_pin 0
+#define enable_pin 2
 
 //for faster digitalWrite:
 #define IN_1_HIGH() (REG_PORT_OUTSET0 = PORT_PA06)
@@ -62,16 +63,12 @@ extern volatile int uMAX;
 #define ENABLE_PROFILE_IO    // Define to enable profiling I/O pins
 
 #ifdef ENABLE_PROFILE_IO  
-  #define TEST1   2
-  #define TEST2   3
+  #define TEST1   3
 
-  #define TEST2_HIGH() (REG_PORT_OUTSET0 = PORT_PA09)
-  #define TEST2_LOW() (REG_PORT_OUTCLR0 = PORT_PA09)
-  #define TEST1_HIGH() (REG_PORT_OUTSET0 = PORT_PA14)
-  #define TEST1_LOW() (REG_PORT_OUTCLR0 = PORT_PA14)
+  #define TEST1_HIGH() (REG_PORT_OUTSET0 = PORT_PA09)
+  #define TEST1_LOW() (REG_PORT_OUTCLR0 = PORT_PA09)
+
 #else
-  #define TEST2_HIGH()
-  #define TEST2_LOW() 
   #define TEST1_HIGH()
   #define TEST1_LOW() 
 #endif

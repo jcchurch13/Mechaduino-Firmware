@@ -60,6 +60,11 @@ void configureStepDir() {
   attachInterrupt(dir_pin, dirInterrupt, CHANGE);
 }
 
+void configureEnablePin() {
+  pinMode(enable_pin, INPUT);
+  attachInterrupt(enable_pin, enableInterrupt, CHANGE);
+}
+
 
 void stepInterrupt() {
   if (dir) r += stepangle;
@@ -69,6 +74,18 @@ void stepInterrupt() {
 void dirInterrupt() {
   if (REG_PORT_IN0 & PORT_PA11) dir = false; // check if dir_pin is HIGH
   else dir = true;
+}
+
+void enableInterrupt() {
+  if (REG_PORT_IN0 & PORT_PA14){   // check if enable_pin is HIGH
+    enableTCInterrupts();
+    }
+  else{
+    diableTCInterrupts();
+    analogFastWrite(VREF_2, 0.33 * uMAX);
+    analogFastWrite(VREF_1, 0.33 * uMAX);
+    
+    }
 }
 
 void output(float theta, int effort) {

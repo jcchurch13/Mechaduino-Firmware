@@ -14,7 +14,7 @@ void TC5_Handler() {  // gets called with FPID frequency
 
   if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {  // An overflow caused the interrupt
      
-     TEST2_HIGH();  //digitalWrite(3, HIGH); //Fast Write to Digital 3 for debugging
+     TEST1_HIGH();  //digitalWrite(3, HIGH); //Fast Write to Digital 3 for debugging
 
   y = lookup[readEncoder()];
   
@@ -88,7 +88,7 @@ void TC5_Handler() {  // gets called with FPID frequency
       }
     }
     TC5->COUNT16.INTFLAG.bit.OVF = 1;    // writing a one clears the flag ovf flag
-    TEST2_LOW();
+    TEST1_LOW();
 
   }
 
