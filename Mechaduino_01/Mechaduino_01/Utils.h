@@ -9,10 +9,14 @@
 	void setupSPI();                  //initializes SPI
 
   void configureStepDir();
+  
+  void configureEnablePin();
 		
 	void stepInterrupt();             //step interrupt handler
 
   void dirInterrupt();              //dir interrupt handler
+
+  void enableInterrupt();           //enable pin interrupt handler
 
 	void output(float theta, int effort);	  //calculates phase currents (commutation) and outputs to Vref pins
 

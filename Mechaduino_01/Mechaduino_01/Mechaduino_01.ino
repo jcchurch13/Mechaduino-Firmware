@@ -1,14 +1,14 @@
 
 /*
   -------------------------------------------------------------
-  Mechaduino 0.1 Firmware  v0.1.1
+  Mechaduino 0.1 Firmware  v0.1.3
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
   All Mechaduino related materials are released under the
   Creative Commons Attribution Share-Alike 4.0 License
   https://creativecommons.org/licenses/by-sa/4.0/
 
-  Many thanks to Will Church, Marco Farrugia, and Kai Wolter.
+  Many thanks to Will Church, Marco Farrugia, Kai Wolter, Trampas Stern, Mike Anton.
   --------------------------------------------------------------
   
   Controlled via a SerialUSB terminal at 115200 baud.
@@ -17,7 +17,7 @@
 
  s  -  step
  d  -  dir
- p  -  print angle [step count] , [assumed angle] , [encoder reading]
+ p  -  print angle [step count] , [uncalibrated angle]
 
  c  -  calibration routine
  e  -  check encoder diagnositics
@@ -51,23 +51,29 @@
 //////////////////////////////////////
 
 
-void setup() {
-  digitalWrite(ledPin,HIGH);        //turn LED on 
-  setupPins();                      //configure pins
-  setupTCInterrupts();              //configure controller interrupt
+void setup()        // This code runs once at startup
+{                         
+   
+  digitalWrite(ledPin,HIGH);        // turn LED on 
+  setupPins();                      // configure pins
+  setupTCInterrupts();              // configure controller interrupt
 
-  SerialUSB.begin(115200);      
-  delay(3000);                      //This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.  
-  serialMenu();
-  setupSPI();
-  digitalWrite(ledPin,LOW);         //turn LED off 
+  SerialUSB.begin(115200);          
+  delay(3000);                      // This delay seems to make it easier to establish a connection when the Mechaduino is configured to start in closed loop mode.  
+  serialMenu();                     // Prints menu to serial monitor
+  setupSPI();                       // Sets up SPI for communicating with encoder
+  digitalWrite(ledPin,LOW);         // turn LED off 
+
+  // Uncomment the below lines as needed for your application.
+  // Leave commented for initial calibration and tuning.
   
-  //configureStepDir();
-  //  enableTCInterrupts();         // uncomment these lines to start in closed loop 
-  //  mode = 'x';                   // position mode
-
+  //    configureStepDir();           // Configures setpoint to be controlled by step/dir interface
+  //    configureEnablePin();         // Active low, for use wath RAMPS 1.4 or similar
+  //    enableTCInterrupts();          // uncomment this line to start in closed loop 
+  //    mode = 'x';                   // start in position mode
+  
 }
-
+  
 
 
 //////////////////////////////////////
@@ -75,11 +81,11 @@ void setup() {
 //////////////////////////////////////
 
 
-void loop()
+void loop()                 // main loop
 {
 
-    serialCheck();
-  //r=0.1125*step_count; --- don't use this anymore, step interrupts enabled above by "configureStepDir()", adjust step angle in parameters.cpp
+    serialCheck();              //must have this execute in loop for serial commands to function
+  //r=0.1125*step_count;        Don't use this anymore, step interrupts enabled above by "configureStepDir()", adjust step size in parameters.cpp
 
 
 

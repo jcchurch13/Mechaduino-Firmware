@@ -3,6 +3,8 @@
 #ifndef __PARAMETERS_H__
 #define __PARAMETERS_H__
 
+#define firmware_version "0.1.3"    //firmware version
+#define identifier "x"              // change this to help keep track of multiple mechaduinos (printed on startup)
 
 //----Current Parameters-----
 
@@ -24,6 +26,7 @@ extern const int spr; //  200 steps per revolution
 extern const float aps; // angle per step
 extern int cpr; //counts per rev
 extern const float stepangle;
+
 extern volatile float PA;  //
 
 extern const float iMAX;
@@ -31,7 +34,9 @@ extern const float rSense;
 extern volatile int uMAX;
 
 
-#define pi 3.14159265359;
+extern const int sin_1[];
+
+//Defines for pins:
 
 #define IN_4  6
 #define IN_3  5
@@ -74,7 +79,6 @@ extern volatile int uMAX;
 #endif
 
 
-extern const int sin_1[];
 
 #endif
 

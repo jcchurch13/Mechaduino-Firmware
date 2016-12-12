@@ -28,37 +28,14 @@ extern volatile long counter;
 extern volatile long wrap_count;
 extern volatile float y_1;
 
-extern int step_state;
-extern long angle; //holds processed angle value
-extern float anglefloat;
-extern int a;  // raw encoder value in closed loop and print_angle routine (should fix the latter to include LUT)
 extern volatile long step_count;  //For step/dir interrupt
 extern int stepNumber; // step index for cal routine
 
 
 extern volatile float ITerm;
-
 extern char mode;
-
-
 extern int dir;
-extern int stepNumber;
-extern void output(float,int);
 
-
-
-
-extern volatile float ITerm;
-
-extern char mode;
-
-
-//___________________________________
-
-
-extern int val1;
-extern int val2;
-
-extern bool print_yw;
+extern bool print_yw;     //for step response, under development...
 #endif
 

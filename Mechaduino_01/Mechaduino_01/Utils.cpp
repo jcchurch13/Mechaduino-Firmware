@@ -24,7 +24,6 @@ void setupPins() {
   
 #ifdef ENABLE_PROFILE_IO  
   pinMode(TEST1, OUTPUT);
-  pinMode(TEST2, OUTPUT);
 #endif
 
   pinMode(ledPin, OUTPUT); //
@@ -76,15 +75,14 @@ void dirInterrupt() {
   else dir = true;
 }
 
-void enableInterrupt() {
+void enableInterrupt() {            //enable pin interrupt handler
   if (REG_PORT_IN0 & PORT_PA14){   // check if enable_pin is HIGH
-    enableTCInterrupts();
-    }
-  else{
-    diableTCInterrupts();
+    disableTCInterrupts();
     analogFastWrite(VREF_2, 0.33 * uMAX);
     analogFastWrite(VREF_1, 0.33 * uMAX);
-    
+    }
+  else{
+    enableTCInterrupts();    
     }
 }
 
@@ -179,14 +177,13 @@ void calibrate() {   /// this is the calibration routine
 
     encoderReading = 0;
     delay(100);                         //moving too fast may not give accurate readings.  Motor needs time to settle after each step.
-
+    
     for (int reading = 0; reading < avg; reading++) {  //average multple readings at each step
       encoderReading += readEncoder();
       delay(10);
     }
     encoderReading = encoderReading / avg;
 
-    anglefloat = encoderReading * 0.02197265625;    //encoderReading * 360/16384
     fullStepReadings[x] = encoderReading;
    // SerialUSB.println(fullStepReadings[x], DEC);      //print readings as a sanity check
     SerialUSB.print(100.0*x/spr,1);
@@ -474,7 +471,7 @@ void parameterQuery() {         //print current parameters in a format that can 
 
 
 void oneStep() {           /////////////////////////////////   oneStep    ///////////////////////////////
-
+  
   if (!dir) {
     stepNumber += 1;
   }
@@ -596,38 +593,27 @@ void readEncoderDiagnostics()           ////////////////////////////////////////
 
 void print_angle()                ///////////////////////////////////       PRINT_ANGLE   /////////////////////////////////
 {
-  a = 0;
-  delay(100);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a += readEncoder();
-  delay(10);
-  a = a / 10;
+  int avg = 10;            //average a few readings
+  int encoderReading = 0;
+  int rawReading = 0;
+  float anglefloat = 0.0;
+  
+  disableTCInterrupts();        //can't use readEncoder while in closed loop
 
-  anglefloat = a * 0.02197265625;
+
+  for (int reading = 0; reading < avg; reading++) {  //average multple readings at each step
+    encoderReading += readEncoder();
+    delay(10);
+    }
+
+  anglefloat = encoderReading * 0.02197265625 / avg;     //    360/16384 = 0.021972....
+  SerialUSB.print("stepNumber: ");
   SerialUSB.print(stepNumber, DEC);
   SerialUSB.print(" , ");
-  SerialUSB.print(stepNumber * aps, DEC);
-  SerialUSB.print(" , ");
-  SerialUSB.print(a, DEC);
-  SerialUSB.print(" , ");
-  SerialUSB.println(anglefloat, DEC);
+//  SerialUSB.print(stepNumber * aps, DEC);
+//  SerialUSB.print(" , ");
+  SerialUSB.print("Angle: ");
+  SerialUSB.println(anglefloat, 2);
 }
 
 
@@ -822,7 +808,7 @@ void parameterEditp() {
           quit = true;
           SerialUSB.println("");
           SerialUSB.println("done...");
-          SerialUSB.println("k");
+          SerialUSB.println("");
         }
       default:
         {}
@@ -832,52 +818,62 @@ void parameterEditp() {
 }
 
 void parameterEditv() {
-  SerialUSB.println("Edit velocity loop gains:");
-  SerialUSB.println();
-  SerialUSB.print("p ----- vKp = ");
-  SerialUSB.println(vKp, DEC);
-  SerialUSB.print("i ----- vKi = ");
-  SerialUSB.println(vKi, DEC);
-  SerialUSB.print("d ----- vKd = ");
-  SerialUSB.println(vKd, DEC);
-  SerialUSB.println("q ----- quit");
-  SerialUSB.println();
-
-  while (SerialUSB.available() == 0)  {}
-  char inChar4 = (char)SerialUSB.read();
-
-  switch (inChar4) {
-    case 'p':
-      {
-        SerialUSB.println("vKp = ?");
-        while (SerialUSB.available() == 0)  {}
-        vKp = SerialUSB.parseFloat();
-        SerialUSB.print("new vKp = ");
-        SerialUSB.println(vKp, DEC);
-      }
-      break;
-    case 'i':
-      {
-        SerialUSB.println("vKi = ?");
-        while (SerialUSB.available() == 0)  {}
-        vKi = SerialUSB.parseFloat();
-        SerialUSB.print("new vKi = ");
-        SerialUSB.println(vKi, DEC);
-      }
-      break;
-    case 'd':
-      {
-        SerialUSB.println("vKd = ?");
-        while (SerialUSB.available() == 0)  {}
-        vKd = SerialUSB.parseFloat();
-        SerialUSB.print("new vKd = ");
-        SerialUSB.println(vKd, DEC);
-      }
-      break;
-    default:
-      {}
-      break;
-  }
+  bool quit = false;
+  while(!quit){  
+    SerialUSB.println("Edit velocity loop gains:");
+    SerialUSB.println();
+    SerialUSB.print("p ----- vKp = ");
+    SerialUSB.println(vKp, DEC);
+    SerialUSB.print("i ----- vKi = ");
+    SerialUSB.println(vKi, DEC);
+    SerialUSB.print("d ----- vKd = ");
+    SerialUSB.println(vKd, DEC);
+    SerialUSB.println("q ----- quit");
+    SerialUSB.println();
+  
+    while (SerialUSB.available() == 0)  {}
+    char inChar4 = (char)SerialUSB.read();
+  
+    switch (inChar4) {
+      case 'p':
+        {
+          SerialUSB.println("vKp = ?");
+          while (SerialUSB.available() == 0)  {}
+          vKp = SerialUSB.parseFloat();
+          SerialUSB.print("new vKp = ");
+          SerialUSB.println(vKp, DEC);
+        }
+        break;
+      case 'i':
+        {
+          SerialUSB.println("vKi = ?");
+          while (SerialUSB.available() == 0)  {}
+          vKi = SerialUSB.parseFloat();
+          SerialUSB.print("new vKi = ");
+          SerialUSB.println(vKi, DEC);
+        }
+        break;
+      case 'd':
+        {
+          SerialUSB.println("vKd = ?");
+          while (SerialUSB.available() == 0)  {}
+          vKd = SerialUSB.parseFloat();
+          SerialUSB.print("new vKd = ");
+          SerialUSB.println(vKd, DEC);
+        }
+        break;
+      case 'q':
+        {  
+          quit = true;
+          SerialUSB.println("");
+          SerialUSB.println("done...");
+          SerialUSB.println("");  
+        }
+      default:
+        {}
+        break;
+    }
+  }  
 }
 
 void parameterEdito() {
@@ -947,6 +943,7 @@ void velocityControl() {
   else if (ITerm < -200) ITerm = -200;
 
   u = ((vKp * e) + ITerm - (vKd * (yw - yw_1)));//+ lookup_force(a)-20; //ARDUINO library style PID controller
+  //SerialUSB.println(e);
 }
 
 void torqueControl() {
@@ -957,9 +954,10 @@ void serialMenu() {
   SerialUSB.println("");
   SerialUSB.println("");
   SerialUSB.println("----- Mechaduino 0.1 -----");
-  //SerialUSB.print("Identifier: ");
-  //SerialUSB.println(identifier);
-  SerialUSB.println("");
+  SerialUSB.print("Firmware: ");
+  SerialUSB.println(firmware_version);
+  SerialUSB.print("Identifier: ");
+  SerialUSB.println(identifier);
   SerialUSB.println("");
   SerialUSB.println("Main menu");
   SerialUSB.println("");
@@ -1037,7 +1035,7 @@ void stepResponse() {     // not done yet...
   delay(1000);
   print_yw = true;
   delay(100);
-  r = 10.0;
+  r = 97.65;      /// choose step size as you like, 97.65 gives a nice plot since 97.65*1024 = 10,000
   delay(400);
   print_yw = false;
   r = 0;

@@ -26,23 +26,13 @@ volatile long counter = 0;
 volatile long wrap_count = 0;  //keeps track of how many revolutions the motor has gone though (so you can command angles outside of 0-360)
 volatile float y_1 = 0;
 
-
-int step_state = 1;    
-long angle = 0; //holds processed angle value
-float anglefloat = 0;
-int a = 0;  // raw encoder value in closed loop and print_angle routine (should fix the latter to use LUT)
-volatile long step_count = 0;  //For step/dir interrupt
-int stepNumber = 0; // step index for cal routine
-
+  
+volatile long step_count = 0;  //For step/dir interrupt (closed loop)
+int stepNumber = 0; // open loop step number (used by 's' and for cal routine)
 
 volatile float ITerm;
 char mode;
-volatile bool dir = true;  
-//___________________________________
-
-
-int val1 = 0;
-int val2 = 0;
+volatile bool dir = false;  
 
 bool print_yw = false;      //for step response, under development...
 
