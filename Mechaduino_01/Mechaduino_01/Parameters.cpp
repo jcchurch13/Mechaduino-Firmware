@@ -25,7 +25,7 @@ const float lookup[] = {
 
 
 
-const int spr = 400;                // 200 steps per revolution  -- for 400 step/rev, you should only need to edit this value
+const int spr = 200;                // 200 steps per revolution  -- for 400 step/rev, you should only need to edit this value
 const float aps = 360.0/ spr;       // angle per step
 int cpr = 16384;                    // counts per rev
 const float stepangle = aps/16.0;   // for step/dir interrupt: aps/16 is the equivalent of 16 microsteps
