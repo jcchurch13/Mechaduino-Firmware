@@ -925,31 +925,6 @@ void hybridControl() {        //still under development
 
 }
 
-void positionControl() {
-  e = (r - yw);
-
-  ITerm += (pKi * e);                             //Integral wind up limit
-  if (ITerm > 150.0) ITerm = 150.0;
-  else if (ITerm < -150.0) ITerm = -150.0;
-
-  u = ((pKp * e) + ITerm - (pKd * (yw - yw_1))); //ARDUINO library style PID controller
-}
-
-void velocityControl() {
-  e = (r - ((yw - yw_1) * Fs * 0.16666667)); //error in degrees per rpm (sample frequency in Hz * (60 seconds/min) / (360 degrees/rev) )
-
-  ITerm += (vKi * e);                 //Integral wind up limit
-  if (ITerm > 200) ITerm = 200;
-  else if (ITerm < -200) ITerm = -200;
-
-  u = ((vKp * e) + ITerm - (vKd * (yw - yw_1)));//+ lookup_force(a)-20; //ARDUINO library style PID controller
-  //SerialUSB.println(e);
-}
-
-void torqueControl() {
-  u = 1.0 * r ;     //directly set control effort
-}
-
 void serialMenu() {
   SerialUSB.println("");
   SerialUSB.println("");
@@ -1043,5 +1018,9 @@ void stepResponse() {     // not done yet...
   disableTCInterrupts();
 
 }
+
+
+
+
 
 

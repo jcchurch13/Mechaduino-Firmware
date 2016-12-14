@@ -3,7 +3,6 @@
 
 //interrupt vars
 
-volatile float ei = 0.0;
 volatile int U = 0;       //control effort (abs)
 volatile float r = 0.0;   //setpoint
 volatile float y = 0.0;   // measured angle
@@ -35,4 +34,8 @@ char mode;
 volatile bool dir = false;  
 
 bool print_yw = false;      //for step response, under development...
+
+
+
+
 

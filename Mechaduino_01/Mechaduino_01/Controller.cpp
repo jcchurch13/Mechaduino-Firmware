@@ -29,14 +29,28 @@ void TC5_Handler() {                // gets called with FPID frequency
     }
     else {
       switch (mode) {
-        case 'x':
-          positionControl();
+        case 'x':         // position control                        
+            e = (r - yw);
+            
+            ITerm += (pKi * e);                             //Integral wind up limit
+            if (ITerm > 150.0) ITerm = 150.0;
+            else if (ITerm < -150.0) ITerm = -150.0;
+          
+            u = ((pKp * e) + ITerm - (pKd * (yw - yw_1))); //ARDUINO library style PID controller
+            break;
+            
+        case 'v':         // velocity control
+          e = (r - ((yw - yw_1) * Fs * 0.16666667)); //error in degrees per rpm (sample frequency in Hz * (60 seconds/min) / (360 degrees/rev) )
+
+          ITerm += (vKi * e);                 //Integral wind up limit
+          if (ITerm > 200) ITerm = 200;
+          else if (ITerm < -200) ITerm = -200;
+        
+          u = ((vKp * e) + ITerm - (vKd * (yw - yw_1)));//+ lookup_force(a)-20; //ARDUINO library style PID controller
           break;
-        case 'v':
-          velocityControl();
-          break;
-        case 't':
-          torqueControl();
+          
+        case 't':         // torquw control
+          u = 1.0 * r ;
           break;
         default:
           u = 0;
@@ -91,4 +105,8 @@ void TC5_Handler() {                // gets called with FPID frequency
 
 
 }
+
+
+
+
 

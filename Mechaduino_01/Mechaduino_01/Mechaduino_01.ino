@@ -17,7 +17,7 @@
 
  s  -  step
  d  -  dir
- p  -  print angle [step count] , [uncalibrated angle]
+ p  -  print [step number] , [encoder reading]
 
  c  -  calibration routine
  e  -  check encoder diagnositics
@@ -90,3 +90,7 @@ void loop()                 // main loop
 
 
 }
+
+
+
+

@@ -6,7 +6,6 @@
 
 //interrupt vars
 
-extern volatile float ei;
 extern volatile int U;  //control effort (abs)
 extern volatile float r;  //setpoint
 extern volatile float y;  // measured angle
@@ -38,4 +37,8 @@ extern int dir;
 
 extern bool print_yw;     //for step response, under development...
 #endif
+
+
+
+
 

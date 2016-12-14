@@ -8,9 +8,9 @@
 	
 	void setupSPI();                  //initializes SPI
 
-  void configureStepDir();
+  void configureStepDir();          //configure step/dir interface
   
-  void configureEnablePin();
+  void configureEnablePin();        //configure enable pin 
 		
 	void stepInterrupt();             //step interrupt handler
 
@@ -32,11 +32,11 @@
 	  
 	void readEncoderDiagnostics();    //check encoder diagnostics registers
 		
-	void print_angle();               //for debigging purposes in open loop mode:  prints [step count] , [assumed angle] , [encoder reading]
+	void print_angle();               //for debigging purposes in open loop mode:  prints [step number] , [encoder reading]
 	
 	void receiveEvent(int howMany);   //for i2c interface...
 	
-	int mod(int xMod, int mMod);      //modulo,  handles negative values properly    
+	int mod(int xMod, int mMod);      //modulo, handles negative values properly    
 	
 	void setupTCInterrupts();         //configures control loop interrupt
 	
@@ -56,16 +56,13 @@
 
   void hybridControl();             //open loop stepping, but corrects for missed steps.  under development
 
-  void positionControl();           //position control code (PID)
-
-  void velocityControl();           //velocity control code (PID)
-  
-  void torqueControl();             //current control code 
-
   void serialMenu();                //main menu
   
   void sineGen();                   //generates sinusoidal commutation table. you can experiment with other commutation profiles 
 
   void stepResponse();              //generates position mode step response in Serial Plotter
 #endif
+
+
+
 
