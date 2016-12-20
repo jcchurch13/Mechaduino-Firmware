@@ -14,12 +14,21 @@ extern volatile float Fs;
 extern volatile float pKp;
 extern volatile float pKi;
 extern volatile float pKd;
+extern volatile float pLPF;
+
 
 extern volatile float vKp;
 extern volatile float vKi;
 extern volatile float vKd;
+extern volatile float vLPF;
 
 extern const float lookup[];
+
+
+extern volatile float pLPFa;
+extern volatile float pLPFb;
+extern volatile float vLPFa;
+extern volatile float vLPFb;
 
 
 extern const int spr; //  200 steps per revolution

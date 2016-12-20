@@ -30,6 +30,9 @@ volatile long step_count = 0;  //For step/dir interrupt (closed loop)
 int stepNumber = 0; // open loop step number (used by 's' and for cal routine)
 
 volatile float ITerm;
+volatile float DTerm;
+
+
 char mode;
 volatile bool dir = false;  
 

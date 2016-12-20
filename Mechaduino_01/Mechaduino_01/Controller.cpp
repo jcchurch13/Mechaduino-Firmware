@@ -25,7 +25,7 @@ void TC5_Handler() {                // gets called with FPID frequency
 
 
     if (mode == 'h') {                            //choose control algorithm based on mode
-      hybridControl();
+      hybridControl();                            // hybrid control is still under development...
     }
     else {
       switch (mode) {
@@ -36,17 +36,32 @@ void TC5_Handler() {                // gets called with FPID frequency
             if (ITerm > 150.0) ITerm = 150.0;
             else if (ITerm < -150.0) ITerm = -150.0;
           
-            u = ((pKp * e) + ITerm - (pKd * (yw - yw_1))); //ARDUINO library style PID controller
+           // u = ((pKp * e) + ITerm + (pKd * (yw - yw_1))); //ARDUINO library style PID controller
+           
+           DTerm = pLPFa*DTerm -  pLPFb*pKd*(yw-yw_1); //pKd*(0.013245)*(e_1-e_2);
+            u = (pKp * e) + ITerm + DTerm;
+           
+           
+           // u = 1.937*u_1 + 0.937*u_2 + 19.155*e -37.958*e_1+18.804*e_2;
+
+            
             break;
             
         case 'v':         // velocity control
-          e = (r - ((yw - yw_1) * Fs * 0.16666667)); //error in degrees per rpm (sample frequency in Hz * (60 seconds/min) / (360 degrees/rev) )
+          DTerm = vLPFa*DTerm -  vLPFb*(yw-yw_1);     //filtered velocity called "DTerm" because it is similar to derivative action in position loop
+
+          e = (r + ((DTerm) * Fs * 0.16666667));
+         // e = (r - ((yw - yw_1) * Fs * 0.16666667)); //error in degrees per rpm (sample frequency in Hz * (60 seconds/min) / (360 degrees/rev) )
 
           ITerm += (vKi * e);                 //Integral wind up limit
           if (ITerm > 200) ITerm = 200;
           else if (ITerm < -200) ITerm = -200;
+
+
         
-          u = ((vKp * e) + ITerm - (vKd * (yw - yw_1)));//+ lookup_force(a)-20; //ARDUINO library style PID controller
+          u = ((vKp * e) + ITerm - (vKd * (e-e_1)));//+ lookup_force(a)-20; //ARDUINO library style PID controller
+          
+          //SerialUSB.println(e);
           break;
           
         case 't':         // torquw control
@@ -83,16 +98,16 @@ void TC5_Handler() {                // gets called with FPID frequency
     }
     
    // e_3 = e_2;    //copy current values to previous values for next control cycle
-   // e_2 = e_1;    //these past values can be useful for more complex controllers/filters.  Uncomment as necessary    
-   // e_1 = e;
+    e_2 = e_1;    //these past values can be useful for more complex controllers/filters.  Uncomment as necessary    
+    e_1 = e;
    // u_3 = u_2;
-   // u_2 = u_1;
-   // u_1 = u;
+    u_2 = u_1;
+    u_1 = u;
     yw_1 = yw;
     //y_1 = y;
     
     if (print_yw ==  true){       //for step resonse... still under development
-      print_counter += 1;    
+      print_counter += 1;  
       if (print_counter >= 5){    // print position every 5th loop (every time is too much data for plotter and may slow down control loop
         SerialUSB.println(int(yw*1024));    //*1024 allows us to print ints instead of floats... may be faster
         print_counter = 0;

@@ -428,12 +428,17 @@ void parameterQuery() {         //print current parameters in a format that can 
   SerialUSB.print("volatile float pKp = ");
   SerialUSB.print(pKp, DEC);
   SerialUSB.println(";      //position mode PID vallues.");
+  
   SerialUSB.print("volatile float pKi = ");
   SerialUSB.print(pKi, DEC);
   SerialUSB.println(";");
 
   SerialUSB.print("volatile float pKd = ");
   SerialUSB.print(pKd, DEC);
+  SerialUSB.println(";");
+  
+  SerialUSB.print("volatile float pLPF = ");
+  SerialUSB.print(pLPF, DEC);
   SerialUSB.println(";");
 
   SerialUSB.println(' ');
@@ -453,6 +458,9 @@ void parameterQuery() {         //print current parameters in a format that can 
   SerialUSB.println(";");
  // SerialUSB.print(vKd / Fs);
  // SerialUSB.println(" * FS;");
+  SerialUSB.print("volatile float vLPF = ");
+  SerialUSB.print(vLPF, DEC);
+  SerialUSB.println(";");
 
   SerialUSB.println("");
   SerialUSB.println("//This is the encoder lookup table (created by calibration routine)");
@@ -718,7 +726,7 @@ void parameterEditmain() {
   SerialUSB.println();
   SerialUSB.println("Edit parameters:");
   SerialUSB.println();
-  SerialUSB.println("p ----- proportional loop");
+  SerialUSB.println("p ----- position loop");
   SerialUSB.println("v ----- velocity loop");
   SerialUSB.println("o ----- other");
   SerialUSB.println("q ----- quit");
@@ -766,6 +774,8 @@ void parameterEditp() {
     SerialUSB.println(pKi, DEC);
     SerialUSB.print("d ----- pKd = ");
     SerialUSB.println(pKd, DEC);
+    SerialUSB.print("l----- LPF = ");
+    SerialUSB.println(pLPF,DEC);
     SerialUSB.println("q ----- quit");
     SerialUSB.println();
     
@@ -803,6 +813,18 @@ void parameterEditp() {
           SerialUSB.println("");
         }
         break;
+       case 'l':
+        {
+          SerialUSB.println("pLPF = ?");
+          while (SerialUSB.available() == 0)  {}
+          pLPF = SerialUSB.parseFloat();
+          pLPFa = exp(pLPF*-2*3.14159/Fs);
+          pLPFb = (1.0-pLPFa)/2.0;
+          SerialUSB.print("new pLPF = ");
+          SerialUSB.println(pLPF, DEC);
+          SerialUSB.println("");
+        }
+        break;
       case 'q':
         {  
           quit = true;
@@ -828,6 +850,8 @@ void parameterEditv() {
     SerialUSB.println(vKi, DEC);
     SerialUSB.print("d ----- vKd = ");
     SerialUSB.println(vKd, DEC);
+    SerialUSB.print("l ----- vLPF = ");
+    SerialUSB.println(vLPF, DEC);
     SerialUSB.println("q ----- quit");
     SerialUSB.println();
   
@@ -860,6 +884,18 @@ void parameterEditv() {
           vKd = SerialUSB.parseFloat();
           SerialUSB.print("new vKd = ");
           SerialUSB.println(vKd, DEC);
+        }
+        break;
+       case 'l':
+        {
+          SerialUSB.println("vLPF = ?");
+          while (SerialUSB.available() == 0)  {}
+          vLPF = SerialUSB.parseFloat();
+          vLPFa = exp(vLPF*-2*3.14159/Fs);
+          vLPFb = (1.0-vLPFa)/2.0;
+          SerialUSB.print("new vLPF = ");
+          SerialUSB.println(vLPF, DEC);
+          SerialUSB.println("");
         }
         break;
       case 'q':
@@ -987,7 +1023,7 @@ void stepResponse() {     // not done yet...
   SerialUSB.println("Close Serial Monitor and open Tools>>Serial Plotter");
   SerialUSB.println("You have 10 seconds...");
   enableTCInterrupts();     //start in closed loop mode
-  mode = 'x';
+  //mode = 'x';
   r = 0;
   delay(1000);
   SerialUSB.println("9...");

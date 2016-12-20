@@ -32,6 +32,7 @@ extern int stepNumber; // step index for cal routine
 
 
 extern volatile float ITerm;
+extern volatile float DTerm;
 extern char mode;
 extern int dir;
 
