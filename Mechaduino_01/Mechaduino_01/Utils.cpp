@@ -891,8 +891,8 @@ void parameterEditv() {
           SerialUSB.println("vLPF = ?");
           while (SerialUSB.available() == 0)  {}
           vLPF = SerialUSB.parseFloat();
-          vLPFa = exp(vLPF*-2*3.14159/Fs);
-          vLPFb = (1.0-vLPFa)/2.0;
+          vLPFa = (exp(vLPF*-2*3.14159/Fs));
+          vLPFb = ((1.0-vLPFa));
           SerialUSB.print("new vLPF = ");
           SerialUSB.println(vLPF, DEC);
           SerialUSB.println("");

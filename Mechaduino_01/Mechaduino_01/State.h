@@ -9,6 +9,7 @@
 extern volatile int U;  //control effort (abs)
 extern volatile float r;  //setpoint
 extern volatile float y;  // measured angle
+extern volatile float v;  // estimated velocity (velocity loop)
 extern volatile float yw;
 extern volatile float yw_1;
 extern volatile float e;  // e = r-y (error)

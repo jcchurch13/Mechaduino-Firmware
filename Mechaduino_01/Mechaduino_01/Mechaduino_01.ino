@@ -71,7 +71,8 @@ void setup()        // This code runs once at startup
   //    configureEnablePin();         // Active low, for use wath RAMPS 1.4 or similar
   //    enableTCInterrupts();          // uncomment this line to start in closed loop 
   //    mode = 'x';                   // start in position mode
-  
+      SerialUSB.println(vLPFa,DEC);
+    SerialUSB.println(vLPFb,DEC);
 }
   
 
@@ -85,6 +86,7 @@ void loop()                 // main loop
 {
 
     serialCheck();              //must have this execute in loop for serial commands to function
+
   //r=0.1125*step_count;        Don't use this anymore, step interrupts enabled above by "configureStepDir()", adjust step size in parameters.cpp
 
 
