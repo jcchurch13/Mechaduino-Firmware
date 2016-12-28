@@ -1057,6 +1057,180 @@ void stepResponse() {     // not done yet...
 
 
 
+void moveRel(float pos_final,int vel_max, int accel){
+  
+   //Use this function for slow relative movements in closed loop position mode
+   //
+   // This function creates a "trapezoidal speed" trajectory (constant accel, and max speed, constant decel);
+   // It works pretty well, but it may not be perfect
+   // 
+   // pos_final is the desired position in degrees
+   // vel_max is the max velocity in degrees/second
+   // accel is the max accel in degrees/second^2
+   //
+   //Note that the actual max velocity is limited by the execution speed of all the math below.
+   //Adjusting dpos (delta position, or step size) allows you to trade higher speeds for smoother motion
+  
+  float pos = 0;
+  float dpos = 0.45;  // "step size" in degrees, smaller is smoother, but will limit max speed, keep below stepper step angle
+  float vel = 0;      // 
+  float vel_1 =0;
+  //int start = micros(); //for debugging
+
+  float accel_x_dpos = accel*dpos;  // pre calculate
+  float dpos_x_1000000 = dpos*1000000.0; // pre calculate
+
+  float pos_remaining = pos_final-pos;
+  unsigned long dt =0; 
+  unsigned long t = micros();
+  unsigned long t_1 = t;
+
+  float r0 = r;  //hold initial setpoint
+
+  // Assume we're decelerating and calculate speed along deceleration profile
+  
+  while (abs(pos_remaining) >(dpos/2)){  //(may not actually reach exactly so leave some margin
+  
+    if (pos_remaining > 0)        // clockwise
+    vel = sqrt(2.0 * pos_remaining * accel);
+    else                      // counter clockwise
+    vel = -sqrt(2.0 * -pos_remaining * accel);
+
+    if (vel > vel_1)  // Check if we actually need to accelerate in  clockwise direction
+      {
+
+      if (vel_1 == 0)  
+        vel = sqrt(2.0 * accel_x_dpos);
+      else
+        vel = vel_1 + abs(accel_x_dpos/ vel_1);
+      if (vel > vel_max)
+        vel = vel_max;
+      }
+    else if (vel < vel_1)
+    {
+    // Need to accelerate in  counter clockwise direction
+    if (vel_1 == 0)
+      vel = -sqrt(2.0 * accel_x_dpos);
+    else
+      vel = vel_1 - abs(accel_x_dpos/ vel_1);
+    if (vel < -vel_max)
+      vel = -vel_max;
+    }
+  //  SerialUSB.println(vel);
+  
+ 
+  dt = abs(dpos_x_1000000 / vel);
+  
+    while(t < t_1 + dt) {           //wait calculated dt 
+    t = micros();
+    }
+  
+  if (vel > 0)  pos += dpos;        //update setpoint
+  else if (vel < 0) pos -= dpos;
+  r= r0 + pos;
+  
+  //SerialUSB.print(micros()-start);
+  //SerialUSB.print(" , ");
+  
+  t_1 = t;  
+  vel_1 = vel;
+  pos_remaining = pos_final-pos;
+  
+  }
+  r = r0 +pos_final;
+  //SerialUSB.print(micros()-start);
+  
+}
+
+
+
+
+void moveAbs(float pos_final,int vel_max, int accel){
+  
+   //Use this function for slow absolute movements in closed loop position mode
+   //
+   // This function creates a "trapezoidal speed" trajectory (constant accel, and max speed, constant decel);
+   // It works pretty well, but it may not be perfect
+   // 
+   // pos_final is the desired position in degrees
+   // vel_max is the max velocity in degrees/second
+   // accel is the max accel in degrees/second^2
+   //
+   //Note that the actual max velocity is limited by the execution speed of all the math below.
+   //Adjusting dpos (delta position, or step size) allows you to trade higher speeds for smoother motion
+  
+  float pos = r;
+  float dpos = 0.45;  // "step size" in degrees, smaller is smoother, but will limit max speed, keep below stepper step angle
+  float vel = 0;      // 
+  float vel_1 =0;
+ // int start = micros(); //for debugging
+
+  float accel_x_dpos = accel*dpos;  // pre calculate
+  float dpos_x_1000000 = dpos*1000000.0; // pre calculate
+
+  float pos_remaining = pos_final-pos;
+  unsigned long dt =0; 
+  unsigned long t = micros();
+  unsigned long t_1 = t;
+
+
+  // Assume we're decelerating and calculate speed along deceleration profile
+  
+  while (abs(pos_remaining) >(dpos/2)){  //(may not actually reach exactly so leave some margin
+  
+    if (pos_remaining > 0)        // clockwise
+    vel = sqrt(2.0 * pos_remaining * accel);
+    else                      // counter clockwise
+    vel = -sqrt(2.0 * -pos_remaining * accel);
+
+    if (vel > vel_1)  // Check if we actually need to accelerate in  clockwise direction
+      {
+
+      if (vel_1 == 0)  
+        vel = sqrt(2.0 * accel_x_dpos);
+      else
+        vel = vel_1 + abs(accel_x_dpos/ vel_1);
+      if (vel > vel_max)
+        vel = vel_max;
+      }
+    else if (vel < vel_1)
+    {
+    // Need to accelerate in  counter clockwise direction
+    if (vel_1 == 0)
+      vel = -sqrt(2.0 * accel_x_dpos);
+    else
+      vel = vel_1 - abs(accel_x_dpos/ vel_1);
+    if (vel < -vel_max)
+      vel = -vel_max;
+    }
+  //  SerialUSB.println(vel);
+  
+ 
+  dt = abs(dpos_x_1000000 / vel);
+  
+    while(t < t_1 + dt) {           //wait calculated dt 
+    t = micros();
+    }
+  
+  if (vel > 0)  pos += dpos;        //update setpoint
+  else if (vel < 0) pos -= dpos;
+  r= pos;
+  
+  //SerialUSB.print(micros()-start);    //for debugging
+  //SerialUSB.print(" , ");
+  
+  t_1 = t;  
+  vel_1 = vel;
+  pos_remaining = pos_final-pos;
+  
+  }
+  r = pos_final;
+  //SerialUSB.print(micros()-start);
+  
+}
+
+
+
 
 
 
