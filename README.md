@@ -5,7 +5,7 @@ Here are some preliminary instructions on how to get your Mechaduino up and runn
 ![image](images/example1.gif)
 
 ## Bootloader:
-You will need to make sure your Mechaduino has the latest Arduino Zero bootloader.  If you are getting a Mechaduino as a reward from our Kickstarter, it will already have this! Otherwise you will need an Atmel-ICE or similar SWD programmer...
+You will need to make sure your Mechaduino has the latest Arduino Zero bootloader.  If you got your Mechaduino from Tropical Labs, it will already have this! Otherwise you will need an Atmel-ICE or similar SWD programmer...
 
 ## Firmware:
 
@@ -34,20 +34,34 @@ As long as you have "serialCheck();" in your main loop, you can use the followin
 
   
 s - step (steps one full step in open loop mode)
+
 d - dir (changes step direction in open loop mode)
+
 p - print angle [step count] , [assumed angle] , [encoder reading]
+
 c - calibration routine
+
 e - check encoder diagnostics
+
 q - parameter query (prints current PID values and cal table)
-x - position mode (set mode for closed loop operation)
+
+
 v - velocity mode
+
 x - torque mode
+
 y - enable control loop (enter closed loop mode)
+
 n - disable control loop (go back to open loop mode)
+
 r - enter new setpoint (new setpoint for control loop)
+
 j - step response
+
 k - edit controller gains*
+
 g - generate sine commutation table
+
 m - print main menu
 
   ...see serialCheck() in Utils for more details
