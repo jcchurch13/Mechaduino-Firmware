@@ -10,7 +10,7 @@
 
 void TC5_Handler() {                // gets called with FPID frequency
   
-  static int print_counter = 0;
+  static int print_counter = 0;               //this is used by step response
 
   if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {    // A counter overflow caused the interrupt
      
@@ -34,39 +34,31 @@ void TC5_Handler() {                // gets called with FPID frequency
             
             ITerm += (pKi * e);                             //Integral wind up limit
             if (ITerm > 150.0) ITerm = 150.0;
-            else if (ITerm < -150.0) ITerm = -150.0;
-          
-           // u = ((pKp * e) + ITerm + (pKd * (yw - yw_1))); //ARDUINO library style PID controller
+            else if (ITerm < -150.0) ITerm = -150.0;          
            
-           DTerm = pLPFa*DTerm -  pLPFb*pKd*(yw-yw_1); //pKd*(0.013245)*(e_1-e_2);
+            DTerm = pLPFa*DTerm -  pLPFb*pKd*(yw-yw_1);
+           
             u = (pKp * e) + ITerm + DTerm;
            
+            // u = ((pKp * e) + ITerm + (pKd * (yw - yw_1))); //ARDUINO library style PID controller
            
-           // u = 1.937*u_1 + 0.937*u_2 + 19.155*e -37.958*e_1+18.804*e_2;
-
-            
             break;
             
-        case 'v':         // velocity control
-          v = vLPFa*v -  vLPFb*(yw-yw_1);     //filtered velocity called "DTerm" because it is similar to derivative action in position loop
+        case 'v':         // velocity controlr
+          v = vLPFa*v +  vLPFb*(yw-yw_1);     //filtered velocity called "DTerm" because it is similar to derivative action in position loop
 
-           e = (r + v);
-
-          //e = (r + ((v) * Fs * 0.16666667));
-         // e = (r - ((yw - yw_1) * Fs * 0.16666667)); //error in degrees per rpm (sample frequency in Hz * (60 seconds/min) / (360 degrees/rev) )
+          e = (r - v);   //error in degrees per rpm (sample frequency in Hz * (60 seconds/min) / (360 degrees/rev) )
 
           ITerm += (vKi * e);                 //Integral wind up limit
           if (ITerm > 200) ITerm = 200;
           else if (ITerm < -200) ITerm = -200;
-
-
         
-          u = ((vKp * e) + ITerm - (vKd * (e-e_1)));//+ lookup_force(a)-20; //ARDUINO library style PID controller
+          u = ((vKp * e) + ITerm - (vKd * (e-e_1)));
           
           //SerialUSB.println(e);
           break;
           
-        case 't':         // torquw control
+        case 't':         // torque control
           u = 1.0 * r ;
           break;
         default:
@@ -122,6 +114,9 @@ void TC5_Handler() {                // gets called with FPID frequency
 
 
 }
+
+
+
 
 
 

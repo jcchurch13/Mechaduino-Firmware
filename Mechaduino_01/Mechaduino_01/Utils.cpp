@@ -1070,12 +1070,14 @@ void moveRel(float pos_final,int vel_max, int accel){
    //
    //Note that the actual max velocity is limited by the execution speed of all the math below.
    //Adjusting dpos (delta position, or step size) allows you to trade higher speeds for smoother motion
+   //Max speed with dpos = 0.225 degrees is about 180 deg/sec
+   //Max speed with dpos = 0.45 degrees is about 360 deg/sec 
   
   float pos = 0;
   float dpos = 0.45;  // "step size" in degrees, smaller is smoother, but will limit max speed, keep below stepper step angle
   float vel = 0;      // 
   float vel_1 =0;
-  //int start = micros(); //for debugging
+  int start = micros(); //for debugging
 
   float accel_x_dpos = accel*dpos;  // pre calculate
   float dpos_x_1000000 = dpos*1000000.0; // pre calculate
@@ -1158,9 +1160,11 @@ void moveAbs(float pos_final,int vel_max, int accel){
    //
    //Note that the actual max velocity is limited by the execution speed of all the math below.
    //Adjusting dpos (delta position, or step size) allows you to trade higher speeds for smoother motion
+   //Max speed with dpos = 0.225 degrees is about 180 deg/sec
+   //Max speed with dpos = 0.45 degrees is about 360 deg/sec
   
   float pos = r;
-  float dpos = 0.45;  // "step size" in degrees, smaller is smoother, but will limit max speed, keep below stepper step angle
+  float dpos = 0.225;  // "step size" in degrees, smaller is smoother, but will limit max speed, keep below stepper step angle
   float vel = 0;      // 
   float vel_1 =0;
  // int start = micros(); //for debugging
@@ -1228,6 +1232,9 @@ void moveAbs(float pos_final,int vel_max, int accel){
   //SerialUSB.print(micros()-start);
   
 }
+
+
+
 
 
 

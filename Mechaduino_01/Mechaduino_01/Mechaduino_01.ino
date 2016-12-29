@@ -70,7 +70,7 @@ void setup()        // This code runs once at startup
   
   //    configureStepDir();           // Configures setpoint to be controlled by step/dir interface
   //    configureEnablePin();         // Active low, for use wath RAMPS 1.4 or similar
-  //    enableTCInterrupts();         // uncomment this line to start in closed loop 
+  //     enableTCInterrupts();         // uncomment this line to start in closed loop 
   //    mode = 'x';                   // start in position mode
 
 }
@@ -89,21 +89,7 @@ void loop()                 // main loop
 
   //r=0.1125*step_count;        Don't use this anymore, step interrupts enabled above by "configureStepDir()", adjust step size in parameters.cpp
 
-  
-//  moveRel(100.0,100, 200);
-//  delay(2000);
-//  //while(1){}
-//  moveAbs(0.0,100,200);
-//  delay(2000);
-//  moveAbs(180.0,100,200);
-//    delay(2000);
-//  moveAbs(-180.0,100,200);
 }
-
-
-
-
-
 
 
 
