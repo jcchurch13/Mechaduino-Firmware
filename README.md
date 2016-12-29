@@ -11,7 +11,7 @@ You will need to make sure your Mechaduino has the latest Arduino Zero bootloade
 
 Compile the Mechaduino_01 firmware in the Arduino IDE and upload to your Mechaduino.  (Mechaduino will appear as an Arduino Zero.)  
 
-New firmware is in the default "master" branch, an older version is available in the multi-file branch and also [here](https://github.com/jcchurch13/Mechaduino-Firmware/releases). 
+New firmware is in the default "master" branch. Older versions are available [here](https://github.com/jcchurch13/Mechaduino-Firmware/releases). 
 
 
 ## Calibration Routine:
@@ -22,7 +22,7 @@ With the Mechaduino connected to your computer, open a serial monitor (115200 ba
 
 Now, make sure nothing will touch the Mechaduino shaft during calibration. Type "c"  to start the calibration routine.  The Mechaduino will now step through all full steps to calibrate the encoder.   When the routine is done, a very long lookup table (16,384 entries) will be printed to the serial terminal.  These are the calibrated angles at each encoder count.  You will need to copy these into the Parameters.cpp file here:
 
-const PROGMEM float lookup[] = {PUT LOOKUP TABLE HERE}
+const float lookup[] = {PUT LOOKUP TABLE HERE}
 
 Note: you can easily select the whole lookup table from the serial monitor by clicking on the next line and dragging the cursor up.
 
@@ -33,33 +33,22 @@ Save, compile, and re-upload the firmware to your Mechaduino.  you are all calib
 As long as you have "serialCheck();" in your main loop, you can use the following built in commands to control the mechaduino from a serial monitor:
 
   
- s  -  step
- 
- d  -  dir
- 
- p  -  print angle [step count] , [assumed angle] , [encoder reading]
-
- c  -  calibration routine
- 
- e  -  check encoder diagnositics
- 
- q  -  parameter query
-
- x  -  position mode
- 
- v  -  velocity mode
- 
- x  -  torque mode
-
- y  -  enable control loop
- 
- n  -  disable control loop
- 
- r  -  enter new setpoint
-
- k  -  edit controller gains -- note, these edits are stored in volatile memory and will be reset if power is cycled
- 
- m  -  print main menu
+s - step (steps one full step in open loop mode)
+d - dir (changes step direction in open loop mode)
+p - print angle [step count] , [assumed angle] , [encoder reading]
+c - calibration routine
+e - check encoder diagnostics
+q - parameter query (prints current PID values and cal table)
+x - position mode (set mode for closed loop operation)
+v - velocity mode
+x - torque mode
+y - enable control loop (enter closed loop mode)
+n - disable control loop (go back to open loop mode)
+r - enter new setpoint (new setpoint for control loop)
+j - step response
+k - edit controller gains*
+g - generate sine commutation table
+m - print main menu
 
   ...see serialCheck() in Utils for more details
  
