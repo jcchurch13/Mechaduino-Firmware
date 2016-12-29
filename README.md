@@ -1,5 +1,6 @@
 ![image](images/header.PNG)
 
+New release!  We've made a number of improvements to the code and added the Mechaduino Manual!
 Here are some preliminary instructions on how to get your Mechaduino up and running.  For more details, see the Mechaduino Manual above!
 
 ![image](images/example1.gif)
