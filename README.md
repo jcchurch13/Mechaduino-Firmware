@@ -1,6 +1,6 @@
 ![image](images/header.PNG)
 
-Here are some preliminary instructions on how to get your Mechaduino up and running.  We're almost ready to release a manual explaining the Mechaduino hardware & firmware. Stay tuned!
+Here are some preliminary instructions on how to get your Mechaduino up and running.  For more details, see the Mechaduino Manual above!
 
 ![image](images/example1.gif)
 

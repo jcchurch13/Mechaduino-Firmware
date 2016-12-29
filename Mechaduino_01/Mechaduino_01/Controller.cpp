@@ -40,7 +40,6 @@ void TC5_Handler() {                // gets called with FPID frequency
            
             u = (pKp * e) + ITerm + DTerm;
            
-            // u = ((pKp * e) + ITerm + (pKd * (yw - yw_1))); //ARDUINO library style PID controller
            
             break;
             
