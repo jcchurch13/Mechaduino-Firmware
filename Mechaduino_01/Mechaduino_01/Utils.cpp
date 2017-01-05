@@ -819,7 +819,7 @@ void parameterEditp() {
           while (SerialUSB.available() == 0)  {}
           pLPF = SerialUSB.parseFloat();
           pLPFa = exp(pLPF*-2*3.14159/Fs);
-          pLPFb = (1.0-pLPFa)/2.0;
+          pLPFb = (1.0-pLPFa);
           SerialUSB.print("new pLPF = ");
           SerialUSB.println(pLPF, DEC);
           SerialUSB.println("");
