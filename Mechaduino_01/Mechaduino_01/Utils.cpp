@@ -819,7 +819,7 @@ void parameterEditp() {
           while (SerialUSB.available() == 0)  {}
           pLPF = SerialUSB.parseFloat();
           pLPFa = exp(pLPF*-2*3.14159/Fs);
-          pLPFb = (1.0-pLPFa)/2.0;
+          pLPFb = (1.0-pLPFa);
           SerialUSB.print("new pLPF = ");
           SerialUSB.println(pLPF, DEC);
           SerialUSB.println("");
@@ -892,7 +892,7 @@ void parameterEditv() {
           while (SerialUSB.available() == 0)  {}
           vLPF = SerialUSB.parseFloat();
           vLPFa = (exp(vLPF*-2*3.14159/Fs));
-          vLPFb = ((1.0-vLPFa));
+          vLPFb = (1.0-vLPFa)* Fs * 0.16666667;
           SerialUSB.print("new vLPF = ");
           SerialUSB.println(vLPF, DEC);
           SerialUSB.println("");
