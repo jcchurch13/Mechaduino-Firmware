@@ -964,7 +964,7 @@ void hybridControl() {        //still under development
 void serialMenu() {
   SerialUSB.println("");
   SerialUSB.println("");
-  SerialUSB.println("----- Mechaduino 0.1 -----");
+  SerialUSB.println("----- Mechaduino 0.X -----");
   SerialUSB.print("Firmware: ");
   SerialUSB.println(firmware_version);
   SerialUSB.print("Identifier: ");

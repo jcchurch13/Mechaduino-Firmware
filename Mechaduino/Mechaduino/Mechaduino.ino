@@ -1,14 +1,14 @@
 
 /*
   -------------------------------------------------------------
-  Mechaduino 0.1 Firmware  v0.1.3
+  Mechaduino 0.X Firmware  v0.1.4
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
   All Mechaduino related materials are released under the
   Creative Commons Attribution Share-Alike 4.0 License
   https://creativecommons.org/licenses/by-sa/4.0/
 
-  Many thanks to Will Church, Marco Farrugia, Kai Wolter, Trampas Stern, Mike Anton.
+  Many thanks to all contributors!
   --------------------------------------------------------------
   
   Controlled via a SerialUSB terminal at 115200 baud.
@@ -25,7 +25,7 @@
 
  x  -  position mode
  v  -  velocity mode
- x  -  torque mode
+ t  -  torque mode
 
  y  -  enable control loop
  n  -  disable control loop
