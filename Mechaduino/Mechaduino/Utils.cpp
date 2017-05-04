@@ -108,6 +108,11 @@ void output(float theta, int effort) {
   v_coil_A = ((effort * sin_coil_A) / 1024);
   v_coil_B = ((effort * sin_coil_B) / 1024);
 
+/*    // For debugging phase voltages:
+     SerialUSB.print(v_coil_A);
+     SerialUSB.print(",");
+     SerialUSB.println(v_coil_B);
+*/
   analogFastWrite(VREF_1, abs(v_coil_A));
   analogFastWrite(VREF_2, abs(v_coil_B));
 
@@ -1006,7 +1011,8 @@ void sineGen() {
      SerialUSB.println("Printing sine look up table:...");
      SerialUSB.println("");
   for (int x = 0; x <= 3600; x++) {
-    temp = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.25))));
+    //temp = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.25))));
+    temp = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.0))));
    SerialUSB.print(temp);
    SerialUSB.print(", ");  
   }
