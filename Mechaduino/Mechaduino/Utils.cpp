@@ -982,7 +982,7 @@ void serialMenu() {
   SerialUSB.println("");
   SerialUSB.println(" x  -  position mode");
   SerialUSB.println(" v  -  velocity mode");
-  SerialUSB.println(" x  -  torque mode");
+  SerialUSB.println(" t  -  torque mode");
   SerialUSB.println("");
   SerialUSB.println(" y  -  enable control loop");
   SerialUSB.println(" n  -  disable control loop");
