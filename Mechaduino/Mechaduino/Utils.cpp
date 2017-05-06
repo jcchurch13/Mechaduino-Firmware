@@ -108,6 +108,11 @@ void output(float theta, int effort) {
   v_coil_A = ((effort * sin_coil_A) / 1024);
   v_coil_B = ((effort * sin_coil_B) / 1024);
 
+/*    // For debugging phase voltages:
+     SerialUSB.print(v_coil_A);
+     SerialUSB.print(",");
+     SerialUSB.println(v_coil_B);
+*/
   analogFastWrite(VREF_1, abs(v_coil_A));
   analogFastWrite(VREF_2, abs(v_coil_B));
 
@@ -964,7 +969,7 @@ void hybridControl() {        //still under development
 void serialMenu() {
   SerialUSB.println("");
   SerialUSB.println("");
-  SerialUSB.println("----- Mechaduino 0.1 -----");
+  SerialUSB.println("----- Mechaduino 0.X -----");
   SerialUSB.print("Firmware: ");
   SerialUSB.println(firmware_version);
   SerialUSB.print("Identifier: ");
@@ -982,7 +987,7 @@ void serialMenu() {
   SerialUSB.println("");
   SerialUSB.println(" x  -  position mode");
   SerialUSB.println(" v  -  velocity mode");
-  SerialUSB.println(" x  -  torque mode");
+  SerialUSB.println(" t  -  torque mode");
   SerialUSB.println("");
   SerialUSB.println(" y  -  enable control loop");
   SerialUSB.println(" n  -  disable control loop");
@@ -1006,7 +1011,8 @@ void sineGen() {
      SerialUSB.println("Printing sine look up table:...");
      SerialUSB.println("");
   for (int x = 0; x <= 3600; x++) {
-    temp = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.25))));
+    //temp = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.25))));
+    temp = round(1024.0 * sin((3.14159265358979 * ((x * 0.1 / 180.0) + 0.0))));
    SerialUSB.print(temp);
    SerialUSB.print(", ");  
   }
