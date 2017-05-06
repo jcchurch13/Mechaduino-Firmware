@@ -1,6 +1,6 @@
 ![image](images/header.PNG)
 
-New release!  We've made a number of improvements to the code and added the Mechaduino Manual!
+New release!  We've added documentation for the MEchaduino 0.2 hardware and fixed a couple small bugs.
 Here are some preliminary instructions on how to get your Mechaduino up and running.  For more details, see the Mechaduino Manual above!
 
 ![image](images/example1.gif)
@@ -10,7 +10,7 @@ You will need to make sure your Mechaduino has the latest Arduino Zero bootloade
 
 ## Firmware:
 
-Compile the Mechaduino_01 firmware in the Arduino IDE and upload to your Mechaduino.  (Mechaduino will appear as an Arduino Zero.)  
+Compile the Mechaduino firmware in the Arduino IDE and upload to your Mechaduino.  (Mechaduino will appear as an Arduino Zero.)  
 
 New firmware is in the default "master" branch. Older versions are available [here](https://github.com/jcchurch13/Mechaduino-Firmware/releases). 
 
@@ -40,6 +40,7 @@ d - dir (changes step direction in open loop mode)
 
 p - print angle [step count] , [assumed angle] , [encoder reading]
 
+
 c - calibration routine
 
 e - check encoder diagnostics
@@ -47,15 +48,19 @@ e - check encoder diagnostics
 q - parameter query (prints current PID values and cal table)
 
 
+x  -  position mode
+
 v - velocity mode
 
-x - torque mode
+t - torque mode
+
 
 y - enable control loop (enter closed loop mode)
 
 n - disable control loop (go back to open loop mode)
 
 r - enter new setpoint (new setpoint for control loop)
+
 
 j - step response
 
