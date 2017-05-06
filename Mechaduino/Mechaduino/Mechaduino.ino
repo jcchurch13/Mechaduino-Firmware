@@ -1,7 +1,7 @@
 
 /*
   -------------------------------------------------------------
-  Mechaduino 0.X Firmware  v0.1.4
+  Mechaduino 0.1 & 0.2 Firmware  v0.1.4
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
   All Mechaduino related materials are released under the
