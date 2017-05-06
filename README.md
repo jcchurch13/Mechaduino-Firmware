@@ -1,6 +1,6 @@
 ![image](images/header.PNG)
 
-New release!  We've added documentation for the MEchaduino 0.2 hardware and fixed a couple small bugs.
+New release!  We've added documentation for the Mechaduino 0.2 hardware and fixed a couple small bugs.
 Here are some preliminary instructions on how to get your Mechaduino up and running.  For more details, see the Mechaduino Manual above!
 
 ![image](images/example1.gif)
