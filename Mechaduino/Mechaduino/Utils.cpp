@@ -141,6 +141,7 @@ void output(float theta, int effort) {
 void calibrate() {   /// this is the calibration routine
 
   int encoderReading = 0;     //or float?  not sure if we can average for more res?
+  int currentencoderReading = 0;
   int lastencoderReading = 0;
   int avg = 10;               //how many readings to average
 
@@ -182,12 +183,29 @@ void calibrate() {   /// this is the calibration routine
 
     encoderReading = 0;
     delay(100);                         //moving too fast may not give accurate readings.  Motor needs time to settle after each step.
-    
+    lastencoderReading = readEncoder();
+        
     for (int reading = 0; reading < avg; reading++) {  //average multple readings at each step
-      encoderReading += readEncoder();
+      currentencoderReading = readEncoder();
+
+      if ((currentencoderReading-lastencoderReading)<(-(cpr/2))){
+        currentencoderReading += cpr;
+      }
+      else if ((currentencoderReading-lastencoderReading)>((cpr/2))){
+        currentencoderReading -= cpr;
+      }
+ 
+      encoderReading += currentencoderReading;
       delay(10);
+      lastencoderReading = currentencoderReading;
     }
     encoderReading = encoderReading / avg;
+    if (encoderReading>cpr){
+      encoderReading-= cpr;
+    }
+    else if (encoderReading<0){
+      encoderReading+= cpr;
+    }
 
     fullStepReadings[x] = encoderReading;
    // SerialUSB.println(fullStepReadings[x], DEC);      //print readings as a sanity check
