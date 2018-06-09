@@ -19,11 +19,12 @@ volatile float vKi = 0.001;
 volatile float vKd = 0.0;
 volatile float vLPF = 100.0;       //break frequency in hertz
 
-//This is the encoder lookup table (created by calibration routine):
+// This is the encoder lookup table (created by calibration routine):
+// There are 16384 entries and it will be filled by the flasher.
+// the default is a linear map so that things will work ok out of the
+// box, but the calibration will ensure that the mapping is better
+const float __attribute__((__aligned__(256))) lookup[16384] = {};
 
-const float lookup[] = {
-  //Put lookup table here!
-};
 
 
 volatile float pLPFa = exp(pLPF*-2*3.14159/Fs); // z = e^st pole mapping
