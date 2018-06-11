@@ -219,7 +219,7 @@ void calibrate() {   /// this is the calibration routine
   for (int x = 0; x < spr; x++) {     //step through all full step positions, recording their encoder readings
 
     encoderReading = 0;
-    delay(100);                         //moving too fast may not give accurate readings.  Motor needs time to settle after each step.
+    delay(20);                         //moving too fast may not give accurate readings.  Motor needs time to settle after each step.
     lastencoderReading = readEncoder();
         
     for (int reading = 0; reading < avg; reading++) {  //average multple readings at each step
@@ -373,6 +373,23 @@ void calibrate() {   /// this is the calibration routine
 }
 
 
+float read_angle()
+{
+  const int avg = 10;            //average a few readings
+  int encoderReading = 0;
+
+  disableTCInterrupts();        //can't use readEncoder while in closed loop
+
+  for (int reading = 0; reading < avg; reading++) {  //average multple readings at each step
+    encoderReading += readEncoder();
+    delay(10);
+    }
+
+  //return encoderReading * (360.0 / 16384.0) / avg;
+  return lookup[encoderReading / avg];
+}
+
+
 void serialCheck() {        //Monitors serial for commands.  Must be called in routinely in loop for serial interface to work.
 
   if (SerialUSB.available()) {
@@ -413,6 +430,9 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
         break;
 
       case 'y':
+        r = read_angle();          // hold the current position
+        SerialUSB.print("New setpoint ");
+        SerialUSB.println(r, 2);
         enableTCInterrupts();      //enable closed loop
         break;
 
@@ -663,27 +683,16 @@ void readEncoderDiagnostics()           ////////////////////////////////////////
 
 void print_angle()                ///////////////////////////////////       PRINT_ANGLE   /////////////////////////////////
 {
-  int avg = 10;            //average a few readings
-  int encoderReading = 0;
-  int rawReading = 0;
-  float anglefloat = 0.0;
-  
-  disableTCInterrupts();        //can't use readEncoder while in closed loop
-
-
-  for (int reading = 0; reading < avg; reading++) {  //average multple readings at each step
-    encoderReading += readEncoder();
-    delay(10);
-    }
-
-  anglefloat = encoderReading * 0.02197265625 / avg;     //    360/16384 = 0.021972....
   SerialUSB.print("stepNumber: ");
   SerialUSB.print(stepNumber, DEC);
   SerialUSB.print(" , ");
 //  SerialUSB.print(stepNumber * aps, DEC);
 //  SerialUSB.print(" , ");
   SerialUSB.print("Angle: ");
-  SerialUSB.println(anglefloat, 2);
+  SerialUSB.print(read_angle(), 2);
+  SerialUSB.print(", raw encoder: ");
+  SerialUSB.print(readEncoder());
+  SerialUSB.println();
 }
 
 
