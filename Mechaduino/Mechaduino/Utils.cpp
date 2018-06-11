@@ -3,6 +3,7 @@
 
 #include <SPI.h>
 #include <Wire.h>
+#include <FlashStorage.h>
 
 #include "Parameters.h"
 #include "Controller.h"
@@ -136,6 +137,42 @@ void output(float theta, int effort) {
 
 }
 
+static FlashClass flash;
+static const unsigned page_size = 256; // actual size is 64?
+static unsigned page_count;
+static const unsigned floats_per_page = page_size / sizeof(float);
+static float page[floats_per_page];
+static const void * page_ptr;
+
+static void write_page()
+{
+  if (0 == (0xFFF & (uintptr_t) page_ptr))
+  {
+    SerialUSB.println();
+    SerialUSB.print("0x");
+    SerialUSB.print((uintptr_t) page_ptr, HEX);
+  } else {
+    SerialUSB.print(".");
+  }
+
+  flash.erase((const void*) page_ptr, sizeof(page));
+  flash.write((const void*) page_ptr, (const void *) page, sizeof(page));
+}
+
+static void store_lookup(float lookupAngle)
+{
+  page[page_count++] = lookupAngle;
+  if(page_count != floats_per_page)
+    return;
+
+  // we've filled an entire page, write it to the flash
+  write_page();
+
+  // reset our counters and increment our flash page
+  page_ptr += sizeof(page);
+  page_count = 0;
+  memset(page, 0, sizeof(page));
+}
 
 
 void calibrate() {   /// this is the calibration routine
@@ -209,11 +246,19 @@ void calibrate() {   /// this is the calibration routine
 
     fullStepReadings[x] = encoderReading;
    // SerialUSB.println(fullStepReadings[x], DEC);      //print readings as a sanity check
-    SerialUSB.print(100.0*x/spr,1);
-    SerialUSB.println("%");
+    if (x % 20 == 0)
+    {
+      SerialUSB.println();
+      SerialUSB.print(100*x/spr);
+      SerialUSB.print("% ");
+    } else {
+      SerialUSB.print('.');
+    }
     
     oneStep();
   }
+      SerialUSB.println();
+
  // SerialUSB.println(" ");
  // SerialUSB.println("ticks:");                        //"ticks" represents the number of encoder counts between successive steps... these should be around 82 for a 1.8 degree stepper
  // SerialUSB.println(" ");
@@ -254,13 +299,18 @@ void calibrate() {   /// this is the calibration routine
 
   }
 
+  // The code below generates the lookup table by intepolating between
+  // full steps and mapping each encoder count to a calibrated angle
+  // The lookup table is too big to store in volatile memory,
+  // so we must generate and store it into the flash on the fly
 
-
-
-  SerialUSB.println(" ");                   //The code below generates the lookup table by intepolating between full steps and mapping each encoder count to a calibrated angle
-  SerialUSB.println("newLookup:");          //The lookup table is too big to store in volatile memory, so we must generate and print it on the fly
-  SerialUSB.println(" ");                   // in the future, we hope to be able to print this directly to non-volatile memory
-
+  // begin the write to the calibration table
+  page_count = 0;
+  page_ptr = (const uint8_t*) lookup;
+  SerialUSB.print("Writing to flash 0x");
+  SerialUSB.print((uintptr_t) page_ptr, HEX);
+  SerialUSB.print(" page size PSZ=");
+  SerialUSB.print(NVMCTRL->PARAM.bit.PSZ);
 
   for (int i = iStart; i < (iStart + spr + 1); i++) {
     ticks = fullStepReadings[mod((i + 1), spr)] - fullStepReadings[mod((i), spr)];
@@ -276,51 +326,36 @@ void calibrate() {   /// this is the calibration routine
 
       if (i == iStart) { //this is an edge case
         for (int j = jStart; j < ticks; j++) {
-          lookupAngle = 0.001 * mod(1000 * ((aps * i) + ((aps * j ) / float(ticks))), 360000.0);
-          SerialUSB.print(lookupAngle);
-          SerialUSB.print(" , ");
+	  store_lookup(0.001 * mod(1000 * ((aps * i) + ((aps * j ) / float(ticks))), 360000.0));
         }
       }
 
       else if (i == (iStart + spr)) { //this is an edge case
         for (int j = 0; j < jStart; j++) {
-          lookupAngle = 0.001 * mod(1000 * ((aps * i) + ((aps * j ) / float(ticks))), 360000.0);
-          SerialUSB.print(lookupAngle);
-          SerialUSB.print(" , ");
+	  store_lookup(0.001 * mod(1000 * ((aps * i) + ((aps * j ) / float(ticks))), 360000.0));
         }
       }
       else {                        //this is the general case
         for (int j = 0; j < ticks; j++) {
-          lookupAngle = 0.001 * mod(1000 * ((aps * i) + ((aps * j ) / float(ticks))), 360000.0);
-          SerialUSB.print(lookupAngle);
-          SerialUSB.print(" , ");
+	  store_lookup(0.001 * mod(1000 * ((aps * i) + ((aps * j ) / float(ticks))), 360000.0));
         }
       }
-
-
-
     }
 
     else if (ticks < 1) {             //similar to above... for case when encoder counts were decreasing during cal routine
       if (i == iStart) {
         for (int j = - ticks; j > (jStart); j--) {
-          lookupAngle = 0.001 * mod(1000 * (aps * (i) + (aps * ((ticks + j)) / float(ticks))), 360000.0);
-          SerialUSB.print(lookupAngle);
-          SerialUSB.print(" , ");
+          store_lookup(0.001 * mod(1000 * (aps * (i) + (aps * ((ticks + j)) / float(ticks))), 360000.0));
         }
       }
       else if (i == iStart + spr) {
         for (int j = jStart; j > 0; j--) {
-          lookupAngle = 0.001 * mod(1000 * (aps * (i) + (aps * ((ticks + j)) / float(ticks))), 360000.0);
-          SerialUSB.print(lookupAngle);
-          SerialUSB.print(" , ");
+          store_lookup(0.001 * mod(1000 * (aps * (i) + (aps * ((ticks + j)) / float(ticks))), 360000.0));
         }
       }
       else {
         for (int j = - ticks; j > 0; j--) {
-          lookupAngle = 0.001 * mod(1000 * (aps * (i) + (aps * ((ticks + j)) / float(ticks))), 360000.0);
-          SerialUSB.print(lookupAngle);
-          SerialUSB.print(" , ");
+          store_lookup(0.001 * mod(1000 * (aps * (i) + (aps * ((ticks + j)) / float(ticks))), 360000.0));
         }
       }
 
@@ -328,6 +363,10 @@ void calibrate() {   /// this is the calibration routine
 
 
   }
+
+  if (page_count != 0)
+	write_page();
+
   SerialUSB.println(" ");
 
 

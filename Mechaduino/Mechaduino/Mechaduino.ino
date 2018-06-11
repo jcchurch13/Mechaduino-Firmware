@@ -64,6 +64,9 @@ void setup()        // This code runs once at startup
   setupSPI();                       // Sets up SPI for communicating with encoder
   digitalWrite(ledPin,LOW);         // turn LED off 
   
+  // spot check some of the lookup table to decide if it has been filled in
+  if (lookup[0] == 0 && lookup[128] == 0 && lookup[1024] == 0)
+    SerialUSB.println("WARNING: Lookup table is empty! Run calibration");
 
   // Uncomment the below lines as needed for your application.
   // Leave commented for initial calibration and tuning.
