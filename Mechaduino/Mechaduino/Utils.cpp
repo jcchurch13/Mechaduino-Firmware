@@ -368,8 +368,11 @@ void calibrate() {   /// this is the calibration routine
 	write_page();
 
   SerialUSB.println(" ");
-
-
+  SerialUSB.println(" ");
+  SerialUSB.println("Calibration complete!");
+  SerialUSB.println("The calibration table has been written to non-volatile Flash memory!");
+  SerialUSB.println(" ");
+  SerialUSB.println(" ");
 }
 
 
@@ -430,7 +433,7 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
         break;
 
       case 'y':
-        r = read_angle();          // hold the current position
+        r = (read_angle()+(360.0 * wrap_count));          // hold the current position
         SerialUSB.print("New setpoint ");
         SerialUSB.println(r, 2);
         enableTCInterrupts();      //enable closed loop
@@ -548,7 +551,7 @@ void parameterQuery() {         //print current parameters in a format that can 
   SerialUSB.println("//This is the encoder lookup table (created by calibration routine)");
   SerialUSB.println("");
   
-  SerialUSB.println("const float lookup[] = {");
+  SerialUSB.println("const float __attribute__((__aligned__(256))) lookup[16384] = {");
   for (int i = 0; i < 16384; i++) {
     SerialUSB.print(lookup[i]);
     SerialUSB.print(", ");
@@ -1304,12 +1307,3 @@ void moveAbs(float pos_final,int vel_max, int accel){
   //SerialUSB.print(micros()-start);
   
 }
-
-
-
-
-
-
-
-
-

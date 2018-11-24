@@ -1,7 +1,7 @@
 
 /*
   -------------------------------------------------------------
-  Mechaduino 0.1 & 0.2 Firmware  v0.1.4
+  Mechaduino 0.1 & 0.2 Firmware  v0.1.5
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
   All Mechaduino related materials are released under the
@@ -93,7 +93,3 @@ void loop()                 // main loop
   //r=0.1125*step_count;      //Don't use this anymore. Step interrupts enabled above by "configureStepDir()", adjust step size ("stepangle")in parameters.cpp
 
 }
-
-
-
-

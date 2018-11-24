@@ -27,6 +27,7 @@ const float __attribute__((__aligned__(256))) lookup[16384] = {};
 
 
 
+
 volatile float pLPFa = exp(pLPF*-2*3.14159/Fs); // z = e^st pole mapping
 volatile float pLPFb = (1.0-pLPFa);
 volatile float vLPFa = exp(vLPF*-2*3.14159/Fs); // z = e^st pole mapping
