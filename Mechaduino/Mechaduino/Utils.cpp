@@ -79,8 +79,8 @@ void dirInterrupt() {
 void enableInterrupt() {            //enable pin interrupt handler
   if (REG_PORT_IN0 & PORT_PA14){   // check if enable_pin is HIGH
     disableTCInterrupts();
-    analogFastWrite(VREF_2, 0.33 * uMAX);
-    analogFastWrite(VREF_1, 0.33 * uMAX);
+    analogFastWrite(VREF_2, 0);  //set phase currents to zero
+    analogFastWrite(VREF_1, 0);
     }
   else{
     enableTCInterrupts();    
@@ -441,6 +441,8 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
 
       case 'n':
         disableTCInterrupts();      //disable closed loop
+        analogFastWrite(VREF_2, 0);     //set phase currents to zero
+        analogFastWrite(VREF_1, 0);                       
         break;
 
       case 'r':             //new setpoint
