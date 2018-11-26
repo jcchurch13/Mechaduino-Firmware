@@ -1,6 +1,6 @@
 ![image](images/header.PNG)
 
-New release 11/26/2018!  The calibration table is now stored in flash memory!  We've also fixed a couple of small bugs.
+New release 11/26/2018!  The calibration table is now stored in flash memory!  (Many thanks to osresearch!) We've also fixed a couple of small bugs.
 Here are some preliminary instructions on how to get your Mechaduino up and running.  For more details, see the Mechaduino Manual above!
 
 ![image](images/example1.gif)
