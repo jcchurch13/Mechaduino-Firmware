@@ -1,6 +1,6 @@
 ![image](images/header.PNG)
 
-New release!  We've added documentation for the Mechaduino 0.2 hardware and fixed a couple small bugs.
+New release 11/26/2018!  The calibration table is now stored in flash memory!  (Many thanks to osresearch!) We've also fixed a couple of small bugs.
 Here are some preliminary instructions on how to get your Mechaduino up and running.  For more details, see the Mechaduino Manual above!
 
 ![image](images/example1.gif)
@@ -21,13 +21,7 @@ The first thing you will need to do is run the encoder calibration routine.
 
 With the Mechaduino connected to your computer, open a serial monitor (115200 baud) in the Arduino IDE.  You will need to provide V+ to the Mechaduino to power the motor drivers (needed to calibrate).  A menu should appear explaining the basic commands (you can call the menu up at any time by typing 'm').  Type "s" and press enter a couple times to verify that everything is working.  The Mechaduino should step like a stepper.  It is currently in open loop mode.  press "d" and the stepping direction will change.  
 
-Now, make sure nothing will touch the Mechaduino shaft during calibration. Type "c"  to start the calibration routine.  The Mechaduino will now step through all full steps to calibrate the encoder.   When the routine is done, a very long lookup table (16,384 entries) will be printed to the serial terminal.  These are the calibrated angles at each encoder count.  You will need to copy these into the Parameters.cpp file here:
-
-const float lookup[] = {PUT LOOKUP TABLE HERE}
-
-Note: you can easily select the whole lookup table from the serial monitor by clicking on the next line and dragging the cursor up.
-
-Save, compile, and re-upload the firmware to your Mechaduino.  you are all calibrated.
+Now, make sure nothing will touch the Mechaduino’s shaft during the calibration routine. If possible, completely disconnect any load that is attached to the Mechaduino’s shaft.  Type "c" to start the calibration routine. The Mechaduino will now step through all full steps to calibrate the encoder. In the latest version of the firmware, the calibration table will automatically be stored in non-volatile flash memory. When this routine is complete, your Mechaduino is now calibrated!
 
 ## Basic Commands:
 

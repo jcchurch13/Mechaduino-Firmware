@@ -1,7 +1,7 @@
 
 /*
   -------------------------------------------------------------
-  Mechaduino 0.1 & 0.2 Firmware  v0.1.4
+  Mechaduino 0.1 & 0.2 Firmware  v0.1.5
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
   All Mechaduino related materials are released under the
@@ -64,6 +64,9 @@ void setup()        // This code runs once at startup
   setupSPI();                       // Sets up SPI for communicating with encoder
   digitalWrite(ledPin,LOW);         // turn LED off 
   
+  // spot check some of the lookup table to decide if it has been filled in
+  if (lookup[0] == 0 && lookup[128] == 0 && lookup[1024] == 0)
+    SerialUSB.println("WARNING: Lookup table is empty! Run calibration");
 
   // Uncomment the below lines as needed for your application.
   // Leave commented for initial calibration and tuning.
@@ -90,7 +93,3 @@ void loop()                 // main loop
   //r=0.1125*step_count;      //Don't use this anymore. Step interrupts enabled above by "configureStepDir()", adjust step size ("stepangle")in parameters.cpp
 
 }
-
-
-
-
